@@ -12,8 +12,8 @@
 /*globals define registry requirejs */
 
 define("resolver",
-  [],
-  function() {
+  ["exports"],
+  function(__exports__) {
     "use strict";
   /*
    * This module defines a subclass of Ember.DefaultResolver that adds two
@@ -81,11 +81,16 @@ define("resolver",
   function resolveRouter(parsedName) {
     /*jshint validthis:true */
 
-    var prefix = this.namespace.modulePrefix;
+    var prefix = this.namespace.modulePrefix,
+        routerModule;
+
     if (parsedName.fullName === 'router:main') {
       // for now, lets keep the router at app/router.js
       if (requirejs._eak_seen[prefix + '/router']) {
-        return require(prefix + '/router');
+        routerModule = require(prefix + '/router');
+        if (routerModule.default) { routerModule = routerModule.default; }
+
+        return routerModule;
       }
     }
   }
@@ -107,6 +112,8 @@ define("resolver",
 
     if (requirejs._eak_seen[normalizedModuleName]) {
       var module = require(normalizedModuleName, null, null, true /* force sync */);
+
+      if (module.default) { module = module.default };
 
       if (module === undefined) {
         throw new Error(" Expected to find: '" + parsedName.fullName + "' within '" + normalizedModuleName + "' but got 'undefined'. Did you forget to `export default` within '" + normalizedModuleName + "'?");
@@ -147,7 +154,7 @@ define("resolver",
     }
   });
 
-  return Resolver;
+  __exports__.default = Resolver;
 });
 
 })();
