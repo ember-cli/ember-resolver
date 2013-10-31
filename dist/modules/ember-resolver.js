@@ -3,7 +3,7 @@
 
 define("resolver",
   ["exports"],
-  function(__exports__) {
+  function() {
     "use strict";
   /*
    * This module defines a subclass of Ember.DefaultResolver that adds two
@@ -144,7 +144,8 @@ define("resolver",
     }
   });
 
-  __exports__.default = Resolver;
+  Resolver.default = Resolver;
+  return Resolver;
 });
 
 })();
