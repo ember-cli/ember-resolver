@@ -1,0 +1,8 @@
+---
+name: Ember Resolver
+assetfile: 'Assetfile'
+testing_suites:
+  default:
+    - "package=all"
+testing_packages:
+  - ember-resolver
