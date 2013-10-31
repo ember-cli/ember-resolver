@@ -102,7 +102,7 @@ define("resolver",
     if (requirejs._eak_seen[normalizedModuleName]) {
       var module = require(normalizedModuleName, null, null, true /* force sync */);
 
-      if (module.default) { module = module.default };
+      if (module.default) { module = module.default; }
 
       if (module === undefined) {
         throw new Error(" Expected to find: '" + parsedName.fullName + "' within '" + normalizedModuleName + "' but got 'undefined'. Did you forget to `export default` within '" + normalizedModuleName + "'?");
