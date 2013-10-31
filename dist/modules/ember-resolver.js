@@ -1,3 +1,4 @@
+(function() {
 /*globals define registry requirejs */
 
 define("resolver",
@@ -138,3 +139,12 @@ define("resolver",
 
   return Resolver;
 });
+
+})();
+
+
+
+(function() {
+
+})();
+

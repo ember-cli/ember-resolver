@@ -1,3 +1,14 @@
+// ==========================================================================
+// Project:   Ember - JavaScript Application Framework
+// Copyright: Copyright 2013 Stefan Penner and Ember App Kit Contributors
+// License:   Licensed under MIT license
+//            See https://raw.github.com/stefanpenner/ember-jj-abrams-resolver/master/LICENSE
+// ==========================================================================
+
+
+ // Version: 0.0.1
+
+(function() {
 /*globals define registry requirejs */
 
 define("resolver",
@@ -83,7 +94,7 @@ define("resolver",
     /*jshint validthis:true */
 
     var prefix = this.namespace.modulePrefix;
-    Ember.assert('module prefix must be defined', prefix);
+
 
     var pluralizedType = parsedName.type + 's';
     var name = parsedName.fullNameWithoutType;
@@ -138,3 +149,18 @@ define("resolver",
 
   return Resolver;
 });
+
+})();
+
+
+
+(function() {
+
+})();
+
+
+
+if (typeof location !== 'undefined' && (location.hostname === 'localhost' || location.hostname === '127.0.0.1')) {
+  Ember.Logger.warn("You are running a production build of Ember on localhost and won't receive detailed error messages. "+
+               "If you want full error messages please use the non-minified build provided on the Ember website.");
+}
