@@ -1,0 +1,8 @@
+---
+rvm:
+  - 2.0.0
+node_js:
+  - "0.10"
+install:
+  - "bundle install --deployment"
+script: rake test
