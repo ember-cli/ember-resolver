@@ -1,0 +1,12 @@
+{
+  "name": "ember-jj-abrams-resolver",
+  "version": "0.0.1",
+  "main": ["dist/ember-resolver.js", "dist/ember-resolver.prod.js", "dist/ember-resolver.min.js"],
+  "ignore": [
+    ".jshintrc",
+    "**/*.txt"
+  ],
+  "dependencies": {
+    "ember": "~> 1.2.0-beta.2"
+  }
+}
