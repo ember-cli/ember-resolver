@@ -113,13 +113,13 @@ define("resolver",
       }
 
       if (Ember.ENV.LOG_MODULE_RESOLVER) {
-        Ember.Logger.info('hit', moduleName);
+        Ember.Logger.info('[*]', parsedName.fullName, Array(40 - parsedName.fullName.length).join('.'), moduleName);
       }
 
       return module;
     } else {
       if (Ember.ENV.LOG_MODULE_RESOLVER) {
-        Ember.Logger.info('miss', moduleName);
+        Ember.Logger.info('[ ]', parsedName.fullName, Array(40 - parsedName.fullName.length).join('.'), moduleName);
       }
       return this._super(parsedName);
     }
