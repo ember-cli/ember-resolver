@@ -113,7 +113,7 @@ define("resolver",
       }
 
       if (Ember.ENV.LOG_MODULE_RESOLVER) {
-        Ember.Logger.info('[*]', parsedName.fullName, new Array(40 - parsedName.fullName.length).join('.'), moduleName);
+        Ember.Logger.info('[✓]', parsedName.fullName, new Array(40 - parsedName.fullName.length).join('.'), moduleName);
       }
 
       return module;
