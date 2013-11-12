@@ -12,7 +12,7 @@
 /*globals define registry requirejs */
 
 define("resolver",
-  ["exports"],
+  [],
   function() {
     "use strict";
   /*
