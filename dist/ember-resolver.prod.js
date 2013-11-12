@@ -141,6 +141,9 @@ define("resolver",
     resolveTemplate: resolveOther,
     resolveOther: resolveOther,
     resolveRouter: resolveRouter,
+    makeToString: function(factory, fullName) {
+      return '(' + this.namespace.modulePrefix + '@' + fullName + ')';
+    },
     parseName: parseName,
     shouldWrapInClassFactory: function(module, parsedName){
       return false;
