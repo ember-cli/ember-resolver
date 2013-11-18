@@ -77,7 +77,7 @@ define("resolver",
       // for now, lets keep the router at app/router.js
       if (requirejs._eak_seen[prefix + '/router']) {
         routerModule = require(prefix + '/router');
-        if (routerModule.default) { routerModule = routerModule.default; }
+        if (routerModule['default']) { routerModule = routerModule['default']; }
 
         return routerModule;
       }
@@ -102,7 +102,7 @@ define("resolver",
     if (requirejs._eak_seen[normalizedModuleName]) {
       var module = require(normalizedModuleName, null, null, true /* force sync */);
 
-      if (module.default) { module = module.default; }
+      if (module['default']) { module = module['default']; }
 
       if (module === undefined) {
         throw new Error(" Expected to find: '" + parsedName.fullName + "' within '" + normalizedModuleName + "' but got 'undefined'. Did you forget to `export default` within '" + normalizedModuleName + "'?");
@@ -146,6 +146,6 @@ define("resolver",
     }
   });
 
-  Resolver.default = Resolver;
+  Resolver['default'] = Resolver;
   return Resolver;
 });
