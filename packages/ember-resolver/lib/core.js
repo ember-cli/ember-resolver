@@ -70,7 +70,7 @@ define("resolver",
   function resolveRouter(parsedName) {
     /*jshint validthis:true */
 
-    var prefix = this.namespace.modulePrefix,
+    var prefix = this.namespace.configPrefix,
         routerModule;
 
     if (parsedName.fullName === 'router:main') {
@@ -87,7 +87,7 @@ define("resolver",
   function resolveOther(parsedName) {
     /*jshint validthis:true */
 
-    var prefix = this.namespace.modulePrefix;
+    var prefix = this.namespace.appPrefix;
     Ember.assert('module prefix must be defined', prefix);
 
     var pluralizedType = parsedName.type + 's';
@@ -131,7 +131,7 @@ define("resolver",
     resolveOther: resolveOther,
     resolveRouter: resolveRouter,
     makeToString: function(factory, fullName) {
-      return '' + this.namespace.modulePrefix + '@' + fullName + ':';
+      return '' + this.namespace.appPrefix + '@' + fullName + ':';
     },
     parseName: parseName,
     shouldWrapInClassFactory: function(module, parsedName){
