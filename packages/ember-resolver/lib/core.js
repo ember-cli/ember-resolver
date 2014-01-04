@@ -55,7 +55,7 @@ define("resolver",
     var underscoredModuleName = Ember.String.underscore(moduleName);
 
     if (moduleName !== underscoredModuleName && seen[moduleName] && seen[underscoredModuleName]) {
-      throw new TypeError("Ambigous module names: `" + moduleName + "` and `" + underscoredModuleName + "`");
+      throw new TypeError("Ambiguous module names: `" + moduleName + "` and `" + underscoredModuleName + "`");
     }
 
     if (seen[moduleName]) {
