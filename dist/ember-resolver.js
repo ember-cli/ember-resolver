@@ -20,7 +20,7 @@ define("resolver",
    * important features:
    *
    *  1) The resolver makes the container aware of es6 modules via the AMD
-   *     output. The loader's _seen is consulted so that classes can be 
+   *     output. The loader's _seen is consulted so that classes can be
    *     resolved directly via the module loader, without needing a manual
    *     `import`.
    *  2) is able provide injections to classes that implement `extend`
@@ -31,7 +31,7 @@ define("resolver",
     return {
       create: function (injections) {
         if (typeof klass.extend === 'function') {
-          return klass.extend(injections);  
+          return klass.extend(injections);
         } else {
           return klass;
         }
@@ -66,7 +66,7 @@ define("resolver",
     var underscoredModuleName = Ember.String.underscore(moduleName);
 
     if (moduleName !== underscoredModuleName && seen[moduleName] && seen[underscoredModuleName]) {
-      throw new TypeError("Ambigous module names: `" + moduleName + "` and `" + underscoredModuleName + "`");
+      throw new TypeError("Ambiguous module names: `" + moduleName + "` and `" + underscoredModuleName + "`");
     }
 
     if (seen[moduleName]) {
@@ -113,7 +113,7 @@ define("resolver",
     if (requirejs._eak_seen[normalizedModuleName]) {
       var module = require(normalizedModuleName, null, null, true /* force sync */);
 
-      if (module['default']) { module = module['default']; }
+      if (module && module['default']) { module = module['default']; }
 
       if (module === undefined) {
         throw new Error(" Expected to find: '" + parsedName.fullName + "' within '" + normalizedModuleName + "' but got 'undefined'. Did you forget to `export default` within '" + normalizedModuleName + "'?");
@@ -153,7 +153,12 @@ define("resolver",
       // 1. `needs: ['posts/post']`
       // 2. `{{render "posts/post"}}`
       // 3. `this.render('posts/post')` from Route
-      return Ember.String.dasherize(fullName.replace(/\./g, '/'));
+      var split = fullName.split(':');
+      if (split.length > 1) {
+        return split[0] + ':' + Ember.String.dasherize(split[1].replace(/\./g, '/'));
+      } else {
+        return fullName;
+      }
     }
   });
 
