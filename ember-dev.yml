@@ -4,5 +4,9 @@ assetfile: 'Assetfile'
 testing_suites:
   default:
     - "package=all"
+  all:
+    - "package=all&emberchannel=release"
+    - "package=all&emberchannel=beta"
+    - "package=all&emberchannel=canary"
 testing_packages:
   - ember-resolver
