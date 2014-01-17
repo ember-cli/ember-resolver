@@ -87,6 +87,10 @@ define("resolver",
     var pluralizedType = parsedName.type + 's';
     var name = parsedName.fullNameWithoutType;
 
+    if (this.namespace[parsedName.type + 'Prefix']) {
+      prefix = this.namespace[parsedName.type + 'Prefix'];
+    }
+
     var moduleName = prefix + '/' +  pluralizedType + '/' + name;
 
     // if router:main or adapter:main look for a module with just the type first

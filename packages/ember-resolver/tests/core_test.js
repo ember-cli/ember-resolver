@@ -123,3 +123,21 @@ test("will lookup an underscored version of the module name when the dasherized 
 
   resolver.resolve('big-band:steve-miller-band');
 });
+
+module("custom prefixes by type", {
+  teardown: resetRegistry
+});
+
+test("will use the prefix specified for a given type if present", function() {
+  setupResolver({ namespace: {
+    fruitPrefix: 'grovestand',
+    modulePrefix: 'appkit'
+  }});
+
+  define('grovestand/fruits/orange', [], function(){
+    ok(true, 'custom prefix used');
+    return 'whatever';
+  });
+
+  resolver.resolve('fruit:orange');
+});
