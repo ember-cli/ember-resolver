@@ -67,23 +67,6 @@ define("resolver",
     }
   }
 
-  function resolveRouter(parsedName) {
-    /*jshint validthis:true */
-
-    var prefix = this.namespace.modulePrefix,
-        routerModule;
-
-    if (parsedName.fullName === 'router:main') {
-      // for now, lets keep the router at app/router.js
-      if (requirejs._eak_seen[prefix + '/router']) {
-        routerModule = require(prefix + '/router');
-        if (routerModule['default']) { routerModule = routerModule['default']; }
-
-        return routerModule;
-      }
-    }
-  }
-
   function resolveOther(parsedName) {
     /*jshint validthis:true */
 
@@ -94,6 +77,11 @@ define("resolver",
     var name = parsedName.fullNameWithoutType;
 
     var moduleName = prefix + '/' +  pluralizedType + '/' + name;
+
+    // if router:main or adapter:main look for a module with just the type first
+    if (name === 'main' && requirejs._eak_seen[prefix + '/' + parsedName.type]) {
+      moduleName = prefix + '/' + parsedName.type;
+    }
 
     // allow treat all dashed and all underscored as the same thing
     // supports components with dashes and other stuff with underscores.
@@ -129,7 +117,6 @@ define("resolver",
   var Resolver = Ember.DefaultResolver.extend({
     resolveTemplate: resolveOther,
     resolveOther: resolveOther,
-    resolveRouter: resolveRouter,
     makeToString: function(factory, fullName) {
       return '' + this.namespace.modulePrefix + '@' + fullName + ':';
     },
