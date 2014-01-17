@@ -73,6 +73,28 @@ test("router:main is hard-coded to prefix/router.js", function() {
   resolver.resolve('router:main');
 });
 
+test("store:main is looked up as prefix/store", function() {
+  expect(1);
+
+  define('appkit/store', [], function(){
+    ok(true, 'store:main was looked up');
+    return 'whatever';
+  });
+
+  resolver.resolve('store:main');
+});
+
+test("store:posts as prefix/stores/post", function() {
+  expect(1);
+
+  define('appkit/stores/post', [], function(){
+    ok(true, 'store:post was looked up');
+    return 'whatever';
+  });
+
+  resolver.resolve('store:post');
+});
+
 test("will raise error if both dasherized and underscored modules exist", function() {
   define('appkit/big-bands/steve-miller-band', [], function(){
     ok(true, 'dasherized version looked up');
