@@ -1,6 +1,64 @@
 /*globals ENV QUnit EmberDev */
 
-var define, registry = {};
+// START *SLIGHTLY MODIFIED* EAK LOADER
+var define, requireModule, require, requirejs;
+
+(function() {
+  var registry = {}, seen = {};
+
+  define = function(name, deps, callback) {
+    registry[name] = { deps: deps, callback: callback };
+  };
+
+  requirejs = require = requireModule = function(name) {
+    if (seen.hasOwnProperty(name)) { return seen[name]; }
+    seen[name] = {};
+
+    if (!registry[name]) {
+      throw new Error("Could not find module " + name);
+    }
+
+    var mod = registry[name],
+        deps = mod.deps,
+        callback = mod.callback,
+        reified = [],
+        exports;
+
+    for (var i=0, l=deps.length; i<l; i++) {
+      if (deps[i] === 'exports') {
+        reified.push(exports = {});
+      } else {
+        reified.push(requireModule(resolve(deps[i])));
+      }
+    }
+
+    var value = callback.apply(this, reified);
+    return seen[name] = exports || value;
+
+    function resolve(child) {
+      if (child.charAt(0) !== '.') { return child; }
+      var parts = child.split("/");
+      var parentBase = name.split("/").slice(0, -1);
+
+      for (var i=0, l=parts.length; i<l; i++) {
+        var part = parts[i];
+
+        if (part === '..') { parentBase.pop(); }
+        else if (part === '.') { continue; }
+        else { parentBase.push(part); }
+      }
+
+      return parentBase.join("/");
+    }
+  };
+
+  requirejs._eak_seen = registry;
+  requirejs.clear = function(){
+    requirejs._eak_seen = registry = {};
+    seen = {};
+  };
+})();
+// END EAK LOADER
 
 (function() {
   window.Ember = {
@@ -33,28 +91,5 @@ var define, registry = {};
   EmberDev.distros = {
     spade:   'ember-resolver-spade.js',
     build:   'ember-resolver.js'
-  };
-
-  // super simple define hack
-  var hasOwn = Object.prototype.hasOwnProperty;
-
-  function hasProp(obj, prop) {
-    return hasOwn.call(obj, prop);
-  }
-
-  define = function (name, deps, callback) {
-
-    //This module may not have dependencies
-    if (!deps.splice) {
-      //deps is not an array, so probably means
-      //an object literal or factory function for
-      //the value. Adjust args.
-      callback = deps;
-      deps = [];
-    }
-
-    if (!hasProp(registry, name)) {
-      registry[name] = [name, deps, callback];
-    }
   };
 })();
