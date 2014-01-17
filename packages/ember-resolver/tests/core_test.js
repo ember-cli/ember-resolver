@@ -141,3 +141,86 @@ test("will use the prefix specified for a given type if present", function() {
 
   resolver.resolve('fruit:orange');
 });
+
+module("pods lookup structure", {
+  setup: function() {
+    setupResolver();
+  },
+
+  teardown: resetRegistry
+});
+
+test("will lookup modulePrefix/name/type before prefix/type/name", function() {
+  define('appkit/controllers/foo', [], function(){
+    ok(false, 'appkit/controllers was used');
+    return 'whatever';
+  });
+
+  define('appkit/foo/controller', [], function(){
+    ok(true, 'appkit/foo/controllers was used');
+    return 'whatever';
+  });
+
+  resolver.resolve('controller:foo');
+});
+
+test("will lookup names with slashes properly", function() {
+  define('appkit/controllers/foo/index', [], function(){
+    ok(false, 'appkit/controllers was used');
+    return 'whatever';
+  });
+
+  define('appkit/foo/index/controller', [], function(){
+    ok(true, 'appkit/foo/index/controller was used');
+    return 'whatever';
+  });
+
+  resolver.resolve('controller:foo/index');
+});
+
+test("specifying a podModulePrefix overrides the general modulePrefix", function() {
+  setupResolver({
+    namespace: {
+      modulePrefix: 'appkit',
+      podModulePrefix: 'appkit/pods'
+    }
+  });
+
+  define('appkit/controllers/foo', [], function(){
+    ok(false, 'appkit/controllers was used');
+    return 'whatever';
+  });
+
+  define('appkit/foo/controller', [], function(){
+    ok(false, 'appkit/foo/controllers was used');
+    return 'whatever';
+  });
+
+  define('appkit/pods/foo/controller', [], function(){
+    ok(true, 'appkit/pods/foo/controllers was used');
+    return 'whatever';
+  });
+
+  resolver.resolve('controller:foo');
+});
+
+test("will not use custom type prefix when using POD format", function() {
+  resolver.namespace['controllerPrefix'] = 'foobar';
+
+  define('foobar/controllers/foo', [], function(){
+    ok(false, 'foobar/controllers was used');
+    return 'whatever';
+  });
+
+  define('foobar/foo/controller', [], function(){
+    ok(false, 'foobar/foo/controllers was used');
+    return 'whatever';
+  });
+
+  define('appkit/foo/controller', [], function(){
+    ok(true, 'appkit/foo/controllers was used');
+    return 'whatever';
+  });
+
+  resolver.resolve('controller:foo');
+});

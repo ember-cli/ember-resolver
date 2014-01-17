@@ -82,22 +82,35 @@ define("resolver",
   function resolveOther(parsedName) {
     /*jshint validthis:true */
 
-    var prefix = this.namespace.modulePrefix;
+    var moduleName, tmpModuleName, prefix, podPrefix;
+
+    prefix = this.namespace.modulePrefix;
+    podPrefix = this.namespace.podModulePrefix || prefix;
+
     Ember.assert('module prefix must be defined', prefix);
 
     var pluralizedType = parsedName.type + 's';
     var name = parsedName.fullNameWithoutType;
 
+    // lookup using POD formatting first
+    tmpModuleName = podPrefix + '/' + name + '/' + parsedName.type;
+    if (requirejs._eak_seen[tmpModuleName]) {
+      moduleName = tmpModuleName;
+    }
+
+    // if not using POD format, use the custom prefix
     if (this.namespace[parsedName.type + 'Prefix']) {
       prefix = this.namespace[parsedName.type + 'Prefix'];
     }
 
-    var moduleName = prefix + '/' +  pluralizedType + '/' + name;
-
     // if router:main or adapter:main look for a module with just the type first
-    if (name === 'main' && requirejs._eak_seen[prefix + '/' + parsedName.type]) {
+    tmpModuleName = prefix + '/' + parsedName.type;
+    if (!moduleName && name === 'main' && requirejs._eak_seen[tmpModuleName]) {
       moduleName = prefix + '/' + parsedName.type;
     }
+
+    // fallback if not type:main or POD format
+    if (!moduleName) { moduleName = prefix + '/' +  pluralizedType + '/' + name; }
 
     // allow treat all dashed and all underscored as the same thing
     // supports components with dashes and other stuff with underscores.
