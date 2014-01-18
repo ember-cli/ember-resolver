@@ -67,6 +67,17 @@ define("resolver",
     }
   }
 
+  function logLookup(found, parsedName, moduleName) {
+    if (Ember.ENV.LOG_MODULE_RESOLVER) {
+      var symbol;
+
+      if (found) { symbol = '[✓]'; }
+      else       { symbol = '[ ]'; }
+
+      Ember.Logger.info(symbol, parsedName.fullName, new Array(40 - parsedName.fullName.length).join('.'), moduleName);
+    }
+  }
+
   function resolveOther(parsedName) {
     /*jshint validthis:true */
 
@@ -100,15 +111,12 @@ define("resolver",
         module = classFactory(module);
       }
 
-      if (Ember.ENV.LOG_MODULE_RESOLVER) {
-        Ember.Logger.info('[✓]', parsedName.fullName, new Array(40 - parsedName.fullName.length).join('.'), moduleName);
-      }
+      logLookup(true, parsedName, moduleName);
 
       return module;
     } else {
-      if (Ember.ENV.LOG_MODULE_RESOLVER) {
-        Ember.Logger.info('[ ]', parsedName.fullName, new Array(40 - parsedName.fullName.length).join('.'), moduleName);
-      }
+      logLookup(false, parsedName, moduleName);
+
       return this._super(parsedName);
     }
   }
