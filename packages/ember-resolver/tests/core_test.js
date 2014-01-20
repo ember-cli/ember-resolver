@@ -2,8 +2,12 @@
 
 var Resolver, resolver;
 
+function lookupResolver() {
+  return requirejs._eak_seen['resolver'];
+}
+
 function resetRegistry() {
-  var keeper = requirejs._eak_seen['resolver'];
+  var keeper = lookupResolver();
 
   requirejs.clear();
   define('resolver', keeper['deps'], keeper['callback']);

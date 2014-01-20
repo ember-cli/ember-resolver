@@ -81,10 +81,11 @@ define("resolver",
   function resolveOther(parsedName) {
     /*jshint validthis:true */
 
-    var moduleName, tmpModuleName, prefix, podPrefix;
+    var moduleName, tmpModuleName, prefix, podPrefix, moduleRegistry;
 
     prefix = this.namespace.modulePrefix;
     podPrefix = this.namespace.podModulePrefix || prefix;
+    moduleRegistry = requirejs._eak_seen;
 
     Ember.assert('module prefix must be defined', prefix);
 
@@ -93,7 +94,7 @@ define("resolver",
 
     // lookup using POD formatting first
     tmpModuleName = podPrefix + '/' + name + '/' + parsedName.type;
-    if (requirejs._eak_seen[tmpModuleName]) {
+    if (moduleRegistry[tmpModuleName]) {
       moduleName = tmpModuleName;
     }
 
@@ -104,7 +105,7 @@ define("resolver",
 
     // if router:main or adapter:main look for a module with just the type first
     tmpModuleName = prefix + '/' + parsedName.type;
-    if (!moduleName && name === 'main' && requirejs._eak_seen[tmpModuleName]) {
+    if (!moduleName && name === 'main' && moduleRegistry[tmpModuleName]) {
       moduleName = prefix + '/' + parsedName.type;
     }
 
@@ -113,9 +114,9 @@ define("resolver",
 
     // allow treat all dashed and all underscored as the same thing
     // supports components with dashes and other stuff with underscores.
-    var normalizedModuleName = chooseModuleName(requirejs._eak_seen, moduleName);
+    var normalizedModuleName = chooseModuleName(moduleRegistry, moduleName);
 
-    if (requirejs._eak_seen[normalizedModuleName]) {
+    if (moduleRegistry[normalizedModuleName]) {
       var module = require(normalizedModuleName, null, null, true /* force sync */);
 
       if (module && module['default']) { module = module['default']; }
