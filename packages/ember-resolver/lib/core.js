@@ -151,13 +151,14 @@ define("resolver",
       return false;
     },
     normalize: function(fullName) {
-      // replace `.` with `/` in order to make nested controllers work in the following cases
+      // decamelize and replace `.` or `_` with `/` in order to make nested controllers work in the following cases
       // 1. `needs: ['posts/post']`
       // 2. `{{render "posts/post"}}`
       // 3. `this.render('posts/post')` from Route
+      // 4. `needs: ['postsPost']`
       var split = fullName.split(':');
       if (split.length > 1) {
-        return split[0] + ':' + Ember.String.dasherize(split[1].replace(/\./g, '/'));
+        return split[0] + ':' + Ember.String.dasherize(Ember.String.decamelize(split[1]).replace(/\.|\_/g, '/'));
       } else {
         return fullName;
       }
