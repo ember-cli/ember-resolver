@@ -151,14 +151,18 @@ define("resolver",
       return false;
     },
     normalize: function(fullName) {
-      // decamelize and replace `.` or `_` with `/` in order to make nested controllers work in the following cases
+      // replace `.` with `/` in order to make nested controllers work in the following cases
       // 1. `needs: ['posts/post']`
       // 2. `{{render "posts/post"}}`
       // 3. `this.render('posts/post')` from Route
-      // 4. `needs: ['postsPost']`
       var split = fullName.split(':');
       if (split.length > 1) {
-        return split[0] + ':' + Ember.String.dasherize(Ember.String.decamelize(split[1]).replace(/\.|\_/g, '/'));
+        if(Ember.String.decamelize(split[1]).replace(/\_/g, '/') !== split[1].replace(/\_/g, '/')) {
+          //assert if camel case is used in the needs array
+          Ember.assert('Nested controllers need be referenced as ['+ Ember.String.decamelize(split[1]).replace(/\_/g, '/') +
+          '], instead of ['+split[1]+']. Refer documentation: http://iamstef.net/ember-app-kit/guides/naming-conventions.html');
+        }
+        return split[0] + ':' + Ember.String.dasherize(split[1].replace(/\./g, '/'));
       } else {
         return fullName;
       }
