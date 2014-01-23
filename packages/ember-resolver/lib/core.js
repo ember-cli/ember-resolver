@@ -159,8 +159,9 @@ define("resolver",
       if (split.length > 1) {
         if(Ember.String.decamelize(split[1]).replace(/\_/g, '/') !== split[1].replace(/\_/g, '/')) {
           //assert if camel case is used in the needs array
-          Ember.assert('Nested controllers need be referenced as ['+ Ember.String.decamelize(split[1]).replace(/\_/g, '/') +
-          '], instead of ['+split[1]+']. Refer documentation: http://iamstef.net/ember-app-kit/guides/naming-conventions.html');
+          var error = 'Nested controllers need be referenced as ['+ Ember.String.decamelize(split[1]).replace(/\_/g, '/') +
+          '], instead of ['+split[1]+']. Refer documentation: http://iamstef.net/ember-app-kit/guides/naming-conventions.html';
+          Ember.assert(error);
         }
         return split[0] + ':' + Ember.String.dasherize(split[1].replace(/\./g, '/'));
       } else {
