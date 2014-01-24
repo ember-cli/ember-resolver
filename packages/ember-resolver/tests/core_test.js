@@ -117,6 +117,19 @@ test("will raise error if both dasherized and underscored modules exist", functi
   }
 });
 
+test("will raise error if camelcased modules exist", function() {
+  expect(2);
+  define('appkit/controllers/postComment', [], function(){
+    ok(true, 'camelcased version looked up');
+    return 'whatever';
+  });
+  try {
+    resolver.normalize('controller:postComment');
+  } catch (e) {
+    equal(e.message, 'Nested controllers need be referenced as [post/comment], instead of [postComment]. Refer documentation: http://iamstef.net/ember-app-kit/guides/naming-conventions.html', "error with a descriptive value is thrown");
+  }
+});
+
 test("will lookup an underscored version of the module name when the dasherized version is not found", function() {
   expect(1);
 

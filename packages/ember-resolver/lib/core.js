@@ -157,13 +157,15 @@ define("resolver",
       // 3. `this.render('posts/post')` from Route
       var split = fullName.split(':');
       if (split.length > 1) {
-        if(Ember.String.decamelize(split[1]).replace(/\_/g, '/') !== split[1].replace(/\_/g, '/')) {
+        var undotted = split[1].replace(/\./g, '/');
+        var normalized = Ember.String.dasherize(undotted);
+        if(Ember.String.decamelize(undotted) !== undotted) {
           //assert if camel case is used in the needs array
           var error = 'Nested controllers need be referenced as ['+ Ember.String.decamelize(split[1]).replace(/\_/g, '/') +
           '], instead of ['+split[1]+']. Refer documentation: http://iamstef.net/ember-app-kit/guides/naming-conventions.html';
-          Ember.assert(error);
+          throw new TypeError(error);
         }
-        return split[0] + ':' + Ember.String.dasherize(split[1].replace(/\./g, '/'));
+        return split[0] + ':' + normalized;
       } else {
         return fullName;
       }
