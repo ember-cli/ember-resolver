@@ -3,7 +3,7 @@
 var Resolver, resolver;
 
 function lookupResolver() {
-  return requirejs._eak_seen['ember/resolver'];
+  return requirejs.entries['resolver'];
 }
 
 function resetRegistry() {

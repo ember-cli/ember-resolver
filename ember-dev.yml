@@ -7,6 +7,6 @@ testing_suites:
   all:
     - "package=all&emberchannel=release"
     - "package=all&emberchannel=beta"
-    - "package=all&emberchannel=canary"
+    - "package=all&emberchannel=canary" 
 testing_packages:
   - ember-resolver

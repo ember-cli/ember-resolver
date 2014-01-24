@@ -9,7 +9,7 @@ define("ember/resolver",
    * important features:
    *
    *  1) The resolver makes the container aware of es6 modules via the AMD
-   *     output. The loader's _seen is consulted so that classes can be
+   *     output. The loader's _moduleEntries is consulted so that classes can be
    *     resolved directly via the module loader, without needing a manual
    *     `import`.
    *  2) is able provide injections to classes that implement `extend`
@@ -51,16 +51,16 @@ define("ember/resolver",
     };
   }
 
-  function chooseModuleName(seen, moduleName) {
+  function chooseModuleName(moduleEntries, moduleName) {
     var underscoredModuleName = Ember.String.underscore(moduleName);
 
-    if (moduleName !== underscoredModuleName && seen[moduleName] && seen[underscoredModuleName]) {
+    if (moduleName !== underscoredModuleName && moduleEntries[moduleName] && moduleEntries[underscoredModuleName]) {
       throw new TypeError("Ambiguous module names: `" + moduleName + "` and `" + underscoredModuleName + "`");
     }
 
-    if (seen[moduleName]) {
+    if (moduleEntries[moduleName]) {
       return moduleName;
-    } else if (seen[underscoredModuleName]) {
+    } else if (moduleEntries[underscoredModuleName]) {
       return underscoredModuleName;
     } else {
       var parts = moduleName.split('/'),
@@ -97,11 +97,11 @@ define("ember/resolver",
   function resolveOther(parsedName) {
     /*jshint validthis:true */
 
-    var moduleName, tmpModuleName, prefix, podPrefix, moduleRegistry;
+    var moduleName, tmpModuleName, prefix, podPrefix, moduleEntries;
 
     prefix = this.namespace.modulePrefix;
     podPrefix = this.namespace.podModulePrefix || prefix;
-    moduleRegistry = requirejs._eak_seen;
+    moduleEntries = requirejs.entries;
 
     Ember.assert('module prefix must be defined', prefix);
 
@@ -110,7 +110,7 @@ define("ember/resolver",
 
     // lookup using POD formatting first
     tmpModuleName = podPrefix + '/' + name + '/' + parsedName.type;
-    if (moduleRegistry[tmpModuleName]) {
+    if (moduleEntries[tmpModuleName]) {
       moduleName = tmpModuleName;
     }
 
@@ -121,7 +121,7 @@ define("ember/resolver",
 
     // if router:main or adapter:main look for a module with just the type first
     tmpModuleName = prefix + '/' + parsedName.type;
-    if (!moduleName && name === 'main' && moduleRegistry[tmpModuleName]) {
+    if (!moduleName && name === 'main' && moduleEntries[tmpModuleName]) {
       moduleName = prefix + '/' + parsedName.type;
     }
 
@@ -130,9 +130,9 @@ define("ember/resolver",
 
     // allow treat all dashed and all underscored as the same thing
     // supports components with dashes and other stuff with underscores.
-    var normalizedModuleName = chooseModuleName(moduleRegistry, moduleName);
+    var normalizedModuleName = chooseModuleName(moduleEntries, moduleName);
 
-    if (moduleRegistry[normalizedModuleName]) {
+    if (moduleEntries[normalizedModuleName]) {
       var module = require(normalizedModuleName, null, null, true /* force sync */);
 
       if (module && module['default']) { module = module['default']; }
@@ -151,14 +151,60 @@ define("ember/resolver",
     } else {
       logLookup(false, parsedName, moduleName);
 
-      return this._super(parsedName);
+      return null;
     }
   }
   // Ember.DefaultResolver docs:
   //   https://github.com/emberjs/ember.js/blob/master/packages/ember-application/lib/system/resolver.js
-  var Resolver = Ember.DefaultResolver.extend({
+  var Resolver = Ember.Resolver.extend({
+    resolveOther: resolveOther,    
     resolveTemplate: resolveOther,
-    resolveOther: resolveOther,
+  /**
+    This method is called via the container's resolver method.
+    It parses the provided `fullName` and then looks up and
+    returns the appropriate template or class.
+
+    @method resolve
+    @param {String} fullName the lookup string
+    @return {Object} the resolved factory
+  */
+  resolve: function(fullName) {
+    var parsedName = this.parseName(fullName),
+        resolveMethodName = parsedName.resolveMethodName;
+
+    if (!(parsedName.name && parsedName.type)) {
+      throw new TypeError("Invalid fullName: `" + fullName + "`, must be of the form `type:name` ");
+    }
+
+    if (this[resolveMethodName]) {
+      var resolved = this[resolveMethodName](parsedName);
+      if (resolved) { return resolved; }
+    }
+    return this.resolveOther(parsedName);
+  },
+  /**
+    Returns a human-readable description for a fullName. Used by the
+    Application namespace in assertions to describe the
+    precise name of the class that Ember is looking for, rather than
+    container keys.
+
+    @protected
+    @param {String} fullName the lookup string
+    @method lookupDescription
+  */
+  lookupDescription: function(fullName) {
+    var parsedName = this.parseName(fullName);
+
+    if (parsedName.type === 'template') {
+      return "template at " + parsedName.fullNameWithoutType.replace(/\./g, '/');
+    }
+
+    var description = parsedName.root + "." + classify(parsedName.name);
+    if (parsedName.type !== 'model') { description += classify(parsedName.type); }
+
+    return description;
+  },
+
     makeToString: function(factory, fullName) {
       return '' + this.namespace.modulePrefix + '@' + fullName + ':';
     },
