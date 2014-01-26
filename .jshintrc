@@ -23,7 +23,11 @@
         "expect",
         "minispade",
         "async",
-        "invokeAsync"
+        "invokeAsync",
+        "expectAssertion",
+        "expectDeprecation",
+        "expectNoDeprecation",
+        "throws"
     ],
 
     "node" : false,
