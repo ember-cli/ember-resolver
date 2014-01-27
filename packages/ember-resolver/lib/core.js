@@ -163,7 +163,7 @@ define("resolver",
           //assert if camel case is used in the needs array
           var error = 'Nested controllers need be referenced as ['+ Ember.String.decamelize(split[1]).replace(/\_/g, '/') +
           '], instead of ['+split[1]+']. Refer documentation: http://iamstef.net/ember-app-kit/guides/naming-conventions.html';
-          throw new TypeError(error);
+          Ember.assert(error);
         }
         return split[0] + ':' + normalized;
       } else {
