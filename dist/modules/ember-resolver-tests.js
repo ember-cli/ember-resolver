@@ -128,11 +128,6 @@ test("will raise error if camelcased modules exist", function() {
   expectAssertion(function(){
     resolver.normalize('controller:postComment');
   }, 'Nested controllers need be referenced as [post/comment], instead of [postComment]. Refer documentation: http://iamstef.net/ember-app-kit/guides/naming-conventions.html');
-  // try {
-    
-  // } catch (e) {
-  //   equal(e.message, 'Nested controllers need be referenced as [post/comment], instead of [postComment]. Refer documentation: http://iamstef.net/ember-app-kit/guides/naming-conventions.html', "error with a descriptive value is thrown");
-  // }
 });
 
 test("will lookup an underscored version of the module name when the dasherized version is not found", function() {
