@@ -98,6 +98,7 @@ define("resolver",
     podPrefix = this.namespace.podModulePrefix || prefix;
     moduleRegistry = requirejs._eak_seen;
 
+    Ember.assert('module prefix must be defined', prefix);
 
     var pluralizedType = parsedName.type + 's';
     var name = parsedName.fullNameWithoutType;
@@ -167,7 +168,15 @@ define("resolver",
       // 3. `this.render('posts/post')` from Route
       var split = fullName.split(':');
       if (split.length > 1) {
-        return split[0] + ':' + Ember.String.dasherize(split[1].replace(/\./g, '/'));
+        var undotted = split[1].replace(/\./g, '/');
+        var normalized = Ember.String.dasherize(undotted);
+        if(Ember.String.decamelize(undotted) !== undotted) {
+          //assert if camel case is used in the needs array
+          var error = 'Nested controllers need be referenced as ['+ Ember.String.decamelize(split[1]).replace(/\_/g, '/') +
+          '], instead of ['+split[1]+']. Refer documentation: http://iamstef.net/ember-app-kit/guides/naming-conventions.html';
+          Ember.assert(error);
+        }
+        return split[0] + ':' + normalized;
       } else {
         return fullName;
       }
