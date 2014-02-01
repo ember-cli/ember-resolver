@@ -64,7 +64,23 @@ define("resolver",
     } else if (seen[underscoredModuleName]) {
       return underscoredModuleName;
     } else {
-      return moduleName;
+      var parts = moduleName.split('/'),
+          lastPart = parts[parts.length - 1],
+          partializedModuleName;
+
+      parts[parts.length - 1] = lastPart.replace(/^-/, '_');
+      partializedModuleName = parts.join('/');
+
+      if (seen[partializedModuleName]) {
+        Ember.deprecate('Modules should not contain underscores. ' +
+                        'Attempted to lookup "'+moduleName+'" which ' +
+                        'was not found. Please rename "'+partializedModuleName+'" '+
+                        'to "'+moduleName+'" instead.', false);
+
+        return partializedModuleName;
+      } else {
+        return moduleName;
+      }
     }
   }
 
