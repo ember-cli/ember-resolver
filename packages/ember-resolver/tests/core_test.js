@@ -140,6 +140,19 @@ test("will lookup an underscored version of the module name when the dasherized 
   resolver.resolve('big-band:steve-miller-band');
 });
 
+test("can lookup templates with mixed naming moduleName", function(){
+  expectDeprecation('Modules should not contain underscores. Attempted to lookup "appkit/bands/-steve-miller-band" which was not found. Please rename "appkit/bands/_steve-miller-band" to "appkit/bands/-steve-miller-band" instead.');
+
+  expect(2);
+
+  define('appkit/bands/_steve-miller-band', [], function(){
+    ok(true, 'underscored version looked up properly');
+    return 'whatever';
+  });
+
+  resolver.resolve('band:-steve-miller-band');
+});
+
 module("custom prefixes by type", {
   teardown: resetRegistry
 });
