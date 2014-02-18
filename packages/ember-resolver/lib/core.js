@@ -178,7 +178,7 @@ define("resolver",
         if(Ember.String.decamelize(undotted) !== undotted) {
           //assert if camel case is used in the needs array
           var error = 'You tried to resolve ['+split[1]+'], but it should have been ['+ Ember.String.decamelize(split[1]).replace(/\_/g, '/') +
-          ']. Refer documentation: http://iamstef.net/ember-app-kit/guides/naming-conventions.html';'
+          ']. Refer documentation: http://iamstef.net/ember-app-kit/guides/naming-conventions.html';
           Ember.assert(error);
         }
         return split[0] + ':' + normalized;
