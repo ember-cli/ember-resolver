@@ -117,18 +117,6 @@ test("will raise error if both dasherized and underscored modules exist", functi
   }
 });
 
-test("will raise error if camelcased modules exist", function() {
-  expect(1);
-  define('appkit/controllers/postComment', [], function(){
-    ok(false, 'should not lookup camelcased module');
-    return 'whatever';
-  });
-
-  expectAssertion(function(){
-    resolver.normalize('controller:postComment');
-  }, 'You tried to resolve [postComment], but it should have been [post/comment]. Refer documentation: http://iamstef.net/ember-app-kit/guides/naming-conventions.html');
-});
-
 test("will lookup an underscored version of the module name when the dasherized version is not found", function() {
   expect(1);
 
