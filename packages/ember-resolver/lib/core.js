@@ -177,8 +177,8 @@ define("resolver",
         var normalized = Ember.String.dasherize(undotted);
         if(Ember.String.decamelize(undotted) !== undotted) {
           //assert if camel case is used in the needs array
-          var error = 'You tried to resolve ['+split[1]+'], but it should have been ['+ Ember.String.decamelize(split[1]).replace(/\_/g, '/') +
-          ']. Refer documentation: http://iamstef.net/ember-app-kit/guides/naming-conventions.html';
+          var error = 'Nested controllers need be referenced as ['+ Ember.String.decamelize(split[1]).replace(/\_/g, '/') +
+          '], instead of ['+split[1]+']. Refer documentation: http://iamstef.net/ember-app-kit/guides/naming-conventions.html';
           Ember.assert(error);
         }
         return split[0] + ':' + normalized;
