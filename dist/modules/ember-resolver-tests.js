@@ -4,14 +4,14 @@
 var Resolver, resolver;
 
 function lookupResolver() {
-  return requirejs._eak_seen['resolver'];
+  return requirejs._eak_seen['ember/resolver'];
 }
 
 function resetRegistry() {
   var keeper = lookupResolver();
 
   requirejs.clear();
-  define('resolver', keeper['deps'], keeper['callback']);
+  define('ember/resolver', keeper['deps'], keeper['callback']);
 }
 
 function setupResolver(options) {
@@ -19,7 +19,7 @@ function setupResolver(options) {
     options = { namespace: { modulePrefix: 'appkit' } };
   }
 
-  Resolver = require('resolver')['default'];
+  Resolver = require('ember/resolver')['default'];
   resolver = Resolver.create(options);
 }
 
@@ -29,6 +29,16 @@ module("Resolver Tests",{
   },
 
   teardown: resetRegistry
+});
+
+test("can access at deprecated 'resolver' module name", function(){
+  expect(2);
+
+  expectDeprecation(/Importing\/requiring Ember Resolver as "resolver" is deprecated, please use "ember\/resolver" instead/);
+
+  var ResolverAlias = require('resolver')['default'];
+
+  equal(Resolver, ResolverAlias, "both 'ember/resolver' and 'resolver' return the same Resolver");
 });
 
 test("can access Resolver", function(){

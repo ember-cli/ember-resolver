@@ -1,7 +1,7 @@
 (function() {
 /*globals define registry requirejs */
 
-define("resolver",
+define("ember/resolver",
   [],
   function() {
     "use strict";
@@ -185,6 +185,12 @@ define("resolver",
   return Resolver;
 });
 
+define("resolver",
+  ["ember/resolver"],
+  function (Resolver) {
+    Ember.deprecate('Importing/requiring Ember Resolver as "resolver" is deprecated, please use "ember/resolver" instead');
+    return Resolver;
+  });
 })();
 
 
