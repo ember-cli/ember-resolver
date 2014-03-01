@@ -1,6 +1,6 @@
 /*globals define registry requirejs */
 
-define("container-debug-adapter",
+define("ember/container-debug-adapter",
   [],
   function() {
     "use strict";
@@ -19,7 +19,7 @@ define("container-debug-adapter",
       on creation.
 
       @property container
-      @default null 
+      @default null
     */
     // container: null, LIVES IN PARENT
 
@@ -31,7 +31,7 @@ define("container-debug-adapter",
       @property resolver
       @default null
     */
-    // resolver: null,  LIVES IN PARENT   
+    // resolver: null,  LIVES IN PARENT
     /**
       Returns true if it is possible to catalog a list of available
       classes in the resolver for a given type.
@@ -52,30 +52,29 @@ define("container-debug-adapter",
       @return {Array} An array of classes.
     */
     catalogEntriesByType: function(type) {
-      var entries = requirejs.entries, 
-      module,
-      types = Ember.A();
+      var entries = requirejs.entries,
+          module,
+          types = Ember.A();
+
       var makeToString = function(){
         return this.shortname;
       };
+
       for(var key in entries) {
         if(entries.hasOwnProperty(key) && key.indexOf(type) !== -1)
         {
-          // TODO
+          // // TODO return the name instead of the module itself
+          // module = require(key, null, null, true);
 
-          module = require(key, null, null, true);
+          // if (module && module['default']) { module = module['default']; }
+          // module.shortname = key.split(type +'s/').pop();
+          // module.toString = makeToString;
 
-          if (module && module['default']) { module = module['default']; }
-          module.shortname = key.split(type +'s/').pop();
-          module.shortname = key.split(type +'s/').pop();
-          module.shortname = key.split(type +'s/').pop();
-          // var modelClass = this.container.lookupFactory("model:" + modelname);
-          module.toString = makeToString;
-
-          types.push(module); 
+          // types.push(module);
+          types.push(key.split(type +'s/').pop());
         }
       }
- 
+
       return types;
     }
   });
@@ -83,68 +82,3 @@ define("container-debug-adapter",
   ContainerDebugAdapter['default'] = ContainerDebugAdapter;
   return ContainerDebugAdapter;
 });
-
-/*
-
-  1. Test to find this class
-  2. Test to Access the methods
-  3. Verify this build includes this / makes available
-  4. Add an Initializer to register this
-
-*/
-
-
-    // var moduleName, tmpModuleName, prefix, podPrefix, moduleRegistry;
-
-    // prefix = this.namespace.modulePrefix;
-    // podPrefix = this.namespace.podModulePrefix || prefix;
-    // moduleRegistry = requirejs._eak_seen;
-
-    // Ember.assert('module prefix must be defined', prefix);
-
-    // var pluralizedType = parsedName.type + 's';
-    // var name = parsedName.fullNameWithoutType;
-
-    // // lookup using POD formatting first
-    // tmpModuleName = podPrefix + '/' + name + '/' + parsedName.type;
-    // if (moduleRegistry[tmpModuleName]) {
-    //   moduleName = tmpModuleName;
-    // }
-
-    // // if not using POD format, use the custom prefix
-    // if (this.namespace[parsedName.type + 'Prefix']) {
-    //   prefix = this.namespace[parsedName.type + 'Prefix'];
-    // }
-
-    // // if router:main or adapter:main look for a module with just the type first
-    // tmpModuleName = prefix + '/' + parsedName.type;
-    // if (!moduleName && name === 'main' && moduleRegistry[tmpModuleName]) {
-    //   moduleName = prefix + '/' + parsedName.type;
-    // }
-
-    // // fallback if not type:main or POD format
-    // if (!moduleName) { moduleName = prefix + '/' +  pluralizedType + '/' + name; }
-
-    // // allow treat all dashed and all underscored as the same thing
-    // // supports components with dashes and other stuff with underscores.
-    // var normalizedModuleName = chooseModuleName(moduleRegistry, moduleName);
-
-    // if (moduleRegistry[normalizedModuleName]) {
-    //   var module = require(normalizedModuleName, null, null, true );/* force sync */
-
-  //     if (module && module['default']) { module = module['default']; }
-
-  //     if (module === undefined) {
-  //       throw new Error(" Expected to find: '" + parsedName.fullName + "' within '" + normalizedModuleName + "' but got 'undefined'. Did you forget to `export default` within '" + normalizedModuleName + "'?");
-  //     }
-
-  //     if (this.shouldWrapInClassFactory(module, parsedName)) {
-  //       module = classFactory(module);
-  //     }
-
-  //     logLookup(true, parsedName, moduleName);
-
-  //     return module;
-  // }
-
-

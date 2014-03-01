@@ -3,7 +3,7 @@
 var Resolver, resolver;
 
 function lookupResolver() {
-  return requirejs.entries['resolver'];
+  return requirejs.entries['ember/resolver'];
 }
 
 function resetRegistry() {

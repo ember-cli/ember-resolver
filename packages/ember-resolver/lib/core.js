@@ -70,7 +70,7 @@ define("ember/resolver",
       parts[parts.length - 1] = lastPart.replace(/^-/, '_');
       partializedModuleName = parts.join('/');
 
-      if (seen[partializedModuleName]) {
+      if (moduleEntries[partializedModuleName]) {
         Ember.deprecate('Modules should not contain underscores. ' +
                         'Attempted to lookup "'+moduleName+'" which ' +
                         'was not found. Please rename "'+partializedModuleName+'" '+
@@ -157,7 +157,7 @@ define("ember/resolver",
   // Ember.DefaultResolver docs:
   //   https://github.com/emberjs/ember.js/blob/master/packages/ember-application/lib/system/resolver.js
   var Resolver = Ember.Resolver.extend({
-    resolveOther: resolveOther,    
+    resolveOther: resolveOther,
     resolveTemplate: resolveOther,
   /**
     This method is called via the container's resolver method.
