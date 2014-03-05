@@ -4,6 +4,12 @@ define("ember/container-debug-adapter",
   [],
   function() {
     "use strict";
+
+  // Support Ember < 1.5-beta.4
+  // TODO: Remove this after 1.5.0 is released
+  if (typeof Ember.ContainerDebugAdapter === 'undefined') {
+    return null;
+  }
   /*
    * This module defines a subclass of Ember.ContainerDebugAdapter that adds two
    * important features:

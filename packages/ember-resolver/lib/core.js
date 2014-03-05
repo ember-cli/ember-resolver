@@ -4,6 +4,16 @@ define("ember/resolver",
   [],
   function() {
     "use strict";
+
+    // Support Ember < 1.5-beta.4
+    // TODO: Remove this after 1.5.0 is released
+    if (typeof Ember.Resolver === 'undefined') {
+      Ember.Resolver = Ember.DefaultResolver;
+    }
+    if (typeof requirejs.entries === 'undefined') {
+      requirejs.entries = requirejs._eak_seen;
+    }
+
   /*
    * This module defines a subclass of Ember.DefaultResolver that adds two
    * important features:
