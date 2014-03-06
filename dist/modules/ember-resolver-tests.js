@@ -89,7 +89,10 @@ module("Resolver Tests",{
     setupResolver();
   },
 
-  teardown: resetRegistry
+  teardown: function() {
+    resetRegistry();
+    Ember.TEMPLATES = {};
+  }
 });
 
 test("can access at deprecated 'resolver' module name", function(){
@@ -213,6 +216,15 @@ test("can lookup templates with mixed naming moduleName", function(){
   resolver.resolve('band:-steve-miller-band');
 });
 
+test("can lookup templates via Ember.TEMPLATES", function() {
+  Ember.TEMPLATES['application'] = function() {
+    return '<h1>herp</h1>';
+  };
+
+  var template = resolver.resolve('template:application');
+  ok(template, 'template should resolve');
+});
+
 module("custom prefixes by type", {
   teardown: resetRegistry
 });
@@ -313,6 +325,5 @@ test("will not use custom type prefix when using POD format", function() {
 
   resolver.resolve('controller:foo');
 });
-
 })();
 
