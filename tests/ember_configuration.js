@@ -52,9 +52,9 @@ var define, requireModule, require, requirejs;
     }
   };
 
-  requirejs._eak_seen = registry;
+  requirejs.entries = registry;
   requirejs.clear = function(){
-    requirejs._eak_seen = registry = {};
+    requirejs.entries = registry = {};
     seen = {};
   };
 })();
