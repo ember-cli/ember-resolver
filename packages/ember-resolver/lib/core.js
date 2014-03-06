@@ -5,11 +5,6 @@ define("ember/resolver",
   function() {
     "use strict";
 
-    // Support Ember < 1.5-beta.4
-    // TODO: Remove this after 1.5.0 is released
-    if (typeof Ember.Resolver === 'undefined') {
-      Ember.Resolver = Ember.DefaultResolver;
-    }
     if (typeof requirejs.entries === 'undefined') {
       requirejs.entries = requirejs._eak_seen;
     }
@@ -161,12 +156,12 @@ define("ember/resolver",
     } else {
       logLookup(false, parsedName, moduleName);
 
-      return null;
+      return this._super(parsedName);
     }
   }
   // Ember.DefaultResolver docs:
   //   https://github.com/emberjs/ember.js/blob/master/packages/ember-application/lib/system/resolver.js
-  var Resolver = Ember.Resolver.extend({
+  var Resolver = Ember.DefaultResolver.extend({
     resolveOther: resolveOther,
     resolveTemplate: resolveOther,
   /**
