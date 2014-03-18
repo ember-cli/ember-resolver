@@ -1,4 +1,4 @@
-# Ember JJ-Abrams Resolver
+# Ember JJ-Abrams Resolver [![Build Status](https://travis-ci.org/stefanpenner/ember-jj-abrams-resolver.png?branch=master)](https://travis-ci.org/stefanpenner/ember-jj-abrams-resolver)
 
 This project is tracking a new resolver based on ES6 semantics that has been extracted from (and used by) the following projects:
 
