@@ -4,5 +4,5 @@ rvm:
 node_js:
   - "0.10"
 install:
-  - "bundle install --deployment"
+  - "bundle install"
 script: bundle exec rake test[all]
