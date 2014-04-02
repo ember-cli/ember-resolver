@@ -1,0 +1,7 @@
+{
+  "framework": "qunit",
+  "src_files": [
+    "loader.js"
+  ],
+  "test_page": "tests/index.html"
+}
