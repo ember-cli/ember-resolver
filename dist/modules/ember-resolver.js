@@ -69,12 +69,9 @@ define("ember/resolver",
     } else if (moduleEntries[underscoredModuleName]) {
       return underscoredModuleName;
     } else {
-      var parts = moduleName.split('/'),
-          lastPart = parts[parts.length - 1],
-          partializedModuleName;
-
-      parts[parts.length - 1] = lastPart.replace(/^-/, '_');
-      partializedModuleName = parts.join('/');
+      // workaround for dasherized partials:
+      // something/something/-something => something/something/_something
+      var partializedModuleName = moduleName.replace(/\/-([^\/]*)$/, '/_$1');
 
       if (moduleEntries[partializedModuleName]) {
         Ember.deprecate('Modules should not contain underscores. ' +
@@ -89,62 +86,14 @@ define("ember/resolver",
     }
   }
 
-  function logLookup(found, parsedName, moduleName) {
-    if (Ember.ENV.LOG_MODULE_RESOLVER) {
-      var symbol, padding;
-
-      if (found) { symbol = '[✓]'; }
-      else       { symbol = '[ ]'; }
-
-      if (parsedName.fullName.length > 60) {
-        padding = '.';
-      } else {
-        padding = new Array(60 - parsedName.fullName.length).join('.');
-      }
-
-      Ember.Logger.info(symbol, parsedName.fullName, padding, moduleName);
-    }
-  }
-
   function resolveOther(parsedName) {
     /*jshint validthis:true */
 
-    var moduleName, tmpModuleName, prefix, podPrefix, moduleEntries;
+    Ember.assert('module prefix must be defined', this.namespace.modulePrefix);
 
-    prefix = this.namespace.modulePrefix;
-    podPrefix = this.namespace.podModulePrefix || prefix;
-    moduleEntries = requirejs.entries;
+    var normalizedModuleName = this.findModuleName(parsedName);
 
-    Ember.assert('module prefix must be defined', prefix);
-
-    var pluralizedType = parsedName.type + 's';
-    var name = parsedName.fullNameWithoutType;
-
-    // lookup using POD formatting first
-    tmpModuleName = podPrefix + '/' + name + '/' + parsedName.type;
-    if (moduleEntries[tmpModuleName]) {
-      moduleName = tmpModuleName;
-    }
-
-    // if not using POD format, use the custom prefix
-    if (this.namespace[parsedName.type + 'Prefix']) {
-      prefix = this.namespace[parsedName.type + 'Prefix'];
-    }
-
-    // if router:main or adapter:main look for a module with just the type first
-    tmpModuleName = prefix + '/' + parsedName.type;
-    if (!moduleName && name === 'main' && moduleEntries[tmpModuleName]) {
-      moduleName = prefix + '/' + parsedName.type;
-    }
-
-    // fallback if not type:main or POD format
-    if (!moduleName) { moduleName = prefix + '/' +  pluralizedType + '/' + name; }
-
-    // allow treat all dashed and all underscored as the same thing
-    // supports components with dashes and other stuff with underscores.
-    var normalizedModuleName = chooseModuleName(moduleEntries, moduleName);
-
-    if (moduleEntries[normalizedModuleName]) {
+    if (normalizedModuleName) {
       var module = require(normalizedModuleName, null, null, true /* force sync */);
 
       if (module && module['default']) { module = module['default']; }
@@ -157,12 +106,8 @@ define("ember/resolver",
         module = classFactory(module);
       }
 
-      logLookup(true, parsedName, moduleName);
-
       return module;
     } else {
-      logLookup(false, parsedName, moduleName);
-
       return this._super(parsedName);
     }
   }
@@ -171,51 +116,6 @@ define("ember/resolver",
   var Resolver = Ember.DefaultResolver.extend({
     resolveOther: resolveOther,
     resolveTemplate: resolveOther,
-  /**
-    This method is called via the container's resolver method.
-    It parses the provided `fullName` and then looks up and
-    returns the appropriate template or class.
-
-    @method resolve
-    @param {String} fullName the lookup string
-    @return {Object} the resolved factory
-  */
-  resolve: function(fullName) {
-    var parsedName = this.parseName(fullName),
-        resolveMethodName = parsedName.resolveMethodName;
-
-    if (!(parsedName.name && parsedName.type)) {
-      throw new TypeError("Invalid fullName: `" + fullName + "`, must be of the form `type:name` ");
-    }
-
-    if (this[resolveMethodName]) {
-      var resolved = this[resolveMethodName](parsedName);
-      if (resolved) { return resolved; }
-    }
-    return this.resolveOther(parsedName);
-  },
-  /**
-    Returns a human-readable description for a fullName. Used by the
-    Application namespace in assertions to describe the
-    precise name of the class that Ember is looking for, rather than
-    container keys.
-
-    @protected
-    @param {String} fullName the lookup string
-    @method lookupDescription
-  */
-  lookupDescription: function(fullName) {
-    var parsedName = this.parseName(fullName);
-
-    if (parsedName.type === 'template') {
-      return "template at " + parsedName.fullNameWithoutType.replace(/\./g, '/');
-    }
-
-    var description = parsedName.root + "." + classify(parsedName.name);
-    if (parsedName.type !== 'model') { description += classify(parsedName.type); }
-
-    return description;
-  },
 
     makeToString: function(factory, fullName) {
       return '' + this.namespace.modulePrefix + '@' + fullName + ':';
@@ -235,6 +135,111 @@ define("ember/resolver",
       } else {
         return fullName;
       }
+    },
+
+    podBasedModuleName: function(parsedName) {
+      var podPrefix = this.namespace.podModulePrefix || this.namespace.modulePrefix;
+
+      return podPrefix + '/' + parsedName.fullNameWithoutType + '/' + parsedName.type;
+    },
+
+    mainModuleName: function(parsedName) {
+      // if router:main or adapter:main look for a module with just the type first
+      var tmpModuleName = this.prefix(parsedName) + '/' + parsedName.type;
+
+      if (parsedName.fullNameWithoutType === 'main') {
+        return tmpModuleName;
+      }
+    },
+
+    defaultModuleName: function(parsedName) {
+      return this.prefix(parsedName) + '/' +  parsedName.type + 's/' + parsedName.fullNameWithoutType;
+    },
+
+    prefix: function(parsedName) {
+      var tmpPrefix = this.namespace.modulePrefix;
+
+      if (this.namespace[parsedName.type + 'Prefix']) {
+        tmpPrefix = this.namespace[parsedName.type + 'Prefix'];
+      }
+
+      return tmpPrefix;
+    },
+
+    /** 
+
+      A listing of functions to test for moduleName's based on the provided
+      `parsedName`. This allows easy customization of additional module based
+      lookup patterns.
+
+      @property moduleNameLookupPatterns
+      @returns {Ember.Array}
+    */
+    moduleNameLookupPatterns: Ember.computed(function(){
+      return Ember.A([
+        this.podBasedModuleName,
+        this.mainModuleName,
+        this.defaultModuleName
+      ]);
+    }),
+
+    findModuleName: function(parsedName, loggingDisabled){
+      var self = this;
+      var moduleName;
+
+      this.get('moduleNameLookupPatterns').find(function(item) {
+        var moduleEntries = requirejs.entries;
+        var tmpModuleName = item.call(self, parsedName);
+
+        // allow treat all dashed and all underscored as the same thing
+        // supports components with dashes and other stuff with underscores.
+        if (tmpModuleName) {
+          tmpModuleName = chooseModuleName(moduleEntries, tmpModuleName);
+        }
+
+        if (tmpModuleName && moduleEntries[tmpModuleName]) {
+          self._logLookup(true, parsedName, tmpModuleName);
+
+          moduleName = tmpModuleName;
+        }
+
+        if (!loggingDisabled && (Ember.ENV.LOG_MODULE_RESOLVER || parsedName.root.LOG_RESOLVER)) {
+          self._logLookup(moduleName, parsedName, tmpModuleName);
+        }
+
+        return moduleName;
+      });
+
+      return moduleName;
+    },
+
+    // used by Ember.DefaultResolver.prototype._logLookup
+    lookupDescription: function(fullName) {
+      var parsedName = this.parseName(fullName);
+
+      var moduleName = this.findModuleName(parsedName, true);
+
+      return moduleName;
+    },
+
+    // only needed until 1.6.0-beta.2 can be required
+    _logLookup: function(found, parsedName, description) {
+      var symbol, padding;
+
+      if (found) { symbol = '[✓]'; }
+      else       { symbol = '[ ]'; }
+
+      if (parsedName.fullName.length > 60) {
+        padding = '.';
+      } else {
+        padding = new Array(60 - parsedName.fullName.length).join('.');
+      }
+
+      if (!description) {
+        description = this.lookupDescription(parsedName);
+      }
+
+      Ember.Logger.info(symbol, parsedName.fullName, padding, description);
     }
   });
 
