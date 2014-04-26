@@ -2,8 +2,9 @@
 
 This project is tracking a new resolver based on ES6 semantics that has been extracted from (and used by) the following projects:
 
-* https://github.com/stefanpenner/ember-app-kit
-* https://github.com/dockyard/ember-appkit-rails
+* [ember-cli](https://github.com/stefanpenner/ember-cli)
+* [ember-app-kit](https://github.com/stefanpenner/ember-app-kit)
+* [ember-appkit-rails](https://github.com/dockyard/ember-appkit-rails)
 
 ## Goal
 
