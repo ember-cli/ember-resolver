@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rake-pipeline', :git => 'https://github.com/livingsocial/rake-pipeline.git'
-gem 'ember-dev', :git => 'https://github.com/emberjs/ember-dev.git', :branch => 'master'
+gem 'rake-pipeline', git: 'https://github.com/livingsocial/rake-pipeline.git'
+gem 'ember-dev',     git: 'https://github.com/emberjs/ember-dev.git', branch: 'master'
 
-gem 'ember-source', '~> 1.5.0.beta.4'
+gem 'ember-source', '~> 1.5.0'
