@@ -90,7 +90,7 @@ define("ember/resolver",
   }
 
   function logLookup(found, parsedName, moduleName) {
-    if (Ember.ENV.LOG_MODULE_RESOLVER) {
+    if (Ember.ENV.APP.LOG_MODULE_RESOLVER) {
       var symbol, padding;
 
       if (found) { symbol = '[✓]'; }

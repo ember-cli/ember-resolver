@@ -65,6 +65,8 @@ var define, requireModule, require, requirejs;
     testing: true
   };
   window.ENV = window.ENV || {};
+  ENV.APP = {};
+
 
   // Test for "hooks in ENV.EMBER_LOAD_HOOKS['hookName'] get executed"
   ENV.EMBER_LOAD_HOOKS = ENV.EMBER_LOAD_HOOKS || {};
