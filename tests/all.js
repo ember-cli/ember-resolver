@@ -129,6 +129,24 @@ test('deep nested relative import/export', function(){
   equal(require('foo/a/b/c'), 'baz');
 });
 
+test('top-level relative import/export', function(){
+  expect(2);
+
+  define('foo', ['./bar'], function(bar) {
+    equal(bar.baz, 'baz');
+
+    return bar.baz;
+  });
+
+  define('bar', [], function() {
+    return {
+      baz: 'baz'
+    };
+  });
+
+  equal(require('foo'), 'baz');
+});
+
 test('runtime cycles', function(){
   define('foo', ['bar', 'exports'], function(bar, __exports__) {
     __exports__.quz = function() {

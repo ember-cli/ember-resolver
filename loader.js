@@ -69,13 +69,7 @@ var define, requireModule, require, requirejs;
 
     var parts = child.split('/');
     var nameParts = name.split('/');
-    var parentBase;
-
-    if (nameParts.length === 1) {
-      parentBase = nameParts;
-    } else {
-      parentBase = nameParts.slice(0, -1);
-    }
+    var parentBase = nameParts.slice(0, -1);
 
     for (var i = 0, l = parts.length; i < l; i++) {
       var part = parts[i];
