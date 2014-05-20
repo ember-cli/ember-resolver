@@ -68,12 +68,9 @@ define("ember/resolver",
     } else if (moduleEntries[underscoredModuleName]) {
       return underscoredModuleName;
     } else {
-      var parts = moduleName.split('/'),
-          lastPart = parts[parts.length - 1],
-          partializedModuleName;
-
-      parts[parts.length - 1] = lastPart.replace(/^-/, '_');
-      partializedModuleName = parts.join('/');
+      // workaround for dasherized partials:
+      // something/something/-something => something/something/_something
+      var partializedModuleName = moduleName.replace(/\/-([^\/]*)$/, '/_$1');
 
       if (moduleEntries[partializedModuleName]) {
         Ember.deprecate('Modules should not contain underscores. ' +
