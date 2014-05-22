@@ -11,8 +11,6 @@ var define, requireModule, require, requirejs;
     };
   };
 
-  define.amd = {};
-
   function reify(deps, name, seen) {
     var length = deps.length;
     var reified = new Array(length);
