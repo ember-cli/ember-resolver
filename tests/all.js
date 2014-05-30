@@ -168,3 +168,19 @@ test('runtime cycles', function(){
   equal(foo.quz(), bar.baz, 'cycle foo depends on bar');
   equal(bar.baz(), foo.quz, 'cycle bar depends on foo');
 });
+
+test('basic CJS mode', function() {
+  define('foo', ['require', 'exports', 'module'], function(require, exports, module) {
+    module.exports = {
+      bar: require('bar').name
+    };
+  });
+
+  define('bar', ['require', 'exports', 'module'], function(require, exports, module) {
+    exports.name = 'bar';
+  });
+
+  var foo = require('foo');
+
+  equal(foo.bar, 'bar');
+});

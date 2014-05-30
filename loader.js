@@ -11,16 +11,20 @@ var define, requireModule, require, requirejs;
     };
   };
 
-  function reify(deps, name, seen) {
+  function reify(mod, deps, name, seen) {
     var length = deps.length;
     var reified = new Array(length);
     var dep;
-    var exports;
+    var module = { };
 
     for (var i = 0, l = length; i < l; i++) {
       dep = deps[i];
       if (dep === 'exports') {
-        exports = reified[i] = seen;
+        module.exports = reified[i] = seen;
+      } else if (dep === 'require') {
+        reified[i] = require;
+      } else if (dep === 'module') {
+        module = reified[i] = { exports: seen };
       } else {
         reified[i] = require(resolve(dep, name));
       }
@@ -28,7 +32,7 @@ var define, requireModule, require, requirejs;
 
     return {
       deps: reified,
-      exports: exports
+      module: module
     };
   }
 
@@ -50,7 +54,7 @@ var define, requireModule, require, requirejs;
     seen[name] = { }; // placeholder for run-time cycles
 
     try {
-      reified = reify(mod.deps, name, seen[name]);
+      reified = reify(mod, mod.deps, name, seen[name]);
       module = mod.callback.apply(this, reified.deps);
       loaded = true;
     } finally {
@@ -59,7 +63,12 @@ var define, requireModule, require, requirejs;
       }
     }
 
-    return reified.exports ? seen[name] : (seen[name] = module);
+    if (reified.module.exports) {
+      return (seen[name] = reified.module.exports);
+    } else {
+      return (seen[name] = module);
+    }
+    //return reified.module.exports ? seen[name] : (seen[name] = module);
   };
 
   function resolve(child, name) {
