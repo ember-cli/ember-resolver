@@ -1,20 +1,31 @@
 var define, requireModule, require, requirejs;
 
 (function() {
-  var registry = {}, seen = {}, state = {};
+  var registry = {}, seen = {};
   var FAILED = false;
 
+  var uuid = 0;
+
+  function Module(name, deps, callback, exports) {
+    this.id       = uuid++;
+    this.name     = name;
+    this.deps     = deps || [];
+    this.exports  = exports || { };
+    this.callback = callback;
+    this.state    = undefined;
+  }
+
   define = function(name, deps, callback) {
-    registry[name] = {
-      deps: deps,
-      callback: callback
-    };
+    registry[name] = new Module(name, deps, callback);
   };
 
-  function reify(mod, deps, name, seen) {
+  function reify(mod, name, seen) {
+    var deps = mod.deps;
     var length = deps.length;
     var reified = new Array(length);
     var dep;
+    // TODO: new Module
+    // TODO: seen refactor
     var module = { };
 
     for (var i = 0, l = length; i < l; i++) {
@@ -24,7 +35,8 @@ var define, requireModule, require, requirejs;
       } else if (dep === 'require') {
         reified[i] = require;
       } else if (dep === 'module') {
-        module = reified[i] = { exports: seen };
+        mod.exports = seen;
+        module = reified[i] = mod;
       } else {
         reified[i] = require(resolve(dep, name));
       }
@@ -37,16 +49,16 @@ var define, requireModule, require, requirejs;
   }
 
   requirejs = require = requireModule = function(name) {
-    if (state[name] !== FAILED &&
+    var mod = registry[name];
+    if (!mod) {
+      throw new Error('Could not find module ' + name);
+    }
+
+    if (mod.state !== FAILED &&
         seen.hasOwnProperty(name)) {
       return seen[name];
     }
 
-    if (!registry[name]) {
-      throw new Error('Could not find module ' + name);
-    }
-
-    var mod = registry[name];
     var reified;
     var module;
     var loaded = false;
@@ -54,12 +66,12 @@ var define, requireModule, require, requirejs;
     seen[name] = { }; // placeholder for run-time cycles
 
     try {
-      reified = reify(mod, mod.deps, name, seen[name]);
+      reified = reify(mod, name, seen[name]);
       module = mod.callback.apply(this, reified.deps);
       loaded = true;
     } finally {
       if (!loaded) {
-        state[name] = FAILED;
+        mod.state = FAILED;
       }
     }
 
