@@ -16,6 +16,11 @@ var define, requireModule, require, requirejs;
   }
 
   define = function(name, deps, callback) {
+    if (!Array.isArray(deps)) {
+      callback = deps;
+      deps     =  [];
+    }
+
     registry[name] = new Module(name, deps, callback);
   };
 

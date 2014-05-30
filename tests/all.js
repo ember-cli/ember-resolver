@@ -45,6 +45,20 @@ test('simple define/require', function(){
 });
 
 
+test('define without deps', function(){
+  var fooCalled = 0;
+
+  define('foo', function() {
+    fooCalled++;
+  });
+
+  var foo = require('foo');
+  equal(foo, undefined);
+  equal(fooCalled, 1);
+  deepEqual(keys(requirejs.entries), ['foo']);
+});
+
+
 test('multiple define/require', function(){
   define('foo', [], function() {
 
