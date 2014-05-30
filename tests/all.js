@@ -198,3 +198,11 @@ test('basic CJS mode', function() {
 
   equal(foo.bar, 'bar');
 });
+
+test('pass default deps if arguments are expected and deps not passed', function() {
+  define('foo', function(require, exports, module) {
+    equal(arguments.length, 3);
+  });
+
+  require('foo');
+});

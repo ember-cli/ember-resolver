@@ -7,9 +7,11 @@ var define, requireModule, require, requirejs;
   var uuid = 0;
 
   function Module(name, deps, callback, exports) {
+    var defaultDeps = ['require', 'exports', 'module'];
+
     this.id       = uuid++;
     this.name     = name;
-    this.deps     = deps || [];
+    this.deps     = !deps.length && callback.length ? defaultDeps : deps;
     this.exports  = exports || { };
     this.callback = callback;
     this.state    = undefined;
@@ -85,7 +87,6 @@ var define, requireModule, require, requirejs;
     } else {
       return (seen[name] = module);
     }
-    //return reified.module.exports ? seen[name] : (seen[name] = module);
   };
 
   function resolve(child, name) {
