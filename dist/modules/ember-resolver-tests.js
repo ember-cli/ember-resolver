@@ -62,7 +62,7 @@ test("the default ContainerDebugAdapter catalogs controller entries", function()
 (function() {
 /*globals define registry requirejs */
 
-var Resolver, resolver;
+var Resolver, resolver, logCalls, originalLog;
 
 function lookupResolver() {
   return requirejs.entries['ember/resolver'];
@@ -223,6 +223,42 @@ test("can lookup templates via Ember.TEMPLATES", function() {
 
   var template = resolver.resolve('template:application');
   ok(template, 'template should resolve');
+});
+
+module("Logging", {
+  setup: function() {
+    originalLog = Ember.Logger.info;
+    logCalls = [];
+    Ember.Logger.info = function(arg) { logCalls.push(arg); };
+  },
+
+  teardown: function() {
+    Ember.Logger.info = originalLog;
+  }
+});
+
+test("logs lookups when logging is enabled", function() {
+  define('appkit/fruits/orange', [], function(){
+    return 'is logged';
+  });
+
+  Ember.ENV.LOG_MODULE_RESOLVER = true;
+
+  resolver.resolve('fruit:orange');
+
+  ok(logCalls.length, "should log lookup");
+});
+
+test("doesn't log lookups if disabled", function() {
+  define('appkit/fruits/orange', [], function(){
+    return 'is not logged';
+  });
+
+  Ember.ENV.LOG_MODULE_RESOLVER = false;
+
+  resolver.resolve('fruit:orange');
+
+  equal(logCalls.length, 0, "should not log lookup");
 });
 
 module("custom prefixes by type", {

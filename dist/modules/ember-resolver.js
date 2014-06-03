@@ -169,7 +169,7 @@ define("ember/resolver",
       return tmpPrefix;
     },
 
-    /** 
+    /**
 
       A listing of functions to test for moduleName's based on the provided
       `parsedName`. This allows easy customization of additional module based
@@ -201,12 +201,14 @@ define("ember/resolver",
         }
 
         if (tmpModuleName && moduleEntries[tmpModuleName]) {
-          self._logLookup(true, parsedName, tmpModuleName);
+          if (!loggingDisabled) {
+            self._logLookup(true, parsedName, tmpModuleName);
+          }
 
           moduleName = tmpModuleName;
         }
 
-        if (!loggingDisabled && (Ember.ENV.LOG_MODULE_RESOLVER || parsedName.root.LOG_RESOLVER)) {
+        if (!loggingDisabled) {
           self._logLookup(moduleName, parsedName, tmpModuleName);
         }
 
@@ -227,6 +229,10 @@ define("ember/resolver",
 
     // only needed until 1.6.0-beta.2 can be required
     _logLookup: function(found, parsedName, description) {
+      if (!Ember.ENV.LOG_MODULE_RESOLVER && !parsedName.root.LOG_RESOLVER) {
+        return;
+      }
+
       var symbol, padding;
 
       if (found) { symbol = '[✓]'; }
