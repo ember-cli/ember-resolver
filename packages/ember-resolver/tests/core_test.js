@@ -165,7 +165,7 @@ test("can lookup templates via Ember.TEMPLATES", function() {
 
 module("Logging", {
   setup: function() {
-    originalLog = Ember.Logger.log;
+    originalLog = Ember.Logger.info;
     logCalls = [];
     Ember.Logger.info = function(arg) { logCalls.push(arg); };
   },
