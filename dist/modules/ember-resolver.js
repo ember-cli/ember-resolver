@@ -41,7 +41,7 @@ define("ember/resolver",
   function parseName(fullName) {
     /*jshint validthis:true */
 
-    if (fullName.parseName === true) { return fullName; }
+    if (fullName.parsedName === true) { return fullName; }
 
     var nameParts = fullName.split(":"),
         type = nameParts[0], fullNameWithoutType = nameParts[1],
