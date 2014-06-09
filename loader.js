@@ -1,6 +1,16 @@
 var define, requireModule, require, requirejs;
 
 (function() {
+
+  var _isArray;
+  if (!Array.isArray) {
+    _isArray = function (x) {
+      return Object.prototype.toString.call(x) === "[object Array]";
+    };
+  } else {
+    _isArray = Array.isArray;
+  }
+
   var registry = {}, seen = {};
   var FAILED = false;
 
