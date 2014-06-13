@@ -6,7 +6,7 @@
 // ==========================================================================
 
 
- // Version: 0.1.1
+ // Version: 0.1.2
 
 (function() {
 /*globals define registry requirejs */
@@ -152,8 +152,13 @@ define("ember/resolver",
 
     podBasedModuleName: function(parsedName) {
       var podPrefix = this.namespace.podModulePrefix || this.namespace.modulePrefix;
+      var fullNameWithoutType = parsedName.fullNameWithoutType;
 
-      return podPrefix + '/' + parsedName.fullNameWithoutType + '/' + parsedName.type;
+      if (parsedName.type === 'template') {
+        fullNameWithoutType = fullNameWithoutType.replace(/^components\//, '');
+      }
+
+        return podPrefix + '/' + fullNameWithoutType + '/' + parsedName.type;
     },
 
     mainModuleName: function(parsedName) {
