@@ -7,9 +7,9 @@
     "test": "tests"
   },
   "dependencies": {
-    "testem": "^0.6.16"
   },
   "devDependencies": {
+    "testem": "^0.6.16"
   },
   "scripts": {
     "test": "testem ci"
