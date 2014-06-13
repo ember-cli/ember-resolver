@@ -1,0 +1,23 @@
+{
+  "name": "loader.js",
+  "version": "0.0.0",
+  "description": "loader.js =========",
+  "main": "loader.js",
+  "directories": {
+    "test": "tests"
+  },
+  "dependencies": {
+    "testem": "^0.6.16"
+  },
+  "devDependencies": {
+  },
+  "scripts": {
+    "test": "testem ci"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/stefanpenner/loader.js/issues"
+  },
+  "homepage": "https://github.com/stefanpenner/loader.js"
+}

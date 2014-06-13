@@ -3,5 +3,12 @@
   "src_files": [
     "loader.js"
   ],
-  "test_page": "tests/index.html"
+  "test_page": "tests/index.html",
+  "launch_in_dev": [
+    "PhantomJS",
+    "Chrome"
+  ],
+  "launch_in_ci": [
+    "PhantomJS"
+  ]
 }
