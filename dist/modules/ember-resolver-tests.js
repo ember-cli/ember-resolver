@@ -361,5 +361,20 @@ test("will not use custom type prefix when using POD format", function() {
 
   resolver.resolve('controller:foo');
 });
+
+test("will lookup a components template without being rooted in `components/`", function() {
+  define('appkit/components/foo-bar/template', [], function(){
+    ok(false, 'appkit/components was used');
+    return 'whatever';
+  });
+
+  define('appkit/foo-bar/template', [], function(){
+    ok(true, 'appkit/foo-bar/template was used');
+    return 'whatever';
+  });
+
+  resolver.resolve('template:components/foo-bar');
+});
+
 })();
 
