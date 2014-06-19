@@ -21,6 +21,7 @@ module('loader.js api', {
 test('has api', function(){
   equal(typeof require, 'function');
   equal(typeof define, 'function');
+  ok(define.amd);
   equal(typeof requirejs, 'function');
   equal(typeof requireModule, 'function');
 });
@@ -41,6 +42,20 @@ test('simple define/require', function(){
   equal(fooAgain, undefined);
   equal(fooCalled, 1);
 
+  deepEqual(keys(requirejs.entries), ['foo']);
+});
+
+
+test('define without deps', function(){
+  var fooCalled = 0;
+
+  define('foo', function() {
+    fooCalled++;
+  });
+
+  var foo = require('foo');
+  equal(foo, undefined);
+  equal(fooCalled, 1);
   deepEqual(keys(requirejs.entries), ['foo']);
 });
 
@@ -167,4 +182,28 @@ test('runtime cycles', function(){
 
   equal(foo.quz(), bar.baz, 'cycle foo depends on bar');
   equal(bar.baz(), foo.quz, 'cycle bar depends on foo');
+});
+
+test('basic CJS mode', function() {
+  define('foo', ['require', 'exports', 'module'], function(require, exports, module) {
+    module.exports = {
+      bar: require('bar').name
+    };
+  });
+
+  define('bar', ['require', 'exports', 'module'], function(require, exports, module) {
+    exports.name = 'bar';
+  });
+
+  var foo = require('foo');
+
+  equal(foo.bar, 'bar');
+});
+
+test('pass default deps if arguments are expected and deps not passed', function() {
+  define('foo', function(require, exports, module) {
+    equal(arguments.length, 3);
+  });
+
+  require('foo');
 });

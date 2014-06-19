@@ -1,26 +1,61 @@
 var define, requireModule, require, requirejs;
 
 (function() {
-  var registry = {}, seen = {}, state = {};
+
+  var _isArray;
+  if (!Array.isArray) {
+    _isArray = function (x) {
+      return Object.prototype.toString.call(x) === "[object Array]";
+    };
+  } else {
+    _isArray = Array.isArray;
+  }
+
+  var registry = {}, seen = {};
   var FAILED = false;
 
+  var uuid = 0;
+
+  function Module(name, deps, callback, exports) {
+    var defaultDeps = ['require', 'exports', 'module'];
+
+    this.id       = uuid++;
+    this.name     = name;
+    this.deps     = !deps.length && callback.length ? defaultDeps : deps;
+    this.exports  = exports || { };
+    this.callback = callback;
+    this.state    = undefined;
+  }
+
   define = function(name, deps, callback) {
-    registry[name] = {
-      deps: deps,
-      callback: callback
-    };
+    if (!Array.isArray(deps)) {
+      callback = deps;
+      deps     =  [];
+    }
+
+    registry[name] = new Module(name, deps, callback);
   };
 
-  function reify(deps, name, seen) {
+  define.amd = {};
+
+  function reify(mod, name, seen) {
+    var deps = mod.deps;
     var length = deps.length;
     var reified = new Array(length);
     var dep;
-    var exports;
+    // TODO: new Module
+    // TODO: seen refactor
+    var module = { };
 
     for (var i = 0, l = length; i < l; i++) {
       dep = deps[i];
       if (dep === 'exports') {
-        exports = reified[i] = seen;
+        module.exports = reified[i] = seen;
+      } else if (dep === 'require') {
+        reified[i] = require;
+      } else if (dep === 'module') {
+        mod.exports = seen;
+        module = reified[i] = mod;
       } else {
         reified[i] = require(resolve(dep, name));
       }
@@ -28,21 +63,21 @@ var define, requireModule, require, requirejs;
 
     return {
       deps: reified,
-      exports: exports
+      module: module
     };
   }
 
   requirejs = require = requireModule = function(name) {
-    if (state[name] !== FAILED &&
+    var mod = registry[name];
+    if (!mod) {
+      throw new Error('Could not find module ' + name);
+    }
+
+    if (mod.state !== FAILED &&
         seen.hasOwnProperty(name)) {
       return seen[name];
     }
 
-    if (!registry[name]) {
-      throw new Error('Could not find module ' + name);
-    }
-
-    var mod = registry[name];
     var reified;
     var module;
     var loaded = false;
@@ -50,16 +85,20 @@ var define, requireModule, require, requirejs;
     seen[name] = { }; // placeholder for run-time cycles
 
     try {
-      reified = reify(mod.deps, name, seen[name]);
+      reified = reify(mod, name, seen[name]);
       module = mod.callback.apply(this, reified.deps);
       loaded = true;
     } finally {
       if (!loaded) {
-        state[name] = FAILED;
+        mod.state = FAILED;
       }
     }
 
-    return reified.exports ? seen[name] : (seen[name] = module);
+    if (reified.module.exports) {
+      return (seen[name] = reified.module.exports);
+    } else {
+      return (seen[name] = module);
+    }
   };
 
   function resolve(child, name) {
