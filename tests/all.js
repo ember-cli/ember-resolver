@@ -207,3 +207,15 @@ test('pass default deps if arguments are expected and deps not passed', function
 
   require('foo');
 });
+
+test('if factory returns a value it is used as export', function() {
+  define('foo', ['require', 'exports', 'module'], function(require, exports, module) {
+    return {
+      bar:'bar'
+    };
+  });
+
+  var foo = require('foo');
+
+  equal(foo.bar, 'bar');
+});
