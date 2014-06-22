@@ -94,7 +94,7 @@ var define, requireModule, require, requirejs;
       }
     }
 
-    if (reified.module.exports) {
+    if (module === undefined && reified.module.exports) {
       return (seen[name] = reified.module.exports);
     } else {
       return (seen[name] = module);
