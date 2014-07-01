@@ -28,7 +28,7 @@ define("ember/resolver",
    *     output. The loader's _moduleEntries is consulted so that classes can be
    *     resolved directly via the module loader, without needing a manual
    *     `import`.
-   *  2) is able provide injections to classes that implement `extend`
+   *  2) is able to provide injections to classes that implement `extend`
    *     (as is typical with Ember).
    */
 
@@ -161,6 +161,14 @@ define("ember/resolver",
         return podPrefix + '/' + fullNameWithoutType + '/' + parsedName.type;
     },
 
+    nestedComponents: function(parsedName) {
+      if (parsedName.type === 'component' || (parsedName.type === 'template' && parsedName.fullNameWithoutType.match(/^components/))) {
+        var correctedName = parsedName.fullNameWithoutType.split('-').join('/');
+
+        return this.prefix(parsedName) + '/' +  parsedName.type + 's/' + correctedName;
+      }
+    },
+
     mainModuleName: function(parsedName) {
       // if router:main or adapter:main look for a module with just the type first
       var tmpModuleName = this.prefix(parsedName) + '/' + parsedName.type;
@@ -197,7 +205,8 @@ define("ember/resolver",
       return Ember.A([
         this.podBasedModuleName,
         this.mainModuleName,
-        this.defaultModuleName
+        this.defaultModuleName,
+        this.nestedComponents
       ]);
     }),
 

@@ -313,3 +313,40 @@ test("will lookup a components template without being rooted in `components/`", 
 
   resolver.resolve('template:components/foo-bar');
 });
+
+test("will not replace dashses with slashes for route lookup", function() {
+  define('appkit/routes/foo/bar', [], function(){
+    ok(false, 'appkit/routes/foo/bar was used');
+    return 'whatever';
+  });
+
+  define('appkit/routes/foo-bar', [], function(){
+    ok(true, 'appkit/routes/foo-bar was used');
+    return 'whatever';
+  });
+
+  resolver.resolve('route:foo-bar');
+});
+
+test("will lookup a components in standard location before replacing dashes with slashes", function() {
+  define('appkit/components/foo/bar', [], function(){
+    ok(false, 'appkit/components/foo/bar was used');
+    return 'whatever';
+  });
+
+  define('appkit/components/foo-bar', [], function(){
+    ok(true, 'appkit/components/foo-bar was used');
+    return 'whatever';
+  });
+
+  resolver.resolve('component:foo-bar');
+});
+
+test("will lookup a components replacing dashes with slashes", function() {
+  define('appkit/components/foo/bar', [], function(){
+    ok(true, 'appkit/components/foo/bar was used');
+    return 'whatever';
+  });
+
+  resolver.resolve('component:foo-bar');
+});
