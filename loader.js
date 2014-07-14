@@ -28,7 +28,7 @@ var define, requireModule, require, requirejs;
   }
 
   define = function(name, deps, callback) {
-    if (!Array.isArray(deps)) {
+    if (!_isArray(deps)) {
       callback = deps;
       deps     =  [];
     }
