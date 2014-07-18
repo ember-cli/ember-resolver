@@ -139,7 +139,7 @@ define("ember/resolver",
       this._normalizeCache = makeDictionary();
     },
     normalize: function(fullName) {
-      return this._normalizeCache[fullName] || (this._normalizeCache = this._normalize(fullName));
+      return this._normalizeCache[fullName] || (this._normalizeCache[fullName] = this._normalize(fullName));
     },
     _normalize: function(fullName) {
       // replace `.` with `/` in order to make nested controllers work in the following cases
