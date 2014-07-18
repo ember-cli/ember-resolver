@@ -18,7 +18,7 @@ define("ember/resolver",
    *     output. The loader's _moduleEntries is consulted so that classes can be
    *     resolved directly via the module loader, without needing a manual
    *     `import`.
-   *  2) is able provide injections to classes that implement `extend`
+   *  2) is able to provide injections to classes that implement `extend`
    *     (as is typical with Ember).
    */
 
@@ -32,6 +32,13 @@ define("ember/resolver",
         }
       }
     };
+  }
+
+  function makeDictionary() {
+    var cache = Object.create(null);
+    cache['_dict'] = null;
+    delete cache['_dict'];
+    return cache;
   }
 
   var underscore = Ember.String.underscore;
@@ -127,7 +134,14 @@ define("ember/resolver",
     shouldWrapInClassFactory: function(module, parsedName){
       return false;
     },
+    init: function() {
+      this._super();
+      this._normalizeCache = makeDictionary();
+    },
     normalize: function(fullName) {
+      return this._normalizeCache[fullName] || (this._normalizeCache = this._normalize(fullName));
+    },
+    _normalize: function(fullName) {
       // replace `.` with `/` in order to make nested controllers work in the following cases
       // 1. `needs: ['posts/post']`
       // 2. `{{render "posts/post"}}`
