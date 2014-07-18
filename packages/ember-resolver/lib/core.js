@@ -33,6 +33,13 @@ define("ember/resolver",
     };
   }
 
+  function makeDictionary() {
+    var cache = Object.create(null);
+    cache['_dict'] = null;
+    delete cache['_dict'];
+    return cache;
+  }
+
   var underscore = Ember.String.underscore;
   var classify = Ember.String.classify;
   var get = Ember.get;
@@ -126,7 +133,14 @@ define("ember/resolver",
     shouldWrapInClassFactory: function(module, parsedName){
       return false;
     },
+    init: function() {
+      this._super();
+      this._normalizeCache = makeDictionary();
+    },
     normalize: function(fullName) {
+      return this._normalizeCache[fullName] || (this._normalizeCache = this._normalize(fullName));
+    },
+    _normalize: function(fullName) {
       // replace `.` with `/` in order to make nested controllers work in the following cases
       // 1. `needs: ['posts/post']`
       // 2. `{{render "posts/post"}}`
