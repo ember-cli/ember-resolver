@@ -313,3 +313,52 @@ test("will lookup a components template without being rooted in `components/`", 
 
   resolver.resolve('template:components/foo-bar');
 });
+
+test("will use pods format to lookup components in components/", function() {
+  expect(2);
+
+  define('appkit/components/foo-bar/template', [], function(){
+    ok(true, 'appkit/components was used');
+    return 'whatever';
+  });
+
+  define('appkit/components/foo-bar/component', [], function(){
+    ok(true, 'appkit/components was used');
+    return 'whatever';
+  });
+
+  resolver.resolve('template:components/foo-bar');
+  resolver.resolve('component:foo-bar');
+});
+
+test("will not lookup routes in components/", function() {
+  expect(1);
+
+  define('appkit/components/foo-bar/route', [], function(){
+    ok(false, 'appkit/components was used');
+    return 'whatever';
+  });
+
+  define('appkit/routes/foo-bar', [], function(){
+    ok(true, 'appkit/routes was used');
+    return 'whatever';
+  });
+
+  resolver.resolve('route:foo-bar');
+});
+
+test("will not lookup non component templates in components/", function() {
+  expect(1);
+
+  define('appkit/components/foo-bar/template', [], function(){
+    ok(false, 'appkit/components was used');
+    return 'whatever';
+  });
+
+  define('appkit/templates/foo-bar', [], function(){
+    ok(true, 'appkit/templates was used');
+    return 'whatever';
+  });
+
+  resolver.resolve('template:foo-bar');
+});

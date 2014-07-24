@@ -157,8 +157,7 @@ define("ember/resolver",
       }
     },
 
-    podBasedModuleName: function(parsedName) {
-      var podPrefix = this.namespace.podModulePrefix || this.namespace.modulePrefix;
+    podBasedLookupWithPrefix: function(podPrefix, parsedName) {
       var fullNameWithoutType = parsedName.fullNameWithoutType;
 
       if (parsedName.type === 'template') {
@@ -166,6 +165,21 @@ define("ember/resolver",
       }
 
         return podPrefix + '/' + fullNameWithoutType + '/' + parsedName.type;
+    },
+
+    podBasedModuleName: function(parsedName) {
+      var podPrefix = this.namespace.podModulePrefix || this.namespace.modulePrefix;
+
+      return this.podBasedLookupWithPrefix(podPrefix, parsedName);
+    },
+
+    podBasedComponentsInSubdir: function(parsedName) {
+      var podPrefix = this.namespace.podModulePrefix || this.namespace.modulePrefix;
+      podPrefix = podPrefix + '/components';
+
+      if (parsedName.type === 'component' || parsedName.fullNameWithoutType.match(/^components/)) {
+        return this.podBasedLookupWithPrefix(podPrefix, parsedName);
+      }
     },
 
     mainModuleName: function(parsedName) {
@@ -203,6 +217,7 @@ define("ember/resolver",
     moduleNameLookupPatterns: Ember.computed(function(){
       return Ember.A([
         this.podBasedModuleName,
+        this.podBasedComponentsInSubdir,
         this.mainModuleName,
         this.defaultModuleName
       ]);
