@@ -16,6 +16,15 @@ var define, requireModule, require, requirejs;
 
   var uuid = 0;
 
+  function tryFinally(tryable, finalizer) {
+    try {
+      return tryable();
+    } finally {
+      finalizer();
+    }
+  }
+
+
   function Module(name, deps, callback, exports) {
     var defaultDeps = ['require', 'exports', 'module'];
 
@@ -84,15 +93,15 @@ var define, requireModule, require, requirejs;
 
     seen[name] = { }; // placeholder for run-time cycles
 
-    try {
+    tryFinally(function() {
       reified = reify(mod, name, seen[name]);
       module = mod.callback.apply(this, reified.deps);
       loaded = true;
-    } finally {
+    }, function() {
       if (!loaded) {
         mod.state = FAILED;
       }
-    }
+    });
 
     if (module === undefined && reified.module.exports) {
       return (seen[name] = reified.module.exports);
