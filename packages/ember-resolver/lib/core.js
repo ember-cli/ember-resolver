@@ -33,7 +33,7 @@ define("ember/resolver",
     };
   }
 
-  if (!Object.create && !Object.create(null).hasOwnProperty) {
+  if (!(Object.create && !Object.create(null).hasOwnProperty)) {
     throw new Error("This browser does not support Object.create(null), please polyfil with es5-sham: http://git.io/yBU2rg");
   }
 
