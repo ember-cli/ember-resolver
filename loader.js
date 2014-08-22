@@ -61,7 +61,9 @@ var define, requireModule, require, requirejs;
       if (dep === 'exports') {
         module.exports = reified[i] = seen;
       } else if (dep === 'require') {
-        reified[i] = require;
+        reified[i] = function requireDep(dep) {
+          return require(resolve(dep, name));
+        };
       } else if (dep === 'module') {
         mod.exports = seen;
         module = reified[i] = mod;
