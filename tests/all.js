@@ -185,17 +185,17 @@ test('runtime cycles', function(){
 });
 
 test('basic CJS mode', function() {
-  define('foo', ['require', 'exports', 'module'], function(require, exports, module) {
+  define('a/foo', ['require', 'exports', 'module'], function(require, exports, module) {
     module.exports = {
-      bar: require('bar').name
+      bar: require('./bar').name
     };
   });
 
-  define('bar', ['require', 'exports', 'module'], function(require, exports, module) {
+  define('a/bar', ['require', 'exports', 'module'], function(require, exports, module) {
     exports.name = 'bar';
   });
 
-  var foo = require('foo');
+  var foo = require('a/foo');
 
   equal(foo.bar, 'bar');
 });
