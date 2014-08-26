@@ -219,3 +219,15 @@ test('if factory returns a value it is used as export', function() {
 
   equal(foo.bar, 'bar');
 });
+
+test("if a module has no default property assume its export is default", function() {
+  define('foo', ['require', 'exports', 'module'], function(require, exports, module) {
+    return {
+      bar:'bar'
+    };
+  });
+
+  var foo = require('foo')['default']
+
+  equal(foo.bar, 'bar');
+});

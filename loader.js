@@ -105,11 +105,18 @@ var define, requireModule, require, requirejs;
       }
     });
 
+    var obj;
     if (module === undefined && reified.module.exports) {
-      return (seen[name] = reified.module.exports);
+      obj = reified.module.exports;
     } else {
-      return (seen[name] = module);
+      obj = seen[name] = module;
     }
+
+    if (obj !== null && typeof obj === 'object' && obj['default'] === undefined) {
+      obj['default'] = obj;
+    }
+
+    return (seen[name] = obj);
   };
 
   function resolve(child, name) {
