@@ -1,5 +1,5 @@
 {
-  "name": "ember-jj-abrams-resolver",
+  "name": "ember-resolver",
   "version": "0.1.7",
   "main": ["dist/ember-resolver.js", "dist/ember-resolver.prod.js", "dist/ember-resolver.min.js"],
   "ignore": [
