@@ -220,14 +220,28 @@ test('if factory returns a value it is used as export', function() {
   equal(foo.bar, 'bar');
 });
 
-test("if a module has no default property assume its export is default", function() {
-  define('foo', ['require', 'exports', 'module'], function(require, exports, module) {
+test("if a module has no default property assume the return is the default", function() {
+  define('foo', [], function() {
     return {
       bar:'bar'
     };
   });
 
-  var foo = require('foo')['default']
+  var foo = require('foo')['default'];
+
+  equal(foo.bar, 'bar');
+});
+
+
+test("if a CJS style module has no default export assume module.exports is the default", function() {
+  define('Foo', ['require', 'exports', 'module'], function(require, exports, module) {
+    module.exports = function Foo() {
+      this.bar = 'bar';
+    };
+  });
+
+  var Foo = require('Foo')['default'];
+  var foo = new Foo();
 
   equal(foo.bar, 'bar');
 });
