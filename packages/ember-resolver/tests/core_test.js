@@ -63,6 +63,54 @@ test("can lookup something", function(){
   adapter();
 });
 
+test("can lookup something in another namespace", function(){
+  expect(2);
+
+  define('other/adapters/post', [], function(){
+    ok(true, "adapter was invoked properly");
+
+    return Ember.K;
+  });
+
+  var adapter = resolver.resolve('other@adapter:post');
+
+  ok(adapter, 'adapter was returned');
+
+  adapter();
+});
+
+test("can lookup a view in another namespace", function() {
+  expect(2);
+
+  define('other/views/post', [], function(){
+    ok(true, "view was invoked properly");
+
+    return Ember.K;
+  });
+
+  var view = resolver.resolve('view:other@post');
+
+  ok(view, 'view was returned');
+
+  view();
+});
+
+test("can lookup a view", function() {
+  expect(2);
+
+  define('appkit/views/queue-list', [], function(){
+    ok(true, "view was invoked properly");
+
+    return Ember.K;
+  });
+
+  var view = resolver.resolve('view:queue-list');
+
+  ok(view, 'view was returned');
+
+  view();
+});
+
 test("will return the raw value if no 'default' is available", function() {
   define('appkit/fruits/orange', [], function(){
     return 'is awesome';
