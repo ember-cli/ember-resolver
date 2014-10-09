@@ -140,6 +140,7 @@ define("ember/resolver",
   var Resolver = Ember.DefaultResolver.extend({
     resolveOther: resolveOther,
     resolveTemplate: resolveOther,
+    pluralizedTypes: null,
 
     makeToString: function(factory, fullName) {
       return '' + this.namespace.modulePrefix + '@' + fullName + ':';
@@ -151,6 +152,12 @@ define("ember/resolver",
     init: function() {
       this._super();
       this._normalizeCache = makeDictionary();
+
+      this.pluralizedTypes = this.pluralizedTypes || makeDictionary();
+
+      if (!this.pluralizedTypes.config) {
+        this.pluralizedTypes.config = 'config';
+      }
     },
     normalize: function(fullName) {
       return this._normalizeCache[fullName] || (this._normalizeCache[fullName] = this._normalize(fullName));
@@ -166,6 +173,10 @@ define("ember/resolver",
       } else {
         return fullName;
       }
+    },
+
+    pluralize: function(type) {
+      return this.pluralizedTypes[type] || (this.pluralizedTypes[type] = type + 's');
     },
 
     podBasedLookupWithPrefix: function(podPrefix, parsedName) {
@@ -203,7 +214,7 @@ define("ember/resolver",
     },
 
     defaultModuleName: function(parsedName) {
-      return this.prefix(parsedName) + '/' +  parsedName.type + 's/' + parsedName.fullNameWithoutType;
+      return this.prefix(parsedName) + '/' +  this.pluralize(parsedName.type) + '/' + parsedName.fullNameWithoutType;
     },
 
     prefix: function(parsedName) {
