@@ -64,22 +64,15 @@ define("ember/resolver",
 
     if (fullName.parsedName === true) { return fullName; }
 
-    var prefixParts = fullName.split('@');
-    if (prefixParts[0].split(':')[0] === 'view') {
-      prefixParts[0] = prefixParts[0].split(':')[1];
-      prefixParts[1] = 'view:' + prefixParts[1];
-    }
-    var prefix = prefixParts.length === 2 ? prefixParts[0] : null;
-    var nameParts = prefixParts[prefixParts.length - 1].split(":");
-    var type = nameParts[0], fullNameWithoutType = nameParts[1];
-    var name = fullNameWithoutType;
-    var namespace = get(this, 'namespace');
-    var root = namespace;
+    var nameParts = fullName.split(":"),
+        type = nameParts[0], fullNameWithoutType = nameParts[1],
+        name = fullNameWithoutType,
+        namespace = get(this, 'namespace'),
+        root = namespace;
 
     return {
       parsedName: true,
       fullName: fullName,
-      prefix: prefix || this.prefix({type: type}),
       type: type,
       fullNameWithoutType: fullNameWithoutType,
       name: name,
@@ -213,7 +206,7 @@ define("ember/resolver",
 
     mainModuleName: function(parsedName) {
       // if router:main or adapter:main look for a module with just the type first
-      var tmpModuleName = parsedName.prefix + '/' + parsedName.type;
+      var tmpModuleName = this.prefix(parsedName) + '/' + parsedName.type;
 
       if (parsedName.fullNameWithoutType === 'main') {
         return tmpModuleName;
@@ -221,7 +214,7 @@ define("ember/resolver",
     },
 
     defaultModuleName: function(parsedName) {
-      return parsedName.prefix + '/' +  this.pluralize(parsedName.type) + '/' + parsedName.fullNameWithoutType;
+      return this.prefix(parsedName) + '/' +  this.pluralize(parsedName.type) + '/' + parsedName.fullNameWithoutType;
     },
 
     prefix: function(parsedName) {
