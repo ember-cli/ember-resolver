@@ -112,7 +112,9 @@ var define, requireModule, require, requirejs;
       obj = seen[name] = module;
     }
 
-    if (obj !== null && (typeof obj === 'object' || typeof obj === 'function') && obj['default'] === undefined) {
+    if (obj !== null &&
+        (typeof obj === 'object' || typeof obj === 'function') &&
+        obj['default'] === undefined) {
       obj['default'] = obj;
     }
 

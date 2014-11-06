@@ -245,3 +245,14 @@ test("if a CJS style module has no default export assume module.exports is the d
 
   equal(foo.bar, 'bar');
 });
+
+
+test("if a module has no default property assume its export is default (function)", function() {
+  var theFunction = function theFunction() {};
+  define('foo', ['require', 'exports', 'module'], function(require, exports, module) {
+    return theFunction;
+  });
+
+  equal(require('foo')['default'], theFunction);
+  equal(require('foo'), theFunction);
+});
