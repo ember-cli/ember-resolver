@@ -313,6 +313,7 @@ define("ember/resolver",
     }
   });
 
+  Resolver.moduleBasedResolver = true;
   Resolver['default'] = Resolver;
   return Resolver;
 });
