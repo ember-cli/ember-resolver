@@ -116,7 +116,7 @@ define("ember/resolver",
   function resolveOther(parsedName) {
     /*jshint validthis:true */
 
-    Ember.assert('module prefix must be defined', this.namespace.modulePrefix);
+    Ember.assert('`modulePrefix` must be defined', this.namespace.modulePrefix);
 
     var normalizedModuleName = this.findModuleName(parsedName);
 
@@ -314,6 +314,7 @@ define("ember/resolver",
     }
   });
 
+  Resolver.moduleBasedResolver = true;
   Resolver['default'] = Resolver;
   return Resolver;
 });
