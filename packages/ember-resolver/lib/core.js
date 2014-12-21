@@ -153,6 +153,7 @@ define("ember/resolver",
     },
     init: function() {
       this._super();
+      this.moduleBasedResolver = true;
       this._normalizeCache = makeDictionary();
 
       this.pluralizedTypes = this.pluralizedTypes || makeDictionary();
