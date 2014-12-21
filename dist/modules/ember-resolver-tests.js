@@ -15,8 +15,8 @@ module("Container Debug Adapter Tests", {
     Ember.run(function() {
       App = Ember.Application.extend({
         init: function () {
-            this.deferReadiness();
             this._super.apply(this, arguments);
+            this.deferReadiness();
         },
         toString: function() { return 'App'; },
         modulePrefix: 'appkit',
