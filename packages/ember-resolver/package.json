@@ -2,7 +2,7 @@
   "name": "ember-resolver",
   "summary": "Ember Resolver Reboot",
   "description": "Ember Resolver Reboot",
-  "homepage": "https://github.com/stefanpenner/ember-resolver",
+  "homepage": "https://github.com/ember-cli/ember-resolver",
   "author": "Stefan Penner",
   "version": "0.0.1"
 }
