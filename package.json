@@ -19,7 +19,7 @@
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/stefanpenner/loader.js/issues"
+    "url": "https://github.com/ember-cli/loader.js/issues"
   },
-  "homepage": "https://github.com/stefanpenner/loader.js"
+  "homepage": "https://github.com/ember-cli/loader.js"
 }

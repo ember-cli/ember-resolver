@@ -2,7 +2,7 @@
   "name": "loader.js",
   "main": "loader.js",
   "version": "2.1.1",
-  "homepage": "https://github.com/stefanpenner/loader.js",
+  "homepage": "https://github.com/ember-cli/loader.js",
   "authors": [
     "Stefan Penner <stefan.penner@gmail.com>"
   ],
