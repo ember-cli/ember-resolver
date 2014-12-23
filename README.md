@@ -1,4 +1,4 @@
-loader.js [![Build Status](https://travis-ci.org/stefanpenner/loader.js.png?branch=master)](https://travis-ci.org/stefanpenner/loader.js)
+loader.js [![Build Status](https://travis-ci.org/ember-cli/loader.js.png?branch=master)](https://travis-ci.org/ember-cli/loader.js)
 =========
 
 Minimal AMD loader mostly stolen from [@wycats](https://github.com/wycats).
@@ -24,4 +24,4 @@ testem
 
 ## License
 
-loader.js is [MIT Licensed](https://github.com/stefanpenner/loader.js/blob/master/LICENSE.md).
+loader.js is [MIT Licensed](https://github.com/ember-cli/loader.js/blob/master/LICENSE.md).
