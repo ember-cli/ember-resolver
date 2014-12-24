@@ -193,13 +193,13 @@ define("ember/resolver",
     },
 
     podBasedModuleName: function(parsedName) {
-      var podPrefix = this.namespace.podModulePrefix || this.namespace.modulePrefix;
+      var podPrefix = this.podPrefix();
 
       return this.podBasedLookupWithPrefix(podPrefix, parsedName);
     },
 
     podBasedComponentsInSubdir: function(parsedName) {
-      var podPrefix = this.namespace.podModulePrefix || this.namespace.modulePrefix;
+      var podPrefix = this.podPrefix();
       podPrefix = podPrefix + '/components';
 
       if (parsedName.type === 'component' || parsedName.fullNameWithoutType.match(/^components/)) {
@@ -228,6 +228,10 @@ define("ember/resolver",
       }
 
       return tmpPrefix;
+    },
+
+    podPrefix: function() {
+      return this.namespace.podModulePrefix || this.namespace.modulePrefix + '/pods';
     },
 
     /**
