@@ -256,3 +256,15 @@ test("if a module has no default property assume its export is default (function
   equal(require('foo')['default'], theFunction);
   equal(require('foo'), theFunction);
 });
+
+
+test("has good error message for missing module", function() {
+  var theFunction = function theFunction() {};
+  define('foo', ['apple'], function(require, exports, module) {
+    return theFunction;
+  });
+
+  throws(function() {
+    require('foo');
+  },  'Could not find module: `apple` imported from: foo');
+});

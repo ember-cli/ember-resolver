@@ -34,6 +34,15 @@ var define, requireModule, require, requirejs;
     this.exports  = exports || { };
     this.callback = callback;
     this.state    = undefined;
+    this._require  = undefined;
+  }
+
+  Module.prototype.makeRequire = function() {
+    var name = this.name;
+
+    return this._require || (this._require = function(dep) {
+      return require(resolve(dep, name));
+    });
   }
 
   define = function(name, deps, callback) {
@@ -61,14 +70,12 @@ var define, requireModule, require, requirejs;
       if (dep === 'exports') {
         module.exports = reified[i] = seen;
       } else if (dep === 'require') {
-        reified[i] = function requireDep(dep) {
-          return require(resolve(dep, name));
-        };
+        reified[i] = mod.makeRequire();
       } else if (dep === 'module') {
         mod.exports = seen;
         module = reified[i] = mod;
       } else {
-        reified[i] = require(resolve(dep, name));
+        reified[i] = requireFrom(resolve(dep, name), name);
       }
     }
 
@@ -76,6 +83,14 @@ var define, requireModule, require, requirejs;
       deps: reified,
       module: module
     };
+  }
+
+  function requireFrom(name, origin) {
+    var mod = registry[name];
+    if (!mod) {
+      throw new Error('Could not find module: `' + name + '` imported from: ' + origin);
+    }
+    return require(name);
   }
 
   requirejs = require = requireModule = function(name) {
@@ -114,7 +129,7 @@ var define, requireModule, require, requirejs;
 
     if (obj !== null &&
         (typeof obj === 'object' || typeof obj === 'function') &&
-        obj['default'] === undefined) {
+          obj['default'] === undefined) {
       obj['default'] = obj;
     }
 
