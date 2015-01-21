@@ -54,7 +54,10 @@ var define, requireModule, require, requirejs;
     registry[name] = new Module(name, deps, callback);
   };
 
-  define.amd = {};
+  // we don't support all of AMD
+  // define.amd = {};
+  // we will support petals...
+  define.petal = { };
 
   function reify(mod, name, seen) {
     var deps = mod.deps;
