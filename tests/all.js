@@ -144,6 +144,27 @@ test('deep nested relative import/export', function(){
   equal(require('foo/a/b/c'), 'baz');
 });
 
+test('incorrect lookup paths should fail', function(){
+
+  define('foo/isolated-container', [], function() {
+    return 'container';
+  });
+
+
+  define('foo', ['./isolated-container'], function(container) {
+    return {
+      container: container
+    };
+  });
+
+  throws(function() {
+    return require('foo');
+  }, function(err) {
+      return err.message === 'Could not find module: `isolated-container` imported from: foo';
+  });
+
+});
+
 test('top-level relative import/export', function(){
   expect(2);
 
