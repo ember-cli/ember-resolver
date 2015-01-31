@@ -160,7 +160,7 @@ test('incorrect lookup paths should fail', function(){
   throws(function() {
     return require('foo');
   }, function(err) {
-      return err.message === 'Could not find module: `isolated-container` imported from: foo';
+      return err.message === 'Could not find module `isolated-container` imported from `foo`';
   });
 
 });
@@ -288,5 +288,5 @@ test("has good error message for missing module", function() {
 
   throws(function() {
     require('foo');
-  },  'Could not find module: `apple` imported from: foo');
+  }, /Could not find module `apple` imported from `foo`/);
 });
