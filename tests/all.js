@@ -290,3 +290,19 @@ test("has good error message for missing module", function() {
     require('foo');
   },  'Could not find module: `apple` imported from: foo');
 });
+
+test('throws when accessing parent module of root', function(){
+  expect(2);
+
+  define('foo', ['../a'], function() {});
+
+  throws(function() {
+    require('foo');
+  }, /Cannot access parent module of root/);
+
+  define('bar/baz', ['../../a'], function() {});
+
+  throws(function() {
+    require('bar/baz');
+  }, /Cannot access parent module of root/);
+});
