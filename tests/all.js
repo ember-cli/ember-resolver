@@ -332,3 +332,21 @@ test("relative CJS esq require", function() {
 
   equal(require('foo/a'), 'c-content');
 });
+
+
+test("relative CJS esq require (with exports and module');", function() {
+  define('foo/a', ['module', 'exports', 'require'], function(module, exports, require) {
+    module.exports = require('./b');
+  });
+
+
+  define('foo/b', ['module', 'exports', 'require'], function(module, exports, require) {
+    module.exports = require('./c');
+  });
+
+  define('foo/c', ['module', 'exports', 'require'], function(module, exports, require) {
+    module.exports = 'c-content';
+  });
+
+  equal(require('foo/a'), 'c-content');
+});
