@@ -315,3 +315,20 @@ test('throws when accessing parent module of root', function(){
     require('bar/baz');
   }, /Cannot access parent module of root/);
 });
+
+test("relative CJS esq require", function() {
+  define('foo/a', ['require'], function(require) {
+    return require('./b');
+  });
+
+
+  define('foo/b', ['require'], function(require) {
+    return require('./c');
+  });
+
+  define('foo/c', ['require'], function(require) {
+    return 'c-content';
+  });
+
+  equal(require('foo/a'), 'c-content');
+});
