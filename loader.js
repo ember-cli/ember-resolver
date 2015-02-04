@@ -24,10 +24,13 @@ var define, requireModule, require, requirejs;
     }
   }
 
+  function unsupportedModule(length) {
+    throw new Error("an unsupported module was defined, expected `define(name, deps, module)` instead got: `" + length + "` arguments to define`");
+  }
+
+  var defaultDeps = ['require', 'exports', 'module'];
 
   function Module(name, deps, callback, exports) {
-    var defaultDeps = ['require', 'exports', 'module'];
-
     this.id       = uuid++;
     this.name     = name;
     this.deps     = !deps.length && callback.length ? defaultDeps : deps;
@@ -36,6 +39,7 @@ var define, requireModule, require, requirejs;
     this.state    = undefined;
     this._require  = undefined;
   }
+
 
   Module.prototype.makeRequire = function() {
     var name = this.name;
@@ -46,6 +50,10 @@ var define, requireModule, require, requirejs;
   }
 
   define = function(name, deps, callback) {
+    if (arguments.length < 2) {
+      unsupportedModule(arguments.length);
+    }
+
     if (!_isArray(deps)) {
       callback = deps;
       deps     =  [];

@@ -291,6 +291,15 @@ test("has good error message for missing module", function() {
   }, /Could not find module `apple` imported from `foo`/);
 });
 
+test("provides good error message when an un-named AMD module is provided", function() {
+  throws(function() {
+    define(function() {
+
+    });
+  },new Error('an unsupported module was defined, expected `define(name, deps, module)` instead got: `1` arguments to define`'));
+});
+
+
 test('throws when accessing parent module of root', function(){
   expect(2);
 
