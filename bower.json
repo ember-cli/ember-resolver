@@ -1,6 +1,6 @@
 {
   "name": "ember-resolver",
-  "version": "0.1.11",
+  "version": "0.1.12",
   "main": ["dist/ember-resolver.js", "dist/ember-resolver.prod.js", "dist/ember-resolver.min.js"],
   "ignore": [
     ".jshintrc",
