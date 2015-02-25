@@ -67,6 +67,14 @@ var define, requireModule, require, requirejs;
   // we will support petals...
   define.petal = { };
 
+  function Alias(path) {
+    this.name = path;
+  }
+
+  define.alias = function(path) {
+    return new Alias(path);
+  };
+
   function reify(mod, name, seen) {
     var deps = mod.deps;
     var length = deps.length;
@@ -104,11 +112,18 @@ var define, requireModule, require, requirejs;
     return require(name);
   }
 
+  function missingModule(name) {
+    throw new Error('Could not find module ' + name);
+  }
   requirejs = require = requireModule = function(name) {
     var mod = registry[name];
-    if (!mod) {
-      throw new Error('Could not find module ' + name);
+
+
+    if (mod && mod.callback instanceof Alias) {
+      mod = registry[mod.callback.name];
     }
+
+    if (!mod) { missingModule(name); }
 
     if (mod.state !== FAILED &&
         seen.hasOwnProperty(name)) {

@@ -339,7 +339,6 @@ test("relative CJS esq require (with exports and module');", function() {
     module.exports = require('./b');
   });
 
-
   define('foo/b', ['module', 'exports', 'require'], function(module, exports, require) {
     module.exports = require('./c');
   });
@@ -349,4 +348,18 @@ test("relative CJS esq require (with exports and module');", function() {
   });
 
   equal(require('foo/a'), 'c-content');
+});
+
+test('foo foo/index are the same thing', function() {
+  define('foo/index', [] , function() {
+    return { 'default': 'hi' };
+  });
+
+  define('foo', [ ], define.alias('foo/index'));
+
+  define('bar', ['foo', 'foo/index'] , function(foo, fooIndex) {
+    deepEqual(foo, fooIndex);
+  });
+
+  deepEqual(require('foo'), require('foo/index'));
 });
