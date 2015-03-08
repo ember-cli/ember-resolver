@@ -84,35 +84,6 @@ define("ember/resolver",
     };
   }
 
-  function chooseModuleName(moduleEntries, moduleName) {
-    var underscoredModuleName = Ember.String.underscore(moduleName);
-
-    if (moduleName !== underscoredModuleName && moduleEntries[moduleName] && moduleEntries[underscoredModuleName]) {
-      throw new TypeError("Ambiguous module names: `" + moduleName + "` and `" + underscoredModuleName + "`");
-    }
-
-    if (moduleEntries[moduleName]) {
-      return moduleName;
-    } else if (moduleEntries[underscoredModuleName]) {
-      return underscoredModuleName;
-    } else {
-      // workaround for dasherized partials:
-      // something/something/-something => something/something/_something
-      var partializedModuleName = moduleName.replace(/\/-([^\/]*)$/, '/_$1');
-
-      if (moduleEntries[partializedModuleName]) {
-        Ember.deprecate('Modules should not contain underscores. ' +
-                        'Attempted to lookup "'+moduleName+'" which ' +
-                        'was not found. Please rename "'+partializedModuleName+'" '+
-                        'to "'+moduleName+'" instead.', false);
-
-        return partializedModuleName;
-      } else {
-        return moduleName;
-      }
-    }
-  }
-
   function resolveOther(parsedName) {
     /*jshint validthis:true */
 
@@ -260,7 +231,7 @@ define("ember/resolver",
         // allow treat all dashed and all underscored as the same thing
         // supports components with dashes and other stuff with underscores.
         if (tmpModuleName) {
-          tmpModuleName = chooseModuleName(moduleEntries, tmpModuleName);
+          tmpModuleName = self.chooseModuleName(moduleEntries, tmpModuleName);
         }
 
         if (tmpModuleName && moduleEntries[tmpModuleName]) {
@@ -279,6 +250,35 @@ define("ember/resolver",
       });
 
       return moduleName;
+    },
+
+    chooseModuleName: function(moduleEntries, moduleName) {
+      var underscoredModuleName = Ember.String.underscore(moduleName);
+
+      if (moduleName !== underscoredModuleName && moduleEntries[moduleName] && moduleEntries[underscoredModuleName]) {
+        throw new TypeError("Ambiguous module names: `" + moduleName + "` and `" + underscoredModuleName + "`");
+      }
+
+      if (moduleEntries[moduleName]) {
+        return moduleName;
+      } else if (moduleEntries[underscoredModuleName]) {
+        return underscoredModuleName;
+      } else {
+        // workaround for dasherized partials:
+        // something/something/-something => something/something/_something
+        var partializedModuleName = moduleName.replace(/\/-([^\/]*)$/, '/_$1');
+
+        if (moduleEntries[partializedModuleName]) {
+          Ember.deprecate('Modules should not contain underscores. ' +
+                          'Attempted to lookup "'+moduleName+'" which ' +
+                          'was not found. Please rename "'+partializedModuleName+'" '+
+                          'to "'+moduleName+'" instead.', false);
+
+          return partializedModuleName;
+        } else {
+          return moduleName;
+        }
+      }
     },
 
     // used by Ember.DefaultResolver.prototype._logLookup
