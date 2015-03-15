@@ -302,12 +302,14 @@ test("will lookup names with slashes properly", function() {
 });
 
 test("specifying a podModulePrefix overrides the general modulePrefix", function() {
-  setupResolver({
-    namespace: {
-      modulePrefix: 'appkit',
-      podModulePrefix: 'appkit/pods'
-    }
-  });
+  expectDeprecation(function() {
+    setupResolver({
+      namespace: {
+        modulePrefix: 'appkit',
+        podModulePrefix: 'appkit/pods'
+      }
+    });
+  }, "`podModulePrefix` is deprecated and will be removed from future versions of ember-cli. Please move existing pods from 'app/pods/' to 'app/'.");
 
   define('appkit/controllers/foo', [], function(){
     ok(false, 'appkit/controllers was used');
