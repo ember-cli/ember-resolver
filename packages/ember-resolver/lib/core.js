@@ -137,7 +137,7 @@ define("ember/resolver",
       var podPath = podModulePrefix.substr(podModulePrefix.lastIndexOf('/') + 1);
       Ember.deprecate('`podModulePrefix` is deprecated and will be removed '+
         'from future versions of ember-cli. Please move existing pods from '+
-        '\'app/' + podPath + '/\' to \'app/\'.', this.namespace.podModulePrefix !== '');
+        '\'app/' + podPath + '/\' to \'app/\'.', !this.namespace.podModulePrefix);
 
     },
     normalize: function(fullName) {
