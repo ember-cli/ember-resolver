@@ -87,6 +87,17 @@ define("ember/resolver",
   function resolveOther(parsedName) {
     /*jshint validthis:true */
 
+    if (!this._deprecatedPodModulePrefix) {
+      var podModulePrefix = this.namespace.podModulePrefix || '';
+      var podPath = podModulePrefix.substr(podModulePrefix.lastIndexOf('/') + 1);
+
+      Ember.deprecate('`podModulePrefix` is deprecated and will be removed '+
+        'from future versions of ember-cli. Please move existing pods from '+
+        '\'app/' + podPath + '/\' to \'app/\'.', !this.namespace.podModulePrefix);
+
+      this._deprecatedPodModulePrefix = true;
+    }
+
     Ember.assert('`modulePrefix` must be defined', this.namespace.modulePrefix);
 
     var normalizedModuleName = this.findModuleName(parsedName);
@@ -133,13 +144,8 @@ define("ember/resolver",
       if (!this.pluralizedTypes.config) {
         this.pluralizedTypes.config = 'config';
       }
-      
-      var podModulePrefix = this.namespace.podModulePrefix || '';
-      var podPath = podModulePrefix.substr(podModulePrefix.lastIndexOf('/') + 1);
-      Ember.deprecate('`podModulePrefix` is deprecated and will be removed '+
-        'from future versions of ember-cli. Please move existing pods from '+
-        '\'app/' + podPath + '/\' to \'app/\'.', !this.namespace.podModulePrefix);
 
+      this._deprecatedPodModulePrefix = false;
     },
     normalize: function(fullName) {
       return this._normalizeCache[fullName] || (this._normalizeCache[fullName] = this._normalize(fullName));

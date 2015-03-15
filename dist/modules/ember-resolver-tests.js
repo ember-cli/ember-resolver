@@ -158,6 +158,12 @@ test("can access Resolver", function(){
   ok(resolver);
 });
 
+test('does not require `namespace` to exist at `init` time', function() {
+  expect(0);
+
+  resolver = Resolver.create();
+});
+
 test("can lookup something", function(){
   expect(2);
 
@@ -413,14 +419,12 @@ test("will lookup names with slashes properly", function() {
 });
 
 test("specifying a podModulePrefix overrides the general modulePrefix", function() {
-  expectDeprecation(function() {
-    setupResolver({
-      namespace: {
-        modulePrefix: 'appkit',
-        podModulePrefix: 'appkit/pods'
-      }
-    });
-  }, "`podModulePrefix` is deprecated and will be removed from future versions of ember-cli. Please move existing pods from 'app/pods/' to 'app/'.");
+  setupResolver({
+    namespace: {
+      modulePrefix: 'appkit',
+      podModulePrefix: 'appkit/pods'
+    }
+  });
 
   define('appkit/controllers/foo', [], function(){
     ok(false, 'appkit/controllers was used');
@@ -437,18 +441,26 @@ test("specifying a podModulePrefix overrides the general modulePrefix", function
     return 'whatever';
   });
 
-  resolver.resolve('controller:foo');
+  expectDeprecation(function() {
+    resolver.resolve('controller:foo');
+  }, "`podModulePrefix` is deprecated and will be removed from future versions of ember-cli. Please move existing pods from 'app/pods/' to 'app/'.");
 });
 
 test("specifying a podModulePrefix is deprecated", function() {
+  setupResolver({
+    namespace: {
+      modulePrefix: 'appkit',
+      podModulePrefix: 'appkit/pods'
+    }
+  });
+
   expectDeprecation(function() {
-    setupResolver({
-      namespace: {
-        modulePrefix: 'appkit',
-        podModulePrefix: 'appkit/pods'
-      }
-    });
+    resolver.resolve('foo:bar');
   }, "`podModulePrefix` is deprecated and will be removed from future versions of ember-cli. Please move existing pods from 'app/pods/' to 'app/'.");
+
+  expectNoDeprecation(function() {
+    resolver.resolve('foo:bar');
+  });
 });
 
 test("will not use custom type prefix when using POD format", function() {
