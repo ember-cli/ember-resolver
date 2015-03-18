@@ -86,7 +86,9 @@ define("ember/resolver",
 
   function resolveOther(parsedName) {
     /*jshint validthis:true */
-
+    
+    // Temporarily disabling podModulePrefix deprecation
+    /*
     if (!this._deprecatedPodModulePrefix) {
       var podModulePrefix = this.namespace.podModulePrefix || '';
       var podPath = podModulePrefix.substr(podModulePrefix.lastIndexOf('/') + 1);
@@ -97,7 +99,7 @@ define("ember/resolver",
 
       this._deprecatedPodModulePrefix = true;
     }
-
+    */
     Ember.assert('`modulePrefix` must be defined', this.namespace.modulePrefix);
 
     var normalizedModuleName = this.findModuleName(parsedName);
