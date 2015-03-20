@@ -440,13 +440,11 @@ test("specifying a podModulePrefix overrides the general modulePrefix", function
     ok(true, 'appkit/pods/foo/controllers was used');
     return 'whatever';
   });
-  resolver.resolve('controller:foo');
+
   // Temporarily disabling podModulePrefix deprecation
-  /*
-    expectDeprecation(function() {
+  // expectDeprecation(function() {
       resolver.resolve('controller:foo');
-    }, "`podModulePrefix` is deprecated and will be removed from future versions of ember-cli. Please move existing pods from 'app/pods/' to 'app/'.");
-  */
+  // }, "`podModulePrefix` is deprecated and will be removed from future versions of ember-cli. Please move existing pods from 'app/pods/' to 'app/'.");
 });
 
 // Temporarily disabling podModulePrefix deprecation
