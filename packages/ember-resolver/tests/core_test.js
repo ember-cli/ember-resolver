@@ -285,8 +285,8 @@ test("will lookup modulePrefix/name/type before prefix/type/name", function() {
     return 'whatever';
   });
 
-  define('appkit/foo/controller', [], function(){
-    ok(true, 'appkit/foo/controllers was used');
+  define('appkit/pods/foo/controller', [], function(){
+    ok(true, 'appkit/pods/foo/controllers was used');
     return 'whatever';
   });
 
@@ -299,8 +299,8 @@ test("will lookup names with slashes properly", function() {
     return 'whatever';
   });
 
-  define('appkit/foo/index/controller', [], function(){
-    ok(true, 'appkit/foo/index/controller was used');
+  define('appkit/pods/foo/index/controller', [], function(){
+    ok(true, 'appkit/pods/foo/index/controller was used');
     return 'whatever';
   });
 
@@ -311,7 +311,7 @@ test("specifying a podModulePrefix overrides the general modulePrefix", function
   setupResolver({
     namespace: {
       modulePrefix: 'appkit',
-      podModulePrefix: 'appkit/pods'
+      podModulePrefix: 'appkit/custom-pods'
     }
   });
 
@@ -325,8 +325,8 @@ test("specifying a podModulePrefix overrides the general modulePrefix", function
     return 'whatever';
   });
 
-  define('appkit/pods/foo/controller', [], function(){
-    ok(true, 'appkit/pods/foo/controllers was used');
+  define('appkit/custom-pods/foo/controller', [], function(){
+    ok(true, 'appkit/custom-pods/foo/controllers was used');
     return 'whatever';
   });
 
@@ -369,8 +369,8 @@ test("will not use custom type prefix when using POD format", function() {
     return 'whatever';
   });
 
-  define('appkit/foo/controller', [], function(){
-    ok(true, 'appkit/foo/controllers was used');
+  define('appkit/pods/foo/controller', [], function(){
+    ok(true, 'appkit/pods/foo/controllers was used');
     return 'whatever';
   });
 
@@ -378,13 +378,13 @@ test("will not use custom type prefix when using POD format", function() {
 });
 
 test("will lookup a components template without being rooted in `components/`", function() {
-  define('appkit/components/foo-bar/template', [], function(){
-    ok(false, 'appkit/components was used');
+  define('appkit/pods/components/foo-bar/template', [], function(){
+    ok(false, 'appkit/pods/components was used');
     return 'whatever';
   });
 
-  define('appkit/foo-bar/template', [], function(){
-    ok(true, 'appkit/foo-bar/template was used');
+  define('appkit/pods/foo-bar/template', [], function(){
+    ok(true, 'appkit/pods/foo-bar/template was used');
     return 'whatever';
   });
 
@@ -394,12 +394,12 @@ test("will lookup a components template without being rooted in `components/`", 
 test("will use pods format to lookup components in components/", function() {
   expect(2);
 
-  define('appkit/components/foo-bar/template', [], function(){
+  define('appkit/pods/components/foo-bar/template', [], function(){
     ok(true, 'appkit/components was used');
     return 'whatever';
   });
 
-  define('appkit/components/foo-bar/component', [], function(){
+  define('appkit/pods/components/foo-bar/component', [], function(){
     ok(true, 'appkit/components was used');
     return 'whatever';
   });
