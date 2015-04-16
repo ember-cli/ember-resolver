@@ -13,12 +13,12 @@ if (Object.keys) {
 }
 
 module('loader.js api', {
-  teardown: function(){
+  teardown: function() {
     requirejs.clear();
   }
 });
 
-test('has api', function(){
+test('has api', function() {
   equal(typeof require, 'function');
   equal(typeof define, 'function');
   equal(define.amd, undefined);
@@ -27,7 +27,7 @@ test('has api', function(){
   equal(typeof requireModule, 'function');
 });
 
-test('simple define/require', function(){
+test('simple define/require', function() {
   var fooCalled = 0;
 
   define('foo', [], function() {
@@ -47,7 +47,7 @@ test('simple define/require', function(){
 });
 
 
-test('define without deps', function(){
+test('define without deps', function() {
   var fooCalled = 0;
 
   define('foo', function() {
@@ -61,7 +61,7 @@ test('define without deps', function(){
 });
 
 
-test('multiple define/require', function(){
+test('multiple define/require', function() {
   define('foo', [], function() {
 
   });
@@ -76,7 +76,7 @@ test('multiple define/require', function(){
 });
 
 
-test('simple import/export', function(){
+test('simple import/export', function() {
   expect(2);
   define('foo', ['bar'], function(bar) {
     equal(bar.baz, 'baz');
@@ -94,7 +94,7 @@ test('simple import/export', function(){
 });
 
 
-test('simple import/export with `exports`', function(){
+test('simple import/export with `exports`', function() {
   expect(2);
   define('foo', ['bar', 'exports'], function(bar, __exports__) {
     equal(bar.baz, 'baz');
@@ -109,7 +109,7 @@ test('simple import/export with `exports`', function(){
   equal(require('foo').baz, 'baz');
 });
 
-test('relative import/export', function(){
+test('relative import/export', function() {
   expect(2);
   define('foo/a', ['./b'], function(bar) {
     equal(bar.baz, 'baz');
@@ -126,7 +126,7 @@ test('relative import/export', function(){
   equal(require('foo/a'), 'baz');
 });
 
-test('deep nested relative import/export', function(){
+test('deep nested relative import/export', function() {
   expect(2);
 
   define('foo/a/b/c', ['../../b/b/c'], function(bar) {
@@ -144,7 +144,7 @@ test('deep nested relative import/export', function(){
   equal(require('foo/a/b/c'), 'baz');
 });
 
-test('incorrect lookup paths should fail', function(){
+test('incorrect lookup paths should fail', function() {
 
   define('foo/isolated-container', [], function() {
     return 'container';
@@ -160,12 +160,12 @@ test('incorrect lookup paths should fail', function(){
   throws(function() {
     return require('foo');
   }, function(err) {
-      return err.message === 'Could not find module `isolated-container` imported from `foo`';
+    return err.message === 'Could not find module `isolated-container` imported from `foo`';
   });
 
 });
 
-test('top-level relative import/export', function(){
+test('top-level relative import/export', function() {
   expect(2);
 
   define('foo', ['./bar'], function(bar) {
@@ -183,7 +183,7 @@ test('top-level relative import/export', function(){
   equal(require('foo'), 'baz');
 });
 
-test('runtime cycles', function(){
+test('runtime cycles', function() {
   define('foo', ['bar', 'exports'], function(bar, __exports__) {
     __exports__.quz = function() {
       return bar.baz;
@@ -233,7 +233,7 @@ test('pass default deps if arguments are expected and deps not passed', function
 test('if factory returns a value it is used as export', function() {
   define('foo', ['require', 'exports', 'module'], function(require, exports, module) {
     return {
-      bar:'bar'
+      bar: 'bar'
     };
   });
 
@@ -245,7 +245,7 @@ test('if factory returns a value it is used as export', function() {
 test("if a module has no default property assume the return is the default", function() {
   define('foo', [], function() {
     return {
-      bar:'bar'
+      bar: 'bar'
     };
   });
 
@@ -296,11 +296,11 @@ test("provides good error message when an un-named AMD module is provided", func
     define(function() {
 
     });
-  },new Error('an unsupported module was defined, expected `define(name, deps, module)` instead got: `1` arguments to define`'));
+  }, new Error('an unsupported module was defined, expected `define(name, deps, module)` instead got: `1` arguments to define`'));
 });
 
 
-test('throws when accessing parent module of root', function(){
+test('throws when accessing parent module of root', function() {
   expect(2);
 
   define('foo', ['../a'], function() {});
