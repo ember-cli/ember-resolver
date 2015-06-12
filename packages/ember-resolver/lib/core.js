@@ -110,7 +110,7 @@ define("ember/resolver",
         throw new Error(" Expected to find: '" + parsedName.fullName + "' within '" + normalizedModuleName + "' but got 'undefined'. Did you forget to `export default` within '" + normalizedModuleName + "'?");
       }
 
-      if (this.shouldWrapInClassFactory(module, parsedName)) {
+      if (this.shouldWrapInClassFactory(defaultExport, parsedName)) {
         defaultExport = classFactory(defaultExport);
       }
 
