@@ -6,7 +6,7 @@
 // ==========================================================================
 
 
- // Version: 0.1.16
+ // Version: 0.1.17
 
 (function() {
 /*globals define registry requirejs */
