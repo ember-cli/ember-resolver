@@ -261,11 +261,29 @@ test('eachForType can find both pod and non-pod factories', function() {
   });
 });
 
+test('if shouldWrapInClassFactory returns true a wrapped object is returned', function() {
+  resolver.shouldWrapInClassFactory = function(defaultExport, parsedName) {
+    equal(defaultExport, 'foo');
+    equal(parsedName.fullName, 'string:foo');
+
+    return true;
+  };
+
+  define('appkit/strings/foo', [], function() {
+    return { default: 'foo' };
+  });
+
+  var value = resolver.resolve('string:foo');
+
+  equal(value.create(), 'foo');
+});
+
 module("Logging", {
   setup: function() {
     originalLog = Ember.Logger.info;
     logCalls = [];
     Ember.Logger.info = function(arg) { logCalls.push(arg); };
+    setupResolver();
   },
 
   teardown: function() {
@@ -298,6 +316,7 @@ test("doesn't log lookups if disabled", function() {
 });
 
 module("custom prefixes by type", {
+  setup: setupResolver,
   teardown: resetRegistry
 });
 
