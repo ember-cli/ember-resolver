@@ -38,7 +38,7 @@ define("ember/resolver",
   }
 
   function makeDictionary() {
-    var cache = Ember.create(null);
+    var cache = Object.create(null);
     cache['_dict'] = null;
     delete cache['_dict'];
     return cache;
@@ -329,7 +329,7 @@ define("ember/resolver",
 
     knownForType: function(type) {
       var moduleEntries = requirejs.entries;
-      var moduleKeys = Ember.keys(moduleEntries);
+      var moduleKeys = Object.keys(moduleEntries);
 
       var items = makeDictionary();
       for (var index = 0, length = moduleKeys.length; index < length; index++) {
