@@ -44,12 +44,13 @@ define("ember/resolver",
     };
   }
 
-  if (!(Object.create && !Object.create(null).hasOwnProperty)) {
+  var create = (Object.create || Ember.create);
+  if (!(create && !create(null).hasOwnProperty)) {
     throw new Error("This browser does not support Object.create(null), please polyfil with es5-sham: http://git.io/yBU2rg");
   }
 
   function makeDictionary() {
-    var cache = Ember.create(null);
+    var cache = create(null);
     cache['_dict'] = null;
     delete cache['_dict'];
     return cache;
@@ -340,7 +341,7 @@ define("ember/resolver",
 
     knownForType: function(type) {
       var moduleEntries = requirejs.entries;
-      var moduleKeys = Ember.keys(moduleEntries);
+      var moduleKeys = (Object.keys || Ember.keys)(moduleEntries);
 
       var items = makeDictionary();
       for (var index = 0, length = moduleKeys.length; index < length; index++) {
