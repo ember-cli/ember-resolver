@@ -58,10 +58,9 @@ define("ember/resolver",
     var prefix;
 
     if (prefixParts.length === 2) {
-      if (prefixParts[0].split(':')[0] === 'view') {
-        prefixParts[0] = prefixParts[0].split(':')[1];
-        prefixParts[1] = 'view:' + prefixParts[1];
-      }
+      var type = prefixParts[0].split(':')[0];
+      prefixParts[0] = prefixParts[0].split(':')[1];
+      prefixParts[1] = type + ':' + prefixParts[1];
 
       prefix = prefixParts[0];
     }
