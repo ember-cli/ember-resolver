@@ -1,3 +1,5 @@
+'use strict';
+
 var keys;
 
 if (Object.keys) {
@@ -362,4 +364,24 @@ test('foo foo/index are the same thing', function() {
   });
 
   deepEqual(require('foo'), require('foo/index'));
+});
+
+test('unsee', function() {
+  var counter = 0;
+  define('foo', [] , function() {
+    counter++;
+    return { 'default': 'hi' };
+  });
+
+  equal(counter, 0);
+  require('foo');
+  equal(counter, 1);
+  require('foo');
+  equal(counter, 1);
+  require.unsee('foo');
+  equal(counter, 1);
+  require('foo');
+  equal(counter, 2);
+  require('foo');
+  equal(counter, 2);
 });

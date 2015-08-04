@@ -119,7 +119,6 @@ var define, requireModule, require, requirejs;
   requirejs = require = requireModule = function(name) {
     var mod = registry[name];
 
-
     if (mod && mod.callback instanceof Alias) {
       mod = registry[mod.callback.name];
     }
@@ -187,6 +186,10 @@ var define, requireModule, require, requirejs;
   }
 
   requirejs.entries = requirejs._eak_seen = registry;
+  requirejs.unsee = function(moduleName) {
+    delete seen[moduleName];
+  };
+
   requirejs.clear = function() {
     requirejs.entries = requirejs._eak_seen = registry = {};
     seen = state = {};
