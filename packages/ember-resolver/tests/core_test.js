@@ -85,6 +85,22 @@ test("can lookup something in another namespace", function(){
   adapter();
 });
 
+test("can lookup something with an @ sign", function(){
+  expect(2);
+
+  define('appkit/helpers/@content-helper', [], function(){
+    ok(true, "helper was invoked properly");
+
+    return Ember.K;
+  });
+
+  var helper = resolver.resolve('helper:@content-helper');
+
+  ok(helper, 'helper was returned');
+
+  helper();
+});
+
 test("can lookup something in another namespace with different syntax", function(){
   expect(2);
 
