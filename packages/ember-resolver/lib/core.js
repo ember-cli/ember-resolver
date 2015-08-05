@@ -57,6 +57,10 @@ define("ember/resolver",
     var prefix, type, name;
     var fullNameParts = fullName.split('@');
 
+    if (/.*:@.*/.test(fullName)) {
+      fullNameParts = [fullName];
+    }
+
     if (fullNameParts.length === 2) {
       var prefixParts = fullNameParts[0].split(':');
 
