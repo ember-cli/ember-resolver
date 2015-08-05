@@ -85,7 +85,39 @@ test("can lookup something in another namespace", function(){
   adapter();
 });
 
+test("can lookup something in another namespace with different syntax", function(){
+  expect(2);
+
+  define('other/adapters/post', [], function(){
+    ok(true, "adapter was invoked properly");
+
+    return Ember.K;
+  });
+
+  var adapter = resolver.resolve('adapter:other@post');
+
+  ok(adapter, 'adapter was returned');
+
+  adapter();
+});
+
 test("can lookup a view in another namespace", function() {
+  expect(2);
+
+  define('other/views/post', [], function(){
+    ok(true, "view was invoked properly");
+
+    return Ember.K;
+  });
+
+  var view = resolver.resolve('other@view:post');
+
+  ok(view, 'view was returned');
+
+  view();
+});
+
+test("can lookup a view in another namespace with different syntax", function() {
   expect(2);
 
   define('other/views/post', [], function(){
