@@ -56,13 +56,13 @@ define("ember/resolver",
     if (fullName.parsedName === true) { return fullName; }
 
     var prefix, type, name;
+    var fullNameParts = fullName.split('@');
 
-    // Htmlbars internally defines modules
-    // like helper:@content-helper which collides
+    // Htmlbars uses helper:@content-helper which collides
     // with ember-cli namespace detection.
-    var fullNameParts = /.*:@.*/.test(fullName) ? [] : fullName.split('@');
-
-    if (fullNameParts.length === 2) {
+    // This will be removed in a future release of Htmlbars.
+    if (fullName !== 'helper:@content-helper' &&
+        fullNameParts.length === 2) {
       var prefixParts = fullNameParts[0].split(':');
 
       if (prefixParts.length === 2) {
