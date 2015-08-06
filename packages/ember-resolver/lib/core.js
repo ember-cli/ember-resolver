@@ -57,7 +57,11 @@ define("ember/resolver",
     var prefix, type, name;
     var fullNameParts = fullName.split('@');
 
-    if (fullNameParts.length === 2) {
+    // Htmlbars uses helper:@content-helper which collides
+    // with ember-cli namespace detection.
+    // This will be removed in a future release of Htmlbars.
+    if (fullName !== 'helper:@content-helper' &&
+        fullNameParts.length === 2) {
       var prefixParts = fullNameParts[0].split(':');
 
       if (prefixParts.length === 2) {
