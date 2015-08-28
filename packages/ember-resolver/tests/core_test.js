@@ -524,12 +524,12 @@ test("will not lookup routes in components/", function() {
 
   define('appkit/components/foo-bar/route', [], function(){
     ok(false, 'appkit/components was used');
-    return 'whatever';
+    return { isRouteFactory: true };
   });
 
   define('appkit/routes/foo-bar', [], function(){
     ok(true, 'appkit/routes was used');
-    return 'whatever';
+    return { isRouteFactory: true };
   });
 
   resolver.resolve('route:foo-bar');
