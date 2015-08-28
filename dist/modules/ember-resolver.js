@@ -361,19 +361,29 @@ define("ember/resolver",
 
     translateToContainerFullname: function(type, moduleName) {
       var prefix = this.prefix({ type: type });
+
+      // Note: using string manipulation here rather than regexes for better performance.
+      // pod modules
+      // '^' + prefix + '/(.+)/' + type + '$'
+      var podPrefix = prefix + '/';
+      var podSuffix = '/' + type;
+      var start = moduleName.indexOf(podPrefix);
+      var end = moduleName.indexOf(podSuffix);
+
+      if (start === 0 && end === (moduleName.length - podSuffix.length) &&
+          moduleName.length > (podPrefix.length + podSuffix.length)) {
+        return type + ':' + moduleName.slice(start + podPrefix.length, end);
+      }
+
+      // non-pod modules
+      // '^' + prefix + '/' + pluralizedType + '/(.+)$'
       var pluralizedType = this.pluralize(type);
-      var nonPodRegExp = new RegExp('^' + prefix + '/' + pluralizedType + '/(.+)$');
-      var podRegExp = new RegExp('^' + prefix + '/(.+)/' + type + '$');
-      var matches;
+      var nonPodPrefix = prefix + '/' + pluralizedType + '/';
 
-
-      if ((matches = moduleName.match(podRegExp))) {
-        return type + ':' + matches[1];
+      if (moduleName.indexOf(nonPodPrefix) === 0 && moduleName.length > nonPodPrefix.length) {
+        return type + ':' + moduleName.slice(nonPodPrefix.length);
       }
 
-      if ((matches = moduleName.match(nonPodRegExp))) {
-        return type + ':' + matches[1];
-      }
     },
 
     _extractDefaultExport: function(normalizedModuleName) {
