@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import entries from './utils/module-entries';
+import ModuleRegistry from './utils/module-registry';
 
 let { ContainerDebugAdapter } = Ember;
 
@@ -25,6 +25,16 @@ if (typeof ContainerDebugAdapter !== 'undefined') {
    */
 
   ModulesContainerDebugAdapter = ContainerDebugAdapter.extend({
+    _moduleRegistry: null,
+
+    init() {
+      this._super(...arguments);
+
+      if (!this._moduleRegistry) {
+        this._moduleRegistry = new ModuleRegistry();
+      }
+    },
+
     /**
       The container of the application being debugged.
       This property will be injected
@@ -63,7 +73,16 @@ if (typeof ContainerDebugAdapter !== 'undefined') {
      * @private
      */
     _getEntries: function() {
-      return entries;
+      // deprecate and confirm with @teddyzeenny that this is not needed by the inspector
+      // remove once confirmed
+
+      Ember.deprecate(
+        'Usage of ContainerDebugAdapter#_getEntries is deprecated and will be removed.',
+        false,
+        { id: 'ember-resolver.container-debug-adapter._getEntries', until: '1.0.0' }
+      );
+
+      return this._moduleRegistry._entries;
     },
 
     /**
@@ -74,13 +93,15 @@ if (typeof ContainerDebugAdapter !== 'undefined') {
       @return {Array} An array of classes.
     */
     catalogEntriesByType: function(type) {
-      let entries = this._getEntries();
+      let moduleNames = this._moduleRegistry.moduleNames();
       let types = Ember.A();
 
       var prefix = this.namespace.modulePrefix;
 
-      for(var key in entries) {
-        if(entries.hasOwnProperty(key) && key.indexOf(type) !== -1) {
+      for (let i = 0, l = moduleNames.length; i < l; i++) {
+        let key = moduleNames[i];
+
+        if(key.indexOf(type) !== -1) {
           // Check if it's a pod module
           var name = getPod(type, key, this.namespace.podModulePrefix || prefix);
           if (!name) {

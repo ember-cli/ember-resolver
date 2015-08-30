@@ -1,7 +1,7 @@
 /*globals require */
 
 import Ember from 'ember';
-import entries from './utils/module-entries';
+import ModuleRegistry from './utils/module-registry';
 import classFactory from './utils/class-factory';
 import makeDictionary from './utils/make-dictionary';
 
@@ -19,6 +19,7 @@ import makeDictionary from './utils/make-dictionary';
 
 
 let {
+  underscore,
   classify
 } = Ember.String;
 let {
@@ -105,6 +106,7 @@ var Resolver = DefaultResolver.extend({
   parseName,
   resolveTemplate: resolveOther,
   pluralizedTypes: null,
+  moduleRegistry: null,
 
   makeToString: function(factory, fullName) {
     return '' + this.namespace.modulePrefix + '@' + fullName + ':';
@@ -117,6 +119,11 @@ var Resolver = DefaultResolver.extend({
   init: function() {
     this._super();
     this.moduleBasedResolver = true;
+
+    if (!this._moduleRegistry) {
+      this._moduleRegistry = new ModuleRegistry();
+    }
+
     this._normalizeCache = makeDictionary();
 
     this.pluralizedTypes = this.pluralizedTypes || makeDictionary();
@@ -220,16 +227,15 @@ var Resolver = DefaultResolver.extend({
     var moduleName;
 
     this.get('moduleNameLookupPatterns').find(function(item) {
-      var moduleEntries = entries;
       var tmpModuleName = item.call(self, parsedName);
 
       // allow treat all dashed and all underscored as the same thing
       // supports components with dashes and other stuff with underscores.
       if (tmpModuleName) {
-        tmpModuleName = self.chooseModuleName(moduleEntries, tmpModuleName);
+        tmpModuleName = self.chooseModuleName(tmpModuleName);
       }
 
-      if (tmpModuleName && moduleEntries[tmpModuleName]) {
+      if (tmpModuleName && self._moduleRegistry.has(tmpModuleName)) {
         if (!loggingDisabled) {
           self._logLookup(true, parsedName, tmpModuleName);
         }
@@ -247,23 +253,23 @@ var Resolver = DefaultResolver.extend({
     return moduleName;
   },
 
-  chooseModuleName: function(moduleEntries, moduleName) {
-    var underscoredModuleName = Ember.String.underscore(moduleName);
+  chooseModuleName: function(moduleName) {
+    var underscoredModuleName = underscore(moduleName);
 
-    if (moduleName !== underscoredModuleName && moduleEntries[moduleName] && moduleEntries[underscoredModuleName]) {
+    if (moduleName !== underscoredModuleName && this._moduleRegistry.has(moduleName) && this._moduleRegistry.has(underscoredModuleName)) {
       throw new TypeError("Ambiguous module names: `" + moduleName + "` and `" + underscoredModuleName + "`");
     }
 
-    if (moduleEntries[moduleName]) {
+    if (this._moduleRegistry.has(moduleName)) {
       return moduleName;
-    } else if (moduleEntries[underscoredModuleName]) {
+    } else if (this._moduleRegistry.has(underscoredModuleName)) {
       return underscoredModuleName;
     } else {
       // workaround for dasherized partials:
       // something/something/-something => something/something/_something
       var partializedModuleName = moduleName.replace(/\/-([^\/]*)$/, '/_$1');
 
-      if (moduleEntries[partializedModuleName]) {
+      if (this._moduleRegistry.has(partializedModuleName)) {
         Ember.deprecate('Modules should not contain underscores. ' +
                         'Attempted to lookup "'+moduleName+'" which ' +
                         'was not found. Please rename "'+partializedModuleName+'" '+
@@ -310,8 +316,7 @@ var Resolver = DefaultResolver.extend({
   },
 
   knownForType: function(type) {
-    var moduleEntries = entries;
-    var moduleKeys = (Object.keys || Ember.keys)(moduleEntries);
+    var moduleKeys = this._moduleRegistry.moduleNames();
 
     var items = makeDictionary();
     for (var index = 0, length = moduleKeys.length; index < length; index++) {
