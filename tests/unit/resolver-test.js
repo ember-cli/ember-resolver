@@ -2,7 +2,7 @@
 
 import Ember from 'ember';
 import { module, test } from 'qunit';
-import Resolver from 'ember-resolver/resolver';
+import Resolver from 'ember-cli-resolver/resolver';
 
 let originalRegistryEntries, originalEmberDeprecate, originalEmberLoggerInfo, logCalls, resolver;
 

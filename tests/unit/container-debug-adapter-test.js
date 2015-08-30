@@ -1,7 +1,7 @@
 import { module, test } from 'qunit';
 import Ember from 'ember';
-import Resolver from 'ember-resolver/resolver';
-import ContainerDebugAdapter from 'ember-resolver/container-debug-adapter';
+import Resolver from 'ember-cli-resolver/resolver';
+import ContainerDebugAdapter from 'ember-cli-resolver/container-debug-adapter';
 import ContainerDebugAdapterInitializer from 'dummy/initializers/container-debug-adapter';
 
 let containerDebugAdapter, App;
