@@ -214,43 +214,41 @@ var Resolver = DefaultResolver.extend({
    @returns {Ember.Array}
    */
   moduleNameLookupPatterns: Ember.computed(function(){
-    return Ember.A([
+    return [
       this.podBasedModuleName,
       this.podBasedComponentsInSubdir,
       this.mainModuleName,
       this.defaultModuleName
-    ]);
+    ];
   }),
 
   findModuleName: function(parsedName, loggingDisabled){
-    var self = this;
+    var moduleNameLookupPatterns = this.get('moduleNameLookupPatterns');
     var moduleName;
 
-    this.get('moduleNameLookupPatterns').find(function(item) {
-      var tmpModuleName = item.call(self, parsedName);
+    for (let index = 0, length = moduleNameLookupPatterns.length; index < length; index++) {
+      let item = moduleNameLookupPatterns[index];
+
+      var tmpModuleName = item.call(this, parsedName);
 
       // allow treat all dashed and all underscored as the same thing
       // supports components with dashes and other stuff with underscores.
       if (tmpModuleName) {
-        tmpModuleName = self.chooseModuleName(tmpModuleName);
+        tmpModuleName = this.chooseModuleName(tmpModuleName);
       }
 
-      if (tmpModuleName && self._moduleRegistry.has(tmpModuleName)) {
-        if (!loggingDisabled) {
-          self._logLookup(true, parsedName, tmpModuleName);
-        }
-
+      if (tmpModuleName && this._moduleRegistry.has(tmpModuleName)) {
         moduleName = tmpModuleName;
       }
 
       if (!loggingDisabled) {
-        self._logLookup(moduleName, parsedName, tmpModuleName);
+        this._logLookup(moduleName, parsedName, tmpModuleName);
       }
 
-      return moduleName;
-    });
-
-    return moduleName;
+      if (moduleName) {
+        return moduleName;
+      }
+    }
   },
 
   chooseModuleName: function(moduleName) {
