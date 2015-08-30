@@ -4,7 +4,7 @@
 var VersionChecker = require('ember-cli-version-checker');
 
 module.exports = {
-  name: 'ember-cli-resolver',
+  name: 'ember-resolver',
 
   init: function() {
     var checker = new VersionChecker(this);

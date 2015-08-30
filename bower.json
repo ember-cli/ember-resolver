@@ -1,5 +1,5 @@
 {
-  "name": "ember-cli-resolver",
+  "name": "ember-resolver",
   "dependencies": {
     "ember": "2.0.0",
     "ember-cli-shims": "ember-cli/ember-cli-shims#0.0.5",

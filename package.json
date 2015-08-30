@@ -1,5 +1,5 @@
 {
-  "name": "ember-cli-resolver",
+  "name": "ember-resolver",
   "version": "1.0.1",
   "description": "The default modules based resolver for Ember CLI.",
   "directories": {
