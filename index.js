@@ -6,7 +6,9 @@ var VersionChecker = require('ember-cli-version-checker');
 module.exports = {
   name: 'ember-resolver',
 
-  init: function() {
+  included: function() {
+    this._super.included.apply(this, arguments);
+
     var checker = new VersionChecker(this);
     var dep = checker.for('ember-cli', 'npm');
 
@@ -16,12 +18,11 @@ module.exports = {
   },
 
   monkeyPatchVendorFiles: function() {
-    var EmberApp = this.project.require('ember-cli/lib/broccoli/ember-app');
-    var originalPopulateLegacyFiles = EmberApp.prototype.populateLegacyFiles;
+    var filesToAppend = this.app.legacyFilesToAppend;
+    var legacyResolverIndex = filesToAppend.indexOf(this.app.bowerDirectory + '/ember-resolver/dist/modules/ember-resolver.js');
 
-    EmberApp.prototype.populateLegacyFiles = function () {
-      delete this.vendorFiles['ember-resolver.js'];
-      originalPopulateLegacyFiles.apply(this, arguments);
-    };
+    if (legacyResolverIndex > -1) {
+      filesToAppend.splice(legacyResolverIndex, 1);
+    }
   }
 };
