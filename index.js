@@ -15,6 +15,8 @@ module.exports = {
     if (!dep.satisfies('>= 2.0.0')) {
       this.monkeyPatchVendorFiles();
     }
+
+    this.app.import('vendor/ember-resolver/legacy-shims.js');
   },
 
   monkeyPatchVendorFiles: function() {

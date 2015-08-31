@@ -1,4 +1,4 @@
-/* globals requirejs */
+/* globals requirejs, require */
 
 import Ember from 'ember';
 import { module, test } from 'qunit';
@@ -33,6 +33,42 @@ module('ember-resolver/resolver', {
     Ember.deprecate = originalEmberDeprecate;
     Ember.Logger.info = originalEmberLoggerInfo;
   }
+});
+
+test("can access at deprecated 'resolver' module name", function(assert){
+  assert.expect(2);
+
+  Ember.deprecate = function(message, test) {
+    if (!test) {
+      assert.equal(message, 'Usage of `resolver` module is deprecated, please update to `ember-resolver`.');
+    }
+  };
+
+  // require manually here, because our resetting of the `requirejs.entries` hash
+  // means that each test that is ran actually creates a new `Resolver` base class
+  // this allows us to match using ===
+  let Resolver = require('ember-resolver/resolver')['default'];
+  let ResolverAlias = require('resolver')['default'];
+
+  assert.equal(Resolver, ResolverAlias, "both 'ember/resolver' and 'resolver' return the same Resolver");
+});
+
+test("can access at deprecated 'ember/resolver' module name", function(assert){
+  assert.expect(2);
+
+  Ember.deprecate = function(message, test) {
+    if (!test) {
+      assert.equal(message, 'Usage of `ember/resolver` module is deprecated, please update to `ember-resolver`.');
+    }
+  };
+
+  // require manually here, because our resetting of the `requirejs.entries` hash
+  // means that each test that is ran actually creates a new `Resolver` base class
+  // this allows us to match using ===
+  let Resolver = require('ember-resolver/resolver')['default'];
+  let ResolverAlias = require('ember/resolver')['default'];
+
+  assert.equal(Resolver, ResolverAlias, "both 'ember/resolver' and 'resolver' return the same Resolver");
 });
 
 test('does not require `namespace` to exist at `init` time', function(assert) {
