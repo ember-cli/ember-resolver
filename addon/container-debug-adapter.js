@@ -66,26 +66,6 @@ if (typeof ContainerDebugAdapter !== 'undefined') {
     },
 
     /**
-     * Get all defined modules.
-     *
-     * @method _getEntries
-     * @return {Array} the list of registered modules.
-     * @private
-     */
-    _getEntries: function() {
-      // deprecate and confirm with @teddyzeenny that this is not needed by the inspector
-      // remove once confirmed
-
-      Ember.deprecate(
-        'Usage of ContainerDebugAdapter#_getEntries is deprecated and will be removed.',
-        false,
-        { id: 'ember-resolver.container-debug-adapter._getEntries', until: '1.0.0' }
-      );
-
-      return this._moduleRegistry._entries;
-    },
-
-    /**
       Returns the available classes a given type.
 
       @method catalogEntriesByType
