@@ -16,7 +16,7 @@ module.exports = {
   },
 
   monkeyPatchVendorFiles: function() {
-    var EmberApp = require('ember-cli/lib/broccoli/ember-app');
+    var EmberApp = this.project.require('ember-cli/lib/broccoli/ember-app');
     var originalPopulateLegacyFiles = EmberApp.prototype.populateLegacyFiles;
 
     EmberApp.prototype.populateLegacyFiles = function () {
