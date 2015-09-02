@@ -7,6 +7,20 @@ This project is tracking a new resolver based on ES6 semantics that has been ext
 * [ember-app-kit](https://github.com/stefanpenner/ember-app-kit)
 * [ember-appkit-rails](https://github.com/dockyard/ember-appkit-rails)
 
+## Installation
+
+Ember-resolver was previously a bower package, but since v1.0.1, it has become an ember-cli addon, and should be installed with `ember install`:
+```
+ember install ember-resolver
+```
+
+If you're currently using ember-resolver v0.1.x in your project, you should uninstall it:
+```
+bower uninstall ember-resolver --save
+```
+
+_You can continue to use ember-resolver v0.1.x as a bower package, but be careful not to update it to versions greater than v1.0._
+
 ## Addon Development
 
 ### Installation
