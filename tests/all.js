@@ -1,3 +1,6 @@
+/*globals newDefine:false, newLoader:false, newRequire:false*/
+/*globals define:true, loader:true, require:true*/
+
 'use strict';
 
 var keys;
@@ -15,18 +18,46 @@ if (Object.keys) {
 }
 
 module('loader.js api', {
+  setup: function() {
+    this._define = define;
+    this._loader = loader;
+    this._require = require;
+  },
+
   teardown: function() {
+    define = this._define;
+    loader = this._loader;
+    require = this._require;
+
     requirejs.clear();
   }
 });
 
 test('has api', function() {
+  equal(typeof loader, 'object');
+  equal(typeof loader.noConflict, 'function');
   equal(typeof require, 'function');
   equal(typeof define, 'function');
-  equal(define.amd, undefined);
+  strictEqual(define.amd, undefined);
   ok(define.petal);
   equal(typeof requirejs, 'function');
   equal(typeof requireModule, 'function');
+});
+
+test('no conflict mode', function() {
+  loader.noConflict({
+    define: 'newDefine',
+    loader: 'newLoader',
+    require: 'newRequire'
+  });
+
+  equal(define, 'LOL');
+  strictEqual(loader, undefined);
+  equal(require, 'ZOMG');
+
+  equal(newDefine, this._define);
+  equal(newLoader, this._loader);
+  equal(newRequire, this._require);
 });
 
 test('simple define/require', function() {
@@ -213,7 +244,7 @@ test('basic CJS mode', function() {
     };
   });
 
-  define('a/bar', ['require', 'exports', 'module'], function(require, exports, module) {
+  define('a/bar', ['require', 'exports', 'module'], function(require, exports) {
     exports.name = 'bar';
   });
 
@@ -223,7 +254,8 @@ test('basic CJS mode', function() {
 });
 
 test('pass default deps if arguments are expected and deps not passed', function() {
-  define('foo', function(require, exports, module) {
+  // this is intentionally testing the array-less form
+  define('foo', function(require, exports, module) { // jshint ignore:line
     equal(arguments.length, 3);
   });
 
@@ -231,7 +263,7 @@ test('pass default deps if arguments are expected and deps not passed', function
 });
 
 test('if factory returns a value it is used as export', function() {
-  define('foo', ['require', 'exports', 'module'], function(require, exports, module) {
+  define('foo', ['require', 'exports', 'module'], function() {
     return {
       bar: 'bar'
     };
@@ -242,7 +274,7 @@ test('if factory returns a value it is used as export', function() {
   equal(foo.bar, 'bar');
 });
 
-test("if a module has no default property assume the return is the default", function() {
+test('if a module has no default property assume the return is the default', function() {
   define('foo', [], function() {
     return {
       bar: 'bar'
@@ -255,7 +287,7 @@ test("if a module has no default property assume the return is the default", fun
 });
 
 
-test("if a CJS style module has no default export assume module.exports is the default", function() {
+test('if a CJS style module has no default export assume module.exports is the default', function() {
   define('Foo', ['require', 'exports', 'module'], function(require, exports, module) {
     module.exports = function Foo() {
       this.bar = 'bar';
@@ -269,9 +301,9 @@ test("if a CJS style module has no default export assume module.exports is the d
 });
 
 
-test("if a module has no default property assume its export is default (function)", function() {
+test('if a module has no default property assume its export is default (function)', function() {
   var theFunction = function theFunction() {};
-  define('foo', ['require', 'exports', 'module'], function(require, exports, module) {
+  define('foo', ['require', 'exports', 'module'], function() {
     return theFunction;
   });
 
@@ -280,9 +312,9 @@ test("if a module has no default property assume its export is default (function
 });
 
 
-test("has good error message for missing module", function() {
+test('has good error message for missing module', function() {
   var theFunction = function theFunction() {};
-  define('foo', ['apple'], function(require, exports, module) {
+  define('foo', ['apple'], function() {
     return theFunction;
   });
 
@@ -291,7 +323,7 @@ test("has good error message for missing module", function() {
   }, /Could not find module `apple` imported from `foo`/);
 });
 
-test("provides good error message when an un-named AMD module is provided", function() {
+test('provides good error message when an un-named AMD module is provided', function() {
   throws(function() {
     define(function() {
 
@@ -316,7 +348,7 @@ test('throws when accessing parent module of root', function() {
   }, /Cannot access parent module of root/);
 });
 
-test("relative CJS esq require", function() {
+test('relative CJS esq require', function() {
   define('foo/a', ['require'], function(require) {
     return require('./b');
   });
@@ -326,7 +358,7 @@ test("relative CJS esq require", function() {
     return require('./c');
   });
 
-  define('foo/c', ['require'], function(require) {
+  define('foo/c', ['require'], function() {
     return 'c-content';
   });
 
@@ -334,7 +366,7 @@ test("relative CJS esq require", function() {
 });
 
 
-test("relative CJS esq require (with exports and module');", function() {
+test('relative CJS esq require (with exports and module);', function() {
   define('foo/a', ['module', 'exports', 'require'], function(module, exports, require) {
     module.exports = require('./b');
   });
@@ -343,7 +375,7 @@ test("relative CJS esq require (with exports and module');", function() {
     module.exports = require('./c');
   });
 
-  define('foo/c', ['module', 'exports', 'require'], function(module, exports, require) {
+  define('foo/c', ['module', 'exports', 'require'], function(module) {
     module.exports = 'c-content';
   });
 

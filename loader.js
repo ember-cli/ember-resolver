@@ -1,7 +1,34 @@
-var define, requireModule, require, requirejs;
+var loader, define, requireModule, require, requirejs;
+var global = this;
 
 (function() {
   'use strict';
+
+  // Save off the original values of these globals, so we can restore them if someone asks us to
+  var oldGlobals = {
+    loader: loader,
+    define: define,
+    requireModule: requireModule,
+    require: require,
+    requirejs: requirejs
+  };
+
+  loader = {
+    noConflict: function(aliases) {
+      var oldName, newName;
+
+      for (oldName in aliases) {
+        if (aliases.hasOwnProperty(oldName)) {
+          if (oldGlobals.hasOwnProperty(oldName)) {
+            newName = aliases[oldName];
+
+            global[newName] = global[oldName];
+            global[oldName] = oldGlobals[oldName];
+          }
+        }
+      }
+    }
+  };
 
   var _isArray;
   if (!Array.isArray) {
