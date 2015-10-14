@@ -1,11 +1,12 @@
 var define, requireModule, require, requirejs;
 
 (function() {
+  'use strict';
 
   var _isArray;
   if (!Array.isArray) {
     _isArray = function (x) {
-      return Object.prototype.toString.call(x) === "[object Array]";
+      return Object.prototype.toString.call(x) === '[object Array]';
     };
   } else {
     _isArray = Array.isArray;
@@ -14,33 +15,80 @@ var define, requireModule, require, requirejs;
   var registry = {};
   var seen = {};
   var FAILED = false;
+  var LOADED = true;
 
   var uuid = 0;
 
-  function tryFinally(tryable, finalizer) {
-    try {
-      return tryable();
-    } finally {
-      finalizer();
-    }
-  }
-
   function unsupportedModule(length) {
-    throw new Error("an unsupported module was defined, expected `define(name, deps, module)` instead got: `" + length + "` arguments to define`");
+    throw new Error('an unsupported module was defined, expected `define(name, deps, module)` instead got: `' +
+                    length + '` arguments to define`');
   }
 
   var defaultDeps = ['require', 'exports', 'module'];
 
-  function Module(name, deps, callback, exports) {
-    this.id       = uuid++;
-    this.name     = name;
-    this.deps     = !deps.length && callback.length ? defaultDeps : deps;
-    this.exports  = exports || { };
-    this.callback = callback;
-    this.state    = undefined;
+  function Module(name, deps, callback) {
+    this.id        = uuid++;
+    this.name      = name;
+    this.deps      = !deps.length && callback.length ? defaultDeps : deps;
+    this.module    = { exports: {} };
+    this.callback  = callback;
+    this.state     = undefined;
     this._require  = undefined;
+    this.finalized = false;
+    this.hasExportsAsDep = false;
   }
 
+  Module.prototype.makeDefaultExport = function() {
+    var exports = this.module.exports;
+    if (exports !== null &&
+        (typeof exports === 'object' || typeof exports === 'function') &&
+          exports['default'] === undefined) {
+      exports['default'] = exports;
+    }
+  };
+
+  Module.prototype.exports = function(reifiedDeps) {
+    if (this.finalized) {
+      return this.module.exports;
+    } else {
+      var result = this.callback.apply(this, reifiedDeps);
+      if (!(this.hasExportsAsDep && result === undefined)) {
+        this.module.exports = result;
+      }
+      this.makeDefaultExport();
+      this.finalized = true;
+      return this.module.exports;
+    }
+  };
+
+  Module.prototype.unsee = function() {
+    this.finalized = false;
+    this.state = undefined;
+    this.module = { exports: {}};
+  };
+
+  Module.prototype.reify = function() {
+    var deps = this.deps;
+    var length = deps.length;
+    var reified = new Array(length);
+    var dep;
+
+    for (var i = 0, l = length; i < l; i++) {
+      dep = deps[i];
+      if (dep === 'exports') {
+        this.hasExportsAsDep = true;
+        reified[i] = this.module.exports;
+      } else if (dep === 'require') {
+        reified[i] = this.makeRequire();
+      } else if (dep === 'module') {
+        reified[i] = this.module;
+      } else {
+        reified[i] = findModule(resolve(dep, this.name), this.name).module.exports;
+      }
+    }
+
+    return reified;
+  };
 
   Module.prototype.makeRequire = function() {
     var name = this.name;
@@ -48,7 +96,14 @@ var define, requireModule, require, requirejs;
     return this._require || (this._require = function(dep) {
       return require(resolve(dep, name));
     });
-  }
+  };
+
+  Module.prototype.build = function() {
+    if (this.state === FAILED) { return; }
+    this.state = FAILED;
+    this.exports(this.reify());
+    this.state = LOADED;
+  };
 
   define = function(name, deps, callback) {
     if (arguments.length < 2) {
@@ -76,91 +131,27 @@ var define, requireModule, require, requirejs;
     return new Alias(path);
   };
 
-  function reify(mod, name, seen) {
-    var deps = mod.deps;
-    var length = deps.length;
-    var reified = new Array(length);
-    var dep;
-    // TODO: new Module
-    // TODO: seen refactor
-    var module = { };
-
-    for (var i = 0, l = length; i < l; i++) {
-      dep = deps[i];
-      if (dep === 'exports') {
-        module.exports = reified[i] = seen;
-      } else if (dep === 'require') {
-        reified[i] = mod.makeRequire();
-      } else if (dep === 'module') {
-        mod.exports = seen;
-        module = reified[i] = mod;
-      } else {
-        reified[i] = requireFrom(resolve(dep, name), name);
-      }
-    }
-
-    return {
-      deps: reified,
-      module: module
-    };
+  function missingModule(name, referrer) {
+    throw new Error('Could not find module `' + name + '` imported from `' + referrer + '`');
   }
 
-  function requireFrom(name, origin) {
-    var mod = registry[name];
-    if (!mod) {
-      throw new Error('Could not find module `' + name + '` imported from `' + origin + '`');
-    }
-    return require(name);
-  }
-
-  function missingModule(name) {
-    throw new Error('Could not find module ' + name);
-  }
   requirejs = require = requireModule = function(name) {
+    return findModule(name, '(require)').module.exports;
+  };
+
+  function findModule(name, referrer) {
     var mod = registry[name];
 
     if (mod && mod.callback instanceof Alias) {
-      mod = registry[mod.callback.name];
+      name = mod.callback.name;
+      mod = registry[name];
     }
 
-    if (!mod) { missingModule(name); }
+    if (!mod) { missingModule(name, referrer); }
 
-    if (mod.state !== FAILED &&
-        seen.hasOwnProperty(name)) {
-      return seen[name];
-    }
-
-    var reified;
-    var module;
-    var loaded = false;
-
-    seen[name] = { }; // placeholder for run-time cycles
-
-    tryFinally(function() {
-      reified = reify(mod, name, seen[name]);
-      module = mod.callback.apply(this, reified.deps);
-      loaded = true;
-    }, function() {
-      if (!loaded) {
-        mod.state = FAILED;
-      }
-    });
-
-    var obj;
-    if (module === undefined && reified.module.exports) {
-      obj = reified.module.exports;
-    } else {
-      obj = seen[name] = module;
-    }
-
-    if (obj !== null &&
-        (typeof obj === 'object' || typeof obj === 'function') &&
-          obj['default'] === undefined) {
-      obj['default'] = obj;
-    }
-
-    return (seen[name] = obj);
-  };
+    mod.build();
+    return mod;
+  }
 
   function resolve(child, name) {
     if (child.charAt(0) !== '.') { return child; }
@@ -187,11 +178,11 @@ var define, requireModule, require, requirejs;
 
   requirejs.entries = requirejs._eak_seen = registry;
   requirejs.unsee = function(moduleName) {
-    delete seen[moduleName];
+    findModule(moduleName, '(unsee)').unsee();
   };
 
   requirejs.clear = function() {
     requirejs.entries = requirejs._eak_seen = registry = {};
-    seen = state = {};
+    seen = {};
   };
 })();

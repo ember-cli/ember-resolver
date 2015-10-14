@@ -161,9 +161,7 @@ test('incorrect lookup paths should fail', function() {
 
   throws(function() {
     return require('foo');
-  }, function(err) {
-    return err.message === 'Could not find module `isolated-container` imported from `foo`';
-  });
+  }, 'Could not find module isolated-container');
 
 });
 
@@ -384,4 +382,82 @@ test('unsee', function() {
   equal(counter, 2);
   require('foo');
   equal(counter, 2);
+});
+
+test('/index fallback no ambiguity', function() {
+  define('foo/index', [], function() {
+    return 'I AM foo/index';
+  });
+
+  define('foo', define.alias('foo/index'));
+
+  define('bar', ['foo'], function(foo) {
+    return 'I AM bar with: ' + foo;
+  });
+
+  equal(require('foo'), 'I AM foo/index');
+  equal(require('foo/index'), 'I AM foo/index');
+  equal(require('bar'), 'I AM bar with: I AM foo/index');
+});
+
+test('/index fallback with ambiguity (alias after)', function() {
+  define('foo', [], function() {
+    return 'I AM foo';
+  });
+
+  define('foo/index', [], function() {
+    return 'I AM foo/index';
+  });
+
+  define('foo', define.alias('foo/index'));
+
+  define('bar', ['foo'], function(foo) {
+    return 'I AM bar with: ' + foo;
+  });
+
+  equal(require('foo'), 'I AM foo/index');
+  equal(require('foo/index'), 'I AM foo/index');
+  equal(require('bar'), 'I AM bar with: I AM foo/index');
+});
+
+test('alias entries share same module instance', function() {
+  var count = 0;
+  define('foo', define.alias('foo/index'));
+
+  define('foo/index', [], function() {
+    count++;
+  });
+
+  equal(count, 0);
+  require('foo');
+  equal(count, 1);
+
+  require('foo/index');
+  equal(count, 1, 'second require should use existing instance');
+});
+
+test('/index fallback + unsee', function() {
+  var count = 0;
+
+  define('foo/index', [], function() {
+    count++;
+  });
+
+  define('foo', define.alias('foo/index'));
+
+  require('foo/index');
+  equal(count, 1);
+
+  require('foo/index');
+  equal(count, 1);
+
+  require.unsee('foo/index');
+  require('foo/index');
+
+  equal(count, 2);
+
+  require.unsee('foo');
+  require('foo');
+
+  equal(count, 3);
 });
