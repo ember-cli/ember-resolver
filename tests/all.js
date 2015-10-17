@@ -420,6 +420,26 @@ test('/index fallback with ambiguity (alias after)', function() {
   equal(require('bar'), 'I AM bar with: I AM foo/index');
 });
 
+test('/index fallback with ambiguity (alias after all defines but before require)', function() {
+  define('foo', [], function() {
+    return 'I AM foo';
+  });
+
+  define('foo/index', [], function() {
+    return 'I AM foo/index';
+  });
+
+  define('bar', ['foo'], function(foo) {
+    return 'I AM bar with: ' + foo;
+  });
+
+  define('foo', define.alias('foo/index'));
+
+  equal(require('foo'), 'I AM foo/index');
+  equal(require('foo/index'), 'I AM foo/index');
+  equal(require('bar'), 'I AM bar with: I AM foo/index');
+});
+
 test('alias entries share same module instance', function() {
   var count = 0;
   define('foo', define.alias('foo/index'));
