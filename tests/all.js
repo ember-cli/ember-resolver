@@ -519,3 +519,26 @@ test('alias chain (long)', function() {
 
   equal(require('bozo'), 'I AM BAR');
 });
+
+test('alias chains are lazy', function() {
+  define('bar', [], function(bar) {
+    return 'I AM BAR';
+  });
+
+  define('bar2', [], function(bar) {
+    return 'I AM BAR2';
+  });
+
+  define('quz', define.alias('foo'));
+  define('foo', define.alias('bar'));
+  define('baz', define.alias('quz'));
+
+  define('bozo', define.alias('baz'));
+  define('bozo2', define.alias('baz'));
+
+  equal(require('bozo'), 'I AM BAR');
+
+  define('foo', define.alias('bar2'));
+
+  equal(require('bozo'), 'I AM BAR2');
+});
