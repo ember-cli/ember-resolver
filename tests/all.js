@@ -161,9 +161,7 @@ test('incorrect lookup paths should fail', function() {
 
   throws(function() {
     return require('foo');
-  }, function(err) {
-    return err.message === 'Could not find module `isolated-container` imported from `foo`';
-  });
+  }, 'Could not find module isolated-container');
 
 });
 
@@ -384,4 +382,202 @@ test('unsee', function() {
   equal(counter, 2);
   require('foo');
   equal(counter, 2);
+});
+
+test('/index fallback no ambiguity', function() {
+  define('foo/index', [], function() {
+    return 'I AM foo/index';
+  });
+
+  define('foo', define.alias('foo/index'));
+
+  define('bar', ['foo'], function(foo) {
+    return 'I AM bar with: ' + foo;
+  });
+
+  equal(require('foo'), 'I AM foo/index');
+  equal(require('foo/index'), 'I AM foo/index');
+  equal(require('bar'), 'I AM bar with: I AM foo/index');
+});
+
+test('/index fallback with ambiguity (alias after)', function() {
+  define('foo', [], function() {
+    return 'I AM foo';
+  });
+
+  define('foo/index', [], function() {
+    return 'I AM foo/index';
+  });
+
+  define('foo', define.alias('foo/index'));
+
+  define('bar', ['foo'], function(foo) {
+    return 'I AM bar with: ' + foo;
+  });
+
+  equal(require('foo'), 'I AM foo/index');
+  equal(require('foo/index'), 'I AM foo/index');
+  equal(require('bar'), 'I AM bar with: I AM foo/index');
+});
+
+test('/index fallback with ambiguity (alias after all defines but before require)', function() {
+  define('foo', [], function() {
+    return 'I AM foo';
+  });
+
+  define('foo/index', [], function() {
+    return 'I AM foo/index';
+  });
+
+  define('bar', ['foo'], function(foo) {
+    return 'I AM bar with: ' + foo;
+  });
+
+  define('foo', define.alias('foo/index'));
+
+  equal(require('foo'), 'I AM foo/index');
+  equal(require('foo/index'), 'I AM foo/index');
+  equal(require('bar'), 'I AM bar with: I AM foo/index');
+});
+
+test('alias entries share same module instance', function() {
+  var count = 0;
+  define('foo', define.alias('foo/index'));
+
+  define('foo/index', [], function() {
+    count++;
+  });
+
+  equal(count, 0);
+  require('foo');
+  equal(count, 1);
+
+  require('foo/index');
+  equal(count, 1, 'second require should use existing instance');
+});
+
+test('/index fallback + unsee', function() {
+  var count = 0;
+
+  define('foo/index', [], function() {
+    count++;
+  });
+
+  define('foo', define.alias('foo/index'));
+
+  require('foo/index');
+  equal(count, 1);
+
+  require('foo/index');
+  equal(count, 1);
+
+  require.unsee('foo/index');
+  require('foo/index');
+
+  equal(count, 2);
+
+  require.unsee('foo');
+  require('foo');
+
+  equal(count, 3);
+});
+
+test('alias with target \w deps', function() {
+  define('foo', ['bar'], function(bar) {
+    return bar;
+  });
+
+  define('bar', [], function(bar) {
+    return 'I AM BAR';
+  });
+
+  define('quz', define.alias('foo'));
+
+  equal(require('quz'), 'I AM BAR');
+});
+
+test('alias chain (simple)', function() {
+  define('bar', [], function(bar) {
+    return 'I AM BAR';
+  });
+
+  define('quz', define.alias('foo'));
+  define('foo', define.alias('bar'));
+
+  equal(require('quz'), 'I AM BAR');
+});
+
+test('alias chain (long)', function() {
+  define('bar', [], function(bar) {
+    return 'I AM BAR';
+  });
+
+  define('quz', define.alias('foo'));
+  define('foo', define.alias('bar'));
+  define('baz', define.alias('quz'));
+  define('bozo', define.alias('baz'));
+
+  equal(require('bozo'), 'I AM BAR');
+});
+
+test('alias chains are lazy', function() {
+  define('bar', [], function(bar) {
+    return 'I AM BAR';
+  });
+
+  define('bar2', [], function(bar) {
+    return 'I AM BAR2';
+  });
+
+  define('quz', define.alias('foo'));
+  define('foo', define.alias('bar'));
+  define('baz', define.alias('quz'));
+
+  define('bozo', define.alias('baz'));
+  define('bozo2', define.alias('baz'));
+
+  equal(require('bozo'), 'I AM BAR');
+
+  define('foo', define.alias('bar2'));
+
+  equal(require('bozo'), 'I AM BAR2');
+});
+
+test('alias chains propogate unsee', function() {
+  var counter = 0;
+
+  define('bar', [], function(bar) {
+    counter++;
+    return 'I AM BAR';
+  });
+
+  define('a', define.alias('bar'));
+  define('b', define.alias('a'));
+
+  equal(counter, 0);
+  equal(require('b'), 'I AM BAR');
+  equal(counter, 1);
+  equal(require('b'), 'I AM BAR');
+  equal(counter, 1);
+  require.unsee('b');
+  equal(counter, 1);
+  equal(require('b'), 'I AM BAR');
+  equal(counter, 2);
+});
+
+test('alias chaining with relative deps works', function() {
+  define('foo/baz', [], function() {
+    return 'I AM baz';
+  });
+
+  define('foo/index', ['./baz'], function(baz) {
+    return 'I AM foo/index: ' + baz;
+  });
+
+  define('foo', define.alias('foo/index'));
+  define('bar', define.alias('foo'));
+
+  equal(require('foo'), 'I AM foo/index: I AM baz');
+  equal(require('foo/index'), 'I AM foo/index: I AM baz');
+  equal(require('bar'), 'I AM foo/index: I AM baz');
 });
