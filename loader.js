@@ -142,7 +142,7 @@ var define, requireModule, require, requirejs;
   function findModule(name, referrer) {
     var mod = registry[name];
 
-    if (mod && mod.callback instanceof Alias) {
+    while (mod && mod.callback instanceof Alias) {
       name = mod.callback.name;
       mod = registry[name];
     }

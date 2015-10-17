@@ -481,3 +481,41 @@ test('/index fallback + unsee', function() {
 
   equal(count, 3);
 });
+
+test('alias with target \w deps', function() {
+  define('foo', ['bar'], function(bar) {
+    return bar;
+  });
+
+  define('bar', [], function(bar) {
+    return 'I AM BAR';
+  });
+
+  define('quz', define.alias('foo'));
+
+  equal(require('quz'), 'I AM BAR');
+});
+
+test('alias chain (simple)', function() {
+  define('bar', [], function(bar) {
+    return 'I AM BAR';
+  });
+
+  define('quz', define.alias('foo'));
+  define('foo', define.alias('bar'));
+
+  equal(require('quz'), 'I AM BAR');
+});
+
+test('alias chain (long)', function() {
+  define('bar', [], function(bar) {
+    return 'I AM BAR';
+  });
+
+  define('quz', define.alias('foo'));
+  define('foo', define.alias('bar'));
+  define('baz', define.alias('quz'));
+  define('bozo', define.alias('baz'));
+
+  equal(require('bozo'), 'I AM BAR');
+});
