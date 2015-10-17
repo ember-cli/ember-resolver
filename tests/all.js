@@ -542,3 +542,25 @@ test('alias chains are lazy', function() {
 
   equal(require('bozo'), 'I AM BAR2');
 });
+
+test('alias chains propogate unsee', function() {
+  var counter = 0;
+
+  define('bar', [], function(bar) {
+    counter++;
+    return 'I AM BAR';
+  });
+
+  define('a', define.alias('bar'));
+  define('b', define.alias('a'));
+
+  equal(counter, 0);
+  equal(require('b'), 'I AM BAR');
+  equal(counter, 1);
+  equal(require('b'), 'I AM BAR');
+  equal(counter, 1);
+  require.unsee('b');
+  equal(counter, 1);
+  equal(require('b'), 'I AM BAR');
+  equal(counter, 2);
+});
