@@ -564,3 +564,20 @@ test('alias chains propogate unsee', function() {
   equal(require('b'), 'I AM BAR');
   equal(counter, 2);
 });
+
+test('alias chaining with relative deps works', function() {
+  define('foo/baz', [], function() {
+    return 'I AM baz';
+  });
+
+  define('foo/index', ['./baz'], function(baz) {
+    return 'I AM foo/index: ' + baz;
+  });
+
+  define('foo', define.alias('foo/index'));
+  define('bar', define.alias('foo'));
+
+  equal(require('foo'), 'I AM foo/index: I AM baz');
+  equal(require('foo/index'), 'I AM foo/index: I AM baz');
+  equal(require('bar'), 'I AM foo/index: I AM baz');
+});
