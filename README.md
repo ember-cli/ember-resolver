@@ -3,6 +3,24 @@ loader.js [![Build Status](https://travis-ci.org/ember-cli/loader.js.png?branch=
 
 Minimal AMD loader mostly stolen from [@wycats](https://github.com/wycats).
 
+## No Conflict
+
+To prevent the loader from overriding `require`, `define`, or `requirejs` you can instruct the loader
+to use no conflict mode by providing it an alternative name for the various globals that are normally used.
+
+Example:
+
+```js
+loader.noConflict({
+  define: 'newDefine',
+  require: 'newRequire'
+});
+```
+
+Note: To be able to take advantage of alternate `define` method name, you will also need to ensure that your
+build tooling generates using the alternate.  An example of this is done in the [emberjs-build](https://github.com/emberjs/emberjs-build)
+project in the [babel-enifed-module-formatter plugin](https://github.com/emberjs/emberjs-build/blob/v0.4.2/lib/utils/babel-enifed-module-formatter.js).
+
 ## Tests
 
 To run the test you'll need to have
