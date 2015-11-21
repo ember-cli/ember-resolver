@@ -44,3 +44,15 @@ _You can continue to use ember-resolver v0.1.x as a bower package, but be carefu
 * `ember build`
 
 For more information on using ember-cli, visit [http://www.ember-cli.com/](http://www.ember-cli.com/).
+
+## Troubleshooting
+
+As mentioned above, `ember-resolver` is no longer a bower package.  If you're seeing a message like this:
+
+```
+Unable to find a suitable version for ember-resolver, please choose one:
+    1) ember-resolver#~0.1.20 which resolved to 0.1.21 and is required by ember-resolver#2.0.3
+    2) ember-resolver#~2.0.3 which resolved to 2.0.3 and is required by [APP_NAME]
+```
+
+... you probably need to update your application accordingly.  See aptible/dashboard.aptible.com#423 as an example of how to update.
