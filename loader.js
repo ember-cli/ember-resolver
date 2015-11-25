@@ -167,7 +167,7 @@ var global = this;
   };
 
   function findModule(name, referrer) {
-    var mod = registry[name];
+    var mod = registry[name] || registry[name + '/index'];
 
     while (mod && mod.callback instanceof Alias) {
       name = mod.callback.name;

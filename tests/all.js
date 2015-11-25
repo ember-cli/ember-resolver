@@ -396,6 +396,50 @@ test('foo foo/index are the same thing', function() {
   deepEqual(require('foo'), require('foo/index'));
 });
 
+test('foo automatically falls back to foo/index', function() {
+  define('foo/index', [] , function() {
+    return { 'default': 'hi' };
+  });
+
+  define('bar', ['foo', 'foo/index'] , function(foo, fooIndex) {
+    deepEqual(foo, fooIndex);
+  });
+
+  deepEqual(require('foo'), require('foo/index'));
+});
+
+test('automatic /index fallback no ambiguity', function() {
+  define('foo/index', [], function() {
+    return 'I AM foo/index';
+  });
+
+  define('bar', ['foo'], function(foo) {
+    return 'I AM bar with: ' + foo;
+  });
+
+  equal(require('foo'), 'I AM foo/index');
+  equal(require('foo/index'), 'I AM foo/index');
+  equal(require('bar'), 'I AM bar with: I AM foo/index');
+});
+
+test('automatic /index fallback is not used if module is defined', function() {
+  define('foo', [], function() {
+    return 'I AM foo';
+  });
+
+  define('foo/index', [], function() {
+    return 'I AM foo/index';
+  });
+
+  define('bar', ['foo'], function(foo) {
+    return 'I AM bar with: ' + foo;
+  });
+
+  equal(require('foo'), 'I AM foo');
+  equal(require('foo/index'), 'I AM foo/index');
+  equal(require('bar'), 'I AM bar with: I AM foo');
+});
+
 test('unsee', function() {
   var counter = 0;
   define('foo', [] , function() {
@@ -416,7 +460,7 @@ test('unsee', function() {
   equal(counter, 2);
 });
 
-test('/index fallback no ambiguity', function() {
+test('manual /index fallback no ambiguity', function() {
   define('foo/index', [], function() {
     return 'I AM foo/index';
   });
@@ -432,7 +476,7 @@ test('/index fallback no ambiguity', function() {
   equal(require('bar'), 'I AM bar with: I AM foo/index');
 });
 
-test('/index fallback with ambiguity (alias after)', function() {
+test('manual /index fallback with ambiguity (alias after)', function() {
   define('foo', [], function() {
     return 'I AM foo';
   });
@@ -452,7 +496,7 @@ test('/index fallback with ambiguity (alias after)', function() {
   equal(require('bar'), 'I AM bar with: I AM foo/index');
 });
 
-test('/index fallback with ambiguity (alias after all defines but before require)', function() {
+test('manual /index fallback with ambiguity (alias after all defines but before require)', function() {
   define('foo', [], function() {
     return 'I AM foo';
   });
