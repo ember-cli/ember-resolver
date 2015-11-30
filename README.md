@@ -5,7 +5,7 @@ This project is tracking a new resolver based on ES6 semantics that has been ext
 
 * [ember-cli](https://github.com/ember-cli/ember-cli)
 * [ember-app-kit](https://github.com/stefanpenner/ember-app-kit)
-* [ember-appkit-rails](https://github.com/dockyard/ember-appkit-rails)
+* [ember-appkit-rails](https://github.com/DavyJonesLocker/ember-appkit-rails)
 
 ## Installation
 
