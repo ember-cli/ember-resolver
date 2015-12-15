@@ -12,7 +12,7 @@ module.exports = {
     var checker = new VersionChecker(this);
     var dep = checker.for('ember-cli', 'npm');
 
-    if (!dep.satisfies('>= 2.0.0')) {
+    if (dep.lt('2.0.0')) {
       this.monkeyPatchVendorFiles();
     }
 
