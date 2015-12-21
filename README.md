@@ -21,6 +21,22 @@ Note: To be able to take advantage of alternate `define` method name, you will a
 build tooling generates using the alternate.  An example of this is done in the [emberjs-build](https://github.com/emberjs/emberjs-build)
 project in the [babel-enifed-module-formatter plugin](https://github.com/emberjs/emberjs-build/blob/v0.4.2/lib/utils/babel-enifed-module-formatter.js).
 
+## wrapModules
+
+It is possible to hook loader to augment or transform the loaded code.  `wrapModules` is an optional method on the loader that is called as each module is originally loaded.  `wrapModules` must be a function of the form `wrapModules(name, callback)`. The `callback` is the original AMD callback.  The return value of `wrapModules` is then used in subsequent requests for `name`
+
+This functionality is useful for instrumenting code, for instance in code coverage libraries.  
+
+```
+loader.wrapModules = function(name, callback) {
+            if (shouldTransform(name) {
+                    return myTransformer(name, callback);
+                }
+            }
+            return callback;
+    };
+```
+
 ## Tests
 
 To run the test you'll need to have

@@ -657,3 +657,19 @@ test('alias chaining with relative deps works', function() {
   equal(require('foo/index'), 'I AM foo/index: I AM baz');
   equal(require('bar'), 'I AM foo/index: I AM baz');
 });
+
+test('wrapModules is called when present', function() {
+  var fooCalled = 0;
+  var annotatorCalled = 0;
+  loader.wrapModules = function(name, callback) {
+    annotatorCalled++;
+    return callback;
+  };
+  define('foo', [], function() {
+    fooCalled++;
+  });
+
+  equal(annotatorCalled, 0);
+  require('foo');
+  equal(annotatorCalled, 1);
+});
