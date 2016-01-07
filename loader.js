@@ -78,6 +78,9 @@ var global = this;
     if (this.finalized) {
       return this.module.exports;
     } else {
+      if (loader.wrapModules) {
+        this.callback = loader.wrapModules(this.name, this.callback);
+      }
       var result = this.callback.apply(this, reifiedDeps);
       if (!(this.hasExportsAsDep && result === undefined)) {
         this.module.exports = result;
