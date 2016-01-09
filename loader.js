@@ -1,7 +1,6 @@
 var loader, define, requireModule, require, requirejs;
-var global = this;
 
-(function() {
+(function(global) {
   'use strict';
 
   // Save off the original values of these globals, so we can restore them if someone asks us to
@@ -215,4 +214,4 @@ var global = this;
     requirejs.entries = requirejs._eak_seen = registry = {};
     seen = {};
   };
-})();
+})(this);
