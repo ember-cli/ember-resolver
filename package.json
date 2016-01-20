@@ -1,6 +1,6 @@
 {
   "name": "loader.js",
-  "version": "3.6.1",
+  "version": "4.0.0",
   "description": "loader.js =========",
   "main": "lib/loader.js",
   "directories": {
