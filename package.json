@@ -2,7 +2,7 @@
   "name": "loader.js",
   "version": "3.6.1",
   "description": "loader.js =========",
-  "main": "index.js",
+  "main": "lib/loader.js",
   "directories": {
     "test": "tests"
   },
@@ -27,5 +27,8 @@
   },
   "keywords": [
     "ember-addon"
-  ]
+  ],
+  "ember-addon": {
+    "main": "index.js"
+  }
 }
