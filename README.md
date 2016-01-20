@@ -25,7 +25,7 @@ project in the [babel-enifed-module-formatter plugin](https://github.com/emberjs
 
 It is possible to hook loader to augment or transform the loaded code.  `wrapModules` is an optional method on the loader that is called as each module is originally loaded.  `wrapModules` must be a function of the form `wrapModules(name, callback)`. The `callback` is the original AMD callback.  The return value of `wrapModules` is then used in subsequent requests for `name`
 
-This functionality is useful for instrumenting code, for instance in code coverage libraries.  
+This functionality is useful for instrumenting code, for instance in code coverage libraries.
 
 ```
 loader.wrapModules = function(name, callback) {
@@ -39,21 +39,16 @@ loader.wrapModules = function(name, callback) {
 
 ## Tests
 
-To run the test you'll need to have
-[testem](https://github.com/airportyh/testem) installed. Install it with `npm
-install -g testem`.
-
-_(You'll also have to install the bower components, which you can do by running
-`bower install`)_
+We use [testem](https://github.com/airportyh/testem) for running our test suite.
 
 You may run them with:
 ```bash
-testem ci
+npm test
 ```
 
 You can also launch testem development mode with:
 ```bash
-testem
+npm run test:dev
 ```
 
 ## License

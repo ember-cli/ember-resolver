@@ -12,7 +12,8 @@
     "testem": "^1.0.0"
   },
   "scripts": {
-    "test": "testem ci"
+    "test": "testem ci",
+    "test:dev": "testem"
   },
   "author": "",
   "license": "MIT",
