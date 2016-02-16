@@ -2,7 +2,7 @@
   "name": "loader.js",
   "version": "4.0.0",
   "description": "loader.js =========",
-  "main": "lib/loader.js",
+  "main": "lib/loader/loader.js",
   "directories": {
     "test": "tests"
   },
