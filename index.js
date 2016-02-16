@@ -8,7 +8,7 @@ module.exports = {
   },
 
   included: function() {
-    this.app.import('vendor/loader.js', {
+    this.app.import('vendor/loader/loader.js', {
       prepend: true
     });
   }
