@@ -6,7 +6,7 @@ var ara = require('ara');
 var path = require('path');
 var file = process.argv[2];
 
-for (var i = 0; i < 50; i++) {
+for (var i = 0; i < 10; i++) {
   tests.push({
     id: i,
     run: function() {
