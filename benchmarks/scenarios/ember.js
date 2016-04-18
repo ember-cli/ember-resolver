@@ -1,3 +1,4 @@
+// var loader = require('../extra/other-loader');
 var loader = require('../../lib/loader/loader.js');
 var measure = require('../handler').measure;
 
