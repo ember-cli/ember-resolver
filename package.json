@@ -8,6 +8,7 @@
   },
   "dependencies": {},
   "devDependencies": {
+    "ara": "0.0.2",
     "ora": "^0.2.1",
     "promise-map-series": "^0.2.2",
     "qunitjs": "^1.20.0",
