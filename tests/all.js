@@ -673,3 +673,29 @@ test('wrapModules is called when present', function() {
   require('foo');
   equal(annotatorCalled, 1);
 });
+
+test('import require from "require" works', function () {
+  define('foo/baz', function () {
+    return 'I AM baz';
+  });
+
+  define('foo/index', ['require'], function (require) {
+    return require.default('./baz');
+  });
+
+  equal(require('foo'), 'I AM baz');
+});
+
+test('require has a has method', function () {
+  define('foo/baz/index', function () {
+    return 'I AM baz';
+  });
+
+  define('foo/index', ['require'], function (require) {
+    if (require.has('./baz')) {
+      return require.default('./baz');
+    }
+  });
+
+  equal(require('foo'), 'I AM baz');
+});
