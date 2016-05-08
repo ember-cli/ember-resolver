@@ -27,7 +27,7 @@ It is possible to hook loader to augment or transform the loaded code.  `wrapMod
 
 This functionality is useful for instrumenting code, for instance in code coverage libraries.
 
-```
+```js
 loader.wrapModules = function(name, callback) {
             if (shouldTransform(name) {
                     return myTransformer(name, callback);
@@ -42,12 +42,12 @@ loader.wrapModules = function(name, callback) {
 We use [testem](https://github.com/airportyh/testem) for running our test suite.
 
 You may run them with:
-```bash
+```sh
 npm test
 ```
 
 You can also launch testem development mode with:
-```bash
+```sh
 npm run test:dev
 ```
 
