@@ -67,14 +67,53 @@ test('simple define/require', function() {
     fooCalled++;
   });
 
+  deepEqual(require._stats, {
+    build: 0,
+    define: 1,
+    ensureBuild: 0,
+    exports: 0,
+    findModule: 0,
+    modules: 1,
+    reify: 0,
+    require: 0,
+    resolve: 0,
+    resolveRelative: 0
+  });
+
   var foo = require('foo');
   equal(foo, undefined);
   equal(fooCalled, 1);
   deepEqual(keys(requirejs.entries), ['foo']);
 
+  deepEqual(require._stats, {
+    build: 1,
+    define: 1,
+    ensureBuild: 1,
+    exports: 1,
+    findModule: 1,
+    modules: 1,
+    reify: 1,
+    require: 1,
+    resolve: 0,
+    resolveRelative: 0
+  });
+
   var fooAgain = require('foo');
   equal(fooAgain, undefined);
   equal(fooCalled, 1);
+
+  deepEqual(require._stats, {
+    build: 1,
+    define: 1,
+    ensureBuild: 2,
+    exports: 1,
+    findModule: 2,
+    modules: 1,
+    reify: 1,
+    require: 2,
+    resolve: 0,
+    resolveRelative: 0
+  });
 
   deepEqual(keys(requirejs.entries), ['foo']);
 });
@@ -88,6 +127,20 @@ test('define without deps', function() {
   });
 
   var foo = require('foo');
+
+  deepEqual(require._stats, {
+    build: 1,
+    define: 1,
+    ensureBuild: 1,
+    exports: 1,
+    findModule: 1,
+    modules: 1,
+    reify: 1,
+    require: 1,
+    resolve: 0,
+    resolveRelative: 0
+  });
+
   equal(foo, undefined);
   equal(fooCalled, 1);
   deepEqual(keys(requirejs.entries), ['foo']);
@@ -101,8 +154,34 @@ test('multiple define/require', function() {
 
   deepEqual(keys(requirejs.entries), ['foo']);
 
+  deepEqual(require._stats, {
+    build: 0,
+    define: 1,
+    ensureBuild: 0,
+    exports: 0,
+    findModule: 0,
+    modules: 1,
+    reify: 0,
+    require: 0,
+    resolve: 0,
+    resolveRelative: 0
+  });
+
   define('bar', [], function() {
 
+  });
+
+  deepEqual(require._stats, {
+    build: 0,
+    define: 2,
+    ensureBuild: 0,
+    exports: 0,
+    findModule: 0,
+    modules: 2,
+    reify: 0,
+    require: 0,
+    resolve: 0,
+    resolveRelative: 0
   });
 
   deepEqual(keys(requirejs.entries), ['foo', 'bar']);
@@ -110,7 +189,8 @@ test('multiple define/require', function() {
 
 
 test('simple import/export', function() {
-  expect(2);
+  expect(4);
+
   define('foo', ['bar'], function(bar) {
     equal(bar.baz, 'baz');
 
@@ -123,12 +203,38 @@ test('simple import/export', function() {
     };
   });
 
+  deepEqual(require._stats, {
+    build: 0,
+    define: 2,
+    ensureBuild: 0,
+    exports: 0,
+    findModule: 0,
+    modules: 2,
+    reify: 0,
+    require: 0,
+    resolve: 0,
+    resolveRelative: 0
+  });
+
   equal(require('foo'), 'baz');
+
+  deepEqual(require._stats, {
+    build: 2,
+    define: 2,
+    ensureBuild: 2,
+    exports: 2,
+    findModule: 2,
+    modules: 2,
+    reify: 2,
+    require: 1,
+    resolve: 1,
+    resolveRelative: 0
+  });
 });
 
-
 test('simple import/export with `exports`', function() {
-  expect(2);
+  expect(4);
+
   define('foo', ['bar', 'exports'], function(bar, __exports__) {
     equal(bar.baz, 'baz');
 
@@ -139,11 +245,37 @@ test('simple import/export with `exports`', function() {
     __exports__.baz = 'baz';
   });
 
+  deepEqual(require._stats, {
+    build: 0,
+    define: 2,
+    ensureBuild: 0,
+    exports: 0,
+    findModule: 0,
+    modules: 2,
+    reify: 0,
+    require: 0,
+    resolve: 0,
+    resolveRelative: 0
+  });
+
   equal(require('foo').baz, 'baz');
+
+  deepEqual(require._stats, {
+    build: 2,
+    define: 2,
+    ensureBuild: 2,
+    exports: 2,
+    findModule: 2,
+    modules: 2,
+    reify: 2,
+    require: 1,
+    resolve: 1,
+    resolveRelative: 0
+  });
 });
 
 test('relative import/export', function() {
-  expect(2);
+  expect(4);
   define('foo/a', ['./b'], function(bar) {
     equal(bar.baz, 'baz');
 
@@ -156,11 +288,37 @@ test('relative import/export', function() {
     };
   });
 
+  deepEqual(require._stats, {
+    build: 0,
+    define: 2,
+    ensureBuild: 0,
+    exports: 0,
+    findModule: 0,
+    modules: 2,
+    reify: 0,
+    require: 0,
+    resolve: 0,
+    resolveRelative: 0
+  });
+
   equal(require('foo/a'), 'baz');
+
+  deepEqual(require._stats, {
+    build: 2,
+    define: 2,
+    ensureBuild: 2,
+    exports: 2,
+    findModule: 2,
+    modules: 2,
+    reify: 2,
+    require: 1,
+    resolve: 1,
+    resolveRelative: 1
+  });
 });
 
 test('deep nested relative import/export', function() {
-  expect(2);
+  expect(4);
 
   define('foo/a/b/c', ['../../b/b/c'], function(bar) {
     equal(bar.baz, 'baz');
@@ -174,7 +332,33 @@ test('deep nested relative import/export', function() {
     };
   });
 
+  deepEqual(require._stats, {
+    build: 0,
+    define: 2,
+    ensureBuild: 0,
+    exports: 0,
+    findModule: 0,
+    modules: 2,
+    reify: 0,
+    require: 0,
+    resolve: 0,
+    resolveRelative: 0
+  });
+
   equal(require('foo/a/b/c'), 'baz');
+
+  deepEqual(require._stats, {
+    build: 2,
+    define: 2,
+    ensureBuild: 2,
+    exports: 2,
+    findModule: 2,
+    modules: 2,
+    reify: 2,
+    require: 1,
+    resolve: 1,
+    resolveRelative: 1
+  });
 });
 
 test('incorrect lookup paths should fail', function() {
@@ -197,7 +381,7 @@ test('incorrect lookup paths should fail', function() {
 });
 
 test('top-level relative import/export', function() {
-  expect(2);
+  expect(3);
 
   define('foo', ['./bar'], function(bar) {
     equal(bar.baz, 'baz');
@@ -212,6 +396,19 @@ test('top-level relative import/export', function() {
   });
 
   equal(require('foo'), 'baz');
+
+  deepEqual(require._stats, {
+    build: 2,
+    define: 2,
+    ensureBuild: 2,
+    exports: 2,
+    findModule: 2,
+    modules: 2,
+    reify: 2,
+    require: 1,
+    resolve: 1,
+    resolveRelative: 1
+  });
 });
 
 test('runtime cycles', function() {
@@ -229,6 +426,19 @@ test('runtime cycles', function() {
 
   var foo = require('foo');
   var bar = require('bar');
+
+  deepEqual(require._stats, {
+    build: 2,
+    define: 2,
+    ensureBuild: 4,
+    exports: 2,
+    findModule: 4,
+    modules: 2,
+    reify: 2,
+    require: 2,
+    resolve: 2,
+    resolveRelative: 0
+  });
 
   ok(foo.quz());
   ok(bar.baz());
@@ -249,6 +459,19 @@ test('basic CJS mode', function() {
   });
 
   var foo = require('a/foo');
+
+  deepEqual(require._stats, {
+    build: 2,
+    define: 2,
+    ensureBuild: 2,
+    exports: 2,
+    findModule: 2,
+    modules: 2,
+    reify: 2,
+    require: 2,
+    resolve: 1,
+    resolveRelative: 1
+  });
 
   equal(foo.bar, 'bar');
 });
@@ -271,6 +494,19 @@ test('if factory returns a value it is used as export', function() {
 
   var foo = require('foo');
 
+  deepEqual(require._stats, {
+    build: 1,
+    define: 1,
+    ensureBuild: 1,
+    exports: 1,
+    findModule: 1,
+    modules: 1,
+    reify: 1,
+    require: 1,
+    resolve: 0,
+    resolveRelative: 0
+  });
+
   equal(foo.bar, 'bar');
 });
 
@@ -282,6 +518,19 @@ test('if a module has no default property assume the return is the default', fun
   });
 
   var foo = require('foo')['default'];
+
+  deepEqual(require._stats, {
+    build: 1,
+    define: 1,
+    ensureBuild: 1,
+    exports: 1,
+    findModule: 1,
+    modules: 1,
+    reify: 1,
+    require: 1,
+    resolve: 0,
+    resolveRelative: 0
+  });
 
   equal(foo.bar, 'bar');
 });
@@ -298,6 +547,19 @@ test('if a CJS style module has no default export assume module.exports is the d
   var foo = new Foo();
 
   equal(foo.bar, 'bar');
+
+  deepEqual(require._stats, {
+    build: 1,
+    define: 1,
+    ensureBuild: 1,
+    exports: 1,
+    findModule: 1,
+    modules: 1,
+    reify: 1,
+    require: 1,
+    resolve: 0,
+    resolveRelative: 0
+  });
 });
 
 
@@ -309,6 +571,19 @@ test('if a module has no default property assume its export is default (function
 
   equal(require('foo')['default'], theFunction);
   equal(require('foo'), theFunction);
+
+  deepEqual(require._stats, {
+    build: 1,
+    define: 1,
+    ensureBuild: 2,
+    exports: 1,
+    findModule: 2,
+    modules: 1,
+    reify: 1,
+    require: 2,
+    resolve: 0,
+    resolveRelative: 0
+  });
 });
 
 
@@ -380,6 +655,19 @@ test('relative CJS esq require (with exports and module);', function() {
   });
 
   equal(require('foo/a'), 'c-content');
+
+  deepEqual(require._stats, {
+    build: 3,
+    define: 3,
+    ensureBuild: 3,
+    exports: 3,
+    findModule: 3,
+    modules: 3,
+    reify: 3,
+    require: 3,
+    resolve: 2,
+    resolveRelative: 2,
+  });
 });
 
 test('foo foo/index are the same thing', function() {
@@ -394,6 +682,19 @@ test('foo foo/index are the same thing', function() {
   });
 
   deepEqual(require('foo'), require('foo/index'));
+
+  deepEqual(require._stats, {
+    build: 1,
+    define: 3,
+    ensureBuild: 2,
+    exports: 1,
+    findModule: 2,
+    modules: 3,
+    reify: 1,
+    require: 2,
+    resolve: 0,
+    resolveRelative: 0,
+  });
 });
 
 test('foo automatically falls back to foo/index', function() {
@@ -406,6 +707,19 @@ test('foo automatically falls back to foo/index', function() {
   });
 
   deepEqual(require('foo'), require('foo/index'));
+
+  deepEqual(require._stats, {
+    build: 1,
+    define: 2,
+    ensureBuild: 2,
+    exports: 1,
+    findModule: 2,
+    modules: 2,
+    reify: 1,
+    require: 2,
+    resolve: 0,
+    resolveRelative: 0,
+  });
 });
 
 test('automatic /index fallback no ambiguity', function() {
@@ -420,6 +734,19 @@ test('automatic /index fallback no ambiguity', function() {
   equal(require('foo'), 'I AM foo/index');
   equal(require('foo/index'), 'I AM foo/index');
   equal(require('bar'), 'I AM bar with: I AM foo/index');
+
+  deepEqual(require._stats, {
+    build: 2,
+    define: 2,
+    ensureBuild: 4,
+    exports: 2,
+    findModule: 4,
+    modules: 2,
+    reify: 2,
+    require: 3,
+    resolve: 1,
+    resolveRelative: 0,
+  });
 });
 
 test('automatic /index fallback is not used if module is defined', function() {
@@ -438,6 +765,19 @@ test('automatic /index fallback is not used if module is defined', function() {
   equal(require('foo'), 'I AM foo');
   equal(require('foo/index'), 'I AM foo/index');
   equal(require('bar'), 'I AM bar with: I AM foo');
+
+  deepEqual(require._stats, {
+    build: 3,
+    define: 3,
+    ensureBuild: 4,
+    exports: 3,
+    findModule: 4,
+    modules: 3,
+    reify: 3,
+    require: 3,
+    resolve: 1,
+    resolveRelative: 0,
+  });
 });
 
 test('unsee', function() {
@@ -458,6 +798,19 @@ test('unsee', function() {
   equal(counter, 2);
   require('foo');
   equal(counter, 2);
+
+  deepEqual(require._stats, {
+    build: 2,
+    define: 1,
+    ensureBuild: 5,
+    exports: 2,
+    findModule: 5,
+    modules: 1,
+    reify: 2,
+    require: 4,
+    resolve: 0,
+    resolveRelative: 0,
+  });
 });
 
 test('manual /index fallback no ambiguity', function() {
@@ -474,6 +827,19 @@ test('manual /index fallback no ambiguity', function() {
   equal(require('foo'), 'I AM foo/index');
   equal(require('foo/index'), 'I AM foo/index');
   equal(require('bar'), 'I AM bar with: I AM foo/index');
+
+  deepEqual(require._stats, {
+    build: 2,
+    define: 3,
+    ensureBuild: 4,
+    exports: 2,
+    findModule: 4,
+    modules: 3,
+    reify: 2,
+    require: 3,
+    resolve: 1,
+    resolveRelative: 0,
+  });
 });
 
 test('manual /index fallback with ambiguity (alias after)', function() {
@@ -494,6 +860,19 @@ test('manual /index fallback with ambiguity (alias after)', function() {
   equal(require('foo'), 'I AM foo/index');
   equal(require('foo/index'), 'I AM foo/index');
   equal(require('bar'), 'I AM bar with: I AM foo/index');
+
+  deepEqual(require._stats, {
+    build: 2,
+    define: 4,
+    ensureBuild: 4,
+    exports: 2,
+    findModule: 4,
+    modules: 4,
+    reify: 2,
+    require: 3,
+    resolve: 1,
+    resolveRelative: 0,
+  });
 });
 
 test('manual /index fallback with ambiguity (alias after all defines but before require)', function() {
@@ -514,6 +893,19 @@ test('manual /index fallback with ambiguity (alias after all defines but before 
   equal(require('foo'), 'I AM foo/index');
   equal(require('foo/index'), 'I AM foo/index');
   equal(require('bar'), 'I AM bar with: I AM foo/index');
+
+  deepEqual(require._stats, {
+    build: 2,
+    define: 4,
+    ensureBuild: 4,
+    exports: 2,
+    findModule: 4,
+    modules: 4,
+    reify: 2,
+    require: 3,
+    resolve: 1,
+    resolveRelative: 0,
+  });
 });
 
 test('alias entries share same module instance', function() {
@@ -530,6 +922,19 @@ test('alias entries share same module instance', function() {
 
   require('foo/index');
   equal(count, 1, 'second require should use existing instance');
+
+  deepEqual(require._stats, {
+    build: 1,
+    define: 2,
+    ensureBuild: 2,
+    exports: 1,
+    findModule: 2,
+    modules: 2,
+    reify: 1,
+    require: 2,
+    resolve: 0,
+    resolveRelative: 0,
+  });
 });
 
 test('/index fallback + unsee', function() {
@@ -556,6 +961,19 @@ test('/index fallback + unsee', function() {
   require('foo');
 
   equal(count, 3);
+
+  deepEqual(require._stats, {
+    build: 3,
+    define: 2,
+    ensureBuild: 6,
+    exports: 3,
+    findModule: 6,
+    modules: 2,
+    reify: 3,
+    require: 4,
+    resolve: 0,
+    resolveRelative: 0,
+  });
 });
 
 test('alias with target \w deps', function() {
@@ -570,6 +988,19 @@ test('alias with target \w deps', function() {
   define('quz', define.alias('foo'));
 
   equal(require('quz'), 'I AM BAR');
+
+  deepEqual(require._stats, {
+    build: 2,
+    define: 3,
+    ensureBuild: 2,
+    exports: 2,
+    findModule: 2,
+    modules: 3,
+    reify: 2,
+    require: 1,
+    resolve: 1,
+    resolveRelative: 0,
+  });
 });
 
 test('alias chain (simple)', function() {
@@ -581,6 +1012,19 @@ test('alias chain (simple)', function() {
   define('foo', define.alias('bar'));
 
   equal(require('quz'), 'I AM BAR');
+
+  deepEqual(require._stats, {
+    build: 1,
+    define: 3,
+    ensureBuild: 1,
+    exports: 1,
+    findModule: 1,
+    modules: 3,
+    reify: 1,
+    require: 1,
+    resolve: 0,
+    resolveRelative: 0,
+  });
 });
 
 test('alias chain (long)', function() {
@@ -594,6 +1038,19 @@ test('alias chain (long)', function() {
   define('bozo', define.alias('baz'));
 
   equal(require('bozo'), 'I AM BAR');
+
+  deepEqual(require._stats, {
+    build: 1,
+    define: 5,
+    ensureBuild: 1,
+    exports: 1,
+    findModule: 1,
+    modules: 5,
+    reify: 1,
+    require: 1,
+    resolve: 0,
+    resolveRelative: 0,
+  });
 });
 
 test('alias chains are lazy', function() {
@@ -617,6 +1074,19 @@ test('alias chains are lazy', function() {
   define('foo', define.alias('bar2'));
 
   equal(require('bozo'), 'I AM BAR2');
+
+  deepEqual(require._stats, {
+    build: 2,
+    define: 8,
+    ensureBuild: 2,
+    exports: 2,
+    findModule: 2,
+    modules: 8,
+    reify: 2,
+    require: 2,
+    resolve: 0,
+    resolveRelative: 0,
+  });
 });
 
 test('alias chains propogate unsee', function() {
@@ -639,6 +1109,19 @@ test('alias chains propogate unsee', function() {
   equal(counter, 1);
   equal(require('b'), 'I AM BAR');
   equal(counter, 2);
+
+  deepEqual(require._stats, {
+    build: 2,
+    define: 3,
+    ensureBuild: 4,
+    exports: 2,
+    findModule: 4,
+    modules: 3,
+    reify: 2,
+    require: 3,
+    resolve: 0,
+    resolveRelative: 0,
+  });
 });
 
 test('alias chaining with relative deps works', function() {
@@ -656,6 +1139,19 @@ test('alias chaining with relative deps works', function() {
   equal(require('foo'), 'I AM foo/index: I AM baz');
   equal(require('foo/index'), 'I AM foo/index: I AM baz');
   equal(require('bar'), 'I AM foo/index: I AM baz');
+
+  deepEqual(require._stats, {
+    build: 2,
+    define: 4,
+    ensureBuild: 4,
+    exports: 2,
+    findModule: 4,
+    modules: 4,
+    reify: 2,
+    require: 3,
+    resolve: 1,
+    resolveRelative: 1,
+  });
 });
 
 test('wrapModules is called when present', function() {
@@ -672,6 +1168,19 @@ test('wrapModules is called when present', function() {
   equal(annotatorCalled, 0);
   require('foo');
   equal(annotatorCalled, 1);
+
+  deepEqual(require._stats, {
+    build: 1,
+    define: 1,
+    ensureBuild: 1,
+    exports: 1,
+    findModule: 1,
+    modules: 1,
+    reify: 1,
+    require: 1,
+    resolve: 0,
+    resolveRelative: 0,
+  });
 });
 
 test('import require from "require" works', function () {
@@ -684,6 +1193,19 @@ test('import require from "require" works', function () {
   });
 
   equal(require('foo'), 'I AM baz');
+
+  deepEqual(require._stats, {
+    build: 2,
+    define: 2,
+    ensureBuild: 2,
+    exports: 2,
+    findModule: 2,
+    modules: 2,
+    reify: 2,
+    require: 2,
+    resolve: 1,
+    resolveRelative: 1,
+  });
 });
 
 test('require has a has method', function () {
@@ -698,4 +1220,17 @@ test('require has a has method', function () {
   });
 
   equal(require('foo'), 'I AM baz');
+
+  deepEqual(require._stats, {
+    build: 2,
+    define: 2,
+    ensureBuild: 2,
+    exports: 2,
+    findModule: 2,
+    modules: 2,
+    reify: 2,
+    require: 2,
+    resolve: 2,
+    resolveRelative: 2,
+  });
 });
