@@ -4,8 +4,6 @@ module.exports = {
   name: 'loader.js',
 
   init: function() {
-    this._super.init && this._super.init(this, arguments);
-
     this.treePaths['vendor'] = 'lib';
   },
 
