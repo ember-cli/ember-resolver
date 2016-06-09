@@ -68,9 +68,8 @@ test('simple define/require', function() {
   });
 
   deepEqual(require._stats, {
-    build: 0,
+    findDeps: 0,
     define: 1,
-    ensureBuild: 0,
     exports: 0,
     findModule: 0,
     modules: 1,
@@ -86,9 +85,8 @@ test('simple define/require', function() {
   deepEqual(keys(requirejs.entries), ['foo']);
 
   deepEqual(require._stats, {
-    build: 1,
+    findDeps: 1,
     define: 1,
-    ensureBuild: 1,
     exports: 1,
     findModule: 1,
     modules: 1,
@@ -103,9 +101,8 @@ test('simple define/require', function() {
   equal(fooCalled, 1);
 
   deepEqual(require._stats, {
-    build: 1,
+    findDeps: 1,
     define: 1,
-    ensureBuild: 2,
     exports: 1,
     findModule: 2,
     modules: 1,
@@ -129,9 +126,8 @@ test('define without deps', function() {
   var foo = require('foo');
 
   deepEqual(require._stats, {
-    build: 1,
+    findDeps: 1,
     define: 1,
-    ensureBuild: 1,
     exports: 1,
     findModule: 1,
     modules: 1,
@@ -155,9 +151,8 @@ test('multiple define/require', function() {
   deepEqual(keys(requirejs.entries), ['foo']);
 
   deepEqual(require._stats, {
-    build: 0,
+    findDeps: 0,
     define: 1,
-    ensureBuild: 0,
     exports: 0,
     findModule: 0,
     modules: 1,
@@ -172,9 +167,8 @@ test('multiple define/require', function() {
   });
 
   deepEqual(require._stats, {
-    build: 0,
+    findDeps: 0,
     define: 2,
-    ensureBuild: 0,
     exports: 0,
     findModule: 0,
     modules: 2,
@@ -204,9 +198,8 @@ test('simple import/export', function() {
   });
 
   deepEqual(require._stats, {
-    build: 0,
+    findDeps: 0,
     define: 2,
-    ensureBuild: 0,
     exports: 0,
     findModule: 0,
     modules: 2,
@@ -219,9 +212,8 @@ test('simple import/export', function() {
   equal(require('foo'), 'baz');
 
   deepEqual(require._stats, {
-    build: 2,
+    findDeps: 2,
     define: 2,
-    ensureBuild: 2,
     exports: 2,
     findModule: 2,
     modules: 2,
@@ -246,9 +238,8 @@ test('simple import/export with `exports`', function() {
   });
 
   deepEqual(require._stats, {
-    build: 0,
+    findDeps: 0,
     define: 2,
-    ensureBuild: 0,
     exports: 0,
     findModule: 0,
     modules: 2,
@@ -261,9 +252,8 @@ test('simple import/export with `exports`', function() {
   equal(require('foo').baz, 'baz');
 
   deepEqual(require._stats, {
-    build: 2,
+    findDeps: 2,
     define: 2,
-    ensureBuild: 2,
     exports: 2,
     findModule: 2,
     modules: 2,
@@ -289,9 +279,8 @@ test('relative import/export', function() {
   });
 
   deepEqual(require._stats, {
-    build: 0,
+    findDeps: 0,
     define: 2,
-    ensureBuild: 0,
     exports: 0,
     findModule: 0,
     modules: 2,
@@ -304,9 +293,8 @@ test('relative import/export', function() {
   equal(require('foo/a'), 'baz');
 
   deepEqual(require._stats, {
-    build: 2,
+    findDeps: 2,
     define: 2,
-    ensureBuild: 2,
     exports: 2,
     findModule: 2,
     modules: 2,
@@ -333,9 +321,8 @@ test('deep nested relative import/export', function() {
   });
 
   deepEqual(require._stats, {
-    build: 0,
+    findDeps: 0,
     define: 2,
-    ensureBuild: 0,
     exports: 0,
     findModule: 0,
     modules: 2,
@@ -348,9 +335,8 @@ test('deep nested relative import/export', function() {
   equal(require('foo/a/b/c'), 'baz');
 
   deepEqual(require._stats, {
-    build: 2,
+    findDeps: 2,
     define: 2,
-    ensureBuild: 2,
     exports: 2,
     findModule: 2,
     modules: 2,
@@ -398,9 +384,8 @@ test('top-level relative import/export', function() {
   equal(require('foo'), 'baz');
 
   deepEqual(require._stats, {
-    build: 2,
+    findDeps: 2,
     define: 2,
-    ensureBuild: 2,
     exports: 2,
     findModule: 2,
     modules: 2,
@@ -428,9 +413,8 @@ test('runtime cycles', function() {
   var bar = require('bar');
 
   deepEqual(require._stats, {
-    build: 2,
+    findDeps: 2,
     define: 2,
-    ensureBuild: 4,
     exports: 2,
     findModule: 4,
     modules: 2,
@@ -461,9 +445,8 @@ test('basic CJS mode', function() {
   var foo = require('a/foo');
 
   deepEqual(require._stats, {
-    build: 2,
+    findDeps: 2,
     define: 2,
-    ensureBuild: 2,
     exports: 2,
     findModule: 2,
     modules: 2,
@@ -495,9 +478,8 @@ test('if factory returns a value it is used as export', function() {
   var foo = require('foo');
 
   deepEqual(require._stats, {
-    build: 1,
+    findDeps: 1,
     define: 1,
-    ensureBuild: 1,
     exports: 1,
     findModule: 1,
     modules: 1,
@@ -520,9 +502,8 @@ test('if a module has no default property assume the return is the default', fun
   var foo = require('foo')['default'];
 
   deepEqual(require._stats, {
-    build: 1,
+    findDeps: 1,
     define: 1,
-    ensureBuild: 1,
     exports: 1,
     findModule: 1,
     modules: 1,
@@ -549,9 +530,8 @@ test('if a CJS style module has no default export assume module.exports is the d
   equal(foo.bar, 'bar');
 
   deepEqual(require._stats, {
-    build: 1,
+    findDeps: 1,
     define: 1,
-    ensureBuild: 1,
     exports: 1,
     findModule: 1,
     modules: 1,
@@ -573,9 +553,8 @@ test('if a module has no default property assume its export is default (function
   equal(require('foo'), theFunction);
 
   deepEqual(require._stats, {
-    build: 1,
+    findDeps: 1,
     define: 1,
-    ensureBuild: 2,
     exports: 1,
     findModule: 2,
     modules: 1,
@@ -657,9 +636,8 @@ test('relative CJS esq require (with exports and module);', function() {
   equal(require('foo/a'), 'c-content');
 
   deepEqual(require._stats, {
-    build: 3,
+    findDeps: 3,
     define: 3,
-    ensureBuild: 3,
     exports: 3,
     findModule: 3,
     modules: 3,
@@ -684,9 +662,8 @@ test('foo foo/index are the same thing', function() {
   deepEqual(require('foo'), require('foo/index'));
 
   deepEqual(require._stats, {
-    build: 1,
+    findDeps: 1,
     define: 3,
-    ensureBuild: 2,
     exports: 1,
     findModule: 2,
     modules: 3,
@@ -709,9 +686,8 @@ test('foo automatically falls back to foo/index', function() {
   deepEqual(require('foo'), require('foo/index'));
 
   deepEqual(require._stats, {
-    build: 1,
+    findDeps: 1,
     define: 2,
-    ensureBuild: 2,
     exports: 1,
     findModule: 2,
     modules: 2,
@@ -736,9 +712,8 @@ test('automatic /index fallback no ambiguity', function() {
   equal(require('bar'), 'I AM bar with: I AM foo/index');
 
   deepEqual(require._stats, {
-    build: 2,
+    findDeps: 2,
     define: 2,
-    ensureBuild: 4,
     exports: 2,
     findModule: 4,
     modules: 2,
@@ -767,9 +742,8 @@ test('automatic /index fallback is not used if module is defined', function() {
   equal(require('bar'), 'I AM bar with: I AM foo');
 
   deepEqual(require._stats, {
-    build: 3,
+    findDeps: 3,
     define: 3,
-    ensureBuild: 4,
     exports: 3,
     findModule: 4,
     modules: 3,
@@ -800,9 +774,8 @@ test('unsee', function() {
   equal(counter, 2);
 
   deepEqual(require._stats, {
-    build: 2,
+    findDeps: 2,
     define: 1,
-    ensureBuild: 5,
     exports: 2,
     findModule: 5,
     modules: 1,
@@ -829,9 +802,8 @@ test('manual /index fallback no ambiguity', function() {
   equal(require('bar'), 'I AM bar with: I AM foo/index');
 
   deepEqual(require._stats, {
-    build: 2,
+    findDeps: 2,
     define: 3,
-    ensureBuild: 4,
     exports: 2,
     findModule: 4,
     modules: 3,
@@ -862,9 +834,8 @@ test('manual /index fallback with ambiguity (alias after)', function() {
   equal(require('bar'), 'I AM bar with: I AM foo/index');
 
   deepEqual(require._stats, {
-    build: 2,
+    findDeps: 2,
     define: 4,
-    ensureBuild: 4,
     exports: 2,
     findModule: 4,
     modules: 4,
@@ -895,9 +866,8 @@ test('manual /index fallback with ambiguity (alias after all defines but before 
   equal(require('bar'), 'I AM bar with: I AM foo/index');
 
   deepEqual(require._stats, {
-    build: 2,
+    findDeps: 2,
     define: 4,
-    ensureBuild: 4,
     exports: 2,
     findModule: 4,
     modules: 4,
@@ -924,9 +894,8 @@ test('alias entries share same module instance', function() {
   equal(count, 1, 'second require should use existing instance');
 
   deepEqual(require._stats, {
-    build: 1,
+    findDeps: 1,
     define: 2,
-    ensureBuild: 2,
     exports: 1,
     findModule: 2,
     modules: 2,
@@ -963,9 +932,8 @@ test('/index fallback + unsee', function() {
   equal(count, 3);
 
   deepEqual(require._stats, {
-    build: 3,
+    findDeps: 3,
     define: 2,
-    ensureBuild: 6,
     exports: 3,
     findModule: 6,
     modules: 2,
@@ -990,9 +958,8 @@ test('alias with target \w deps', function() {
   equal(require('quz'), 'I AM BAR');
 
   deepEqual(require._stats, {
-    build: 2,
+    findDeps: 2,
     define: 3,
-    ensureBuild: 2,
     exports: 2,
     findModule: 2,
     modules: 3,
@@ -1014,9 +981,8 @@ test('alias chain (simple)', function() {
   equal(require('quz'), 'I AM BAR');
 
   deepEqual(require._stats, {
-    build: 1,
+    findDeps: 1,
     define: 3,
-    ensureBuild: 1,
     exports: 1,
     findModule: 1,
     modules: 3,
@@ -1040,9 +1006,8 @@ test('alias chain (long)', function() {
   equal(require('bozo'), 'I AM BAR');
 
   deepEqual(require._stats, {
-    build: 1,
+    findDeps: 1,
     define: 5,
-    ensureBuild: 1,
     exports: 1,
     findModule: 1,
     modules: 5,
@@ -1076,9 +1041,8 @@ test('alias chains are lazy', function() {
   equal(require('bozo'), 'I AM BAR2');
 
   deepEqual(require._stats, {
-    build: 2,
+    findDeps: 2,
     define: 8,
-    ensureBuild: 2,
     exports: 2,
     findModule: 2,
     modules: 8,
@@ -1111,9 +1075,8 @@ test('alias chains propogate unsee', function() {
   equal(counter, 2);
 
   deepEqual(require._stats, {
-    build: 2,
+    findDeps: 2,
     define: 3,
-    ensureBuild: 4,
     exports: 2,
     findModule: 4,
     modules: 3,
@@ -1141,9 +1104,8 @@ test('alias chaining with relative deps works', function() {
   equal(require('bar'), 'I AM foo/index: I AM baz');
 
   deepEqual(require._stats, {
-    build: 2,
+    findDeps: 2,
     define: 4,
-    ensureBuild: 4,
     exports: 2,
     findModule: 4,
     modules: 4,
@@ -1170,9 +1132,8 @@ test('wrapModules is called when present', function() {
   equal(annotatorCalled, 1);
 
   deepEqual(require._stats, {
-    build: 1,
+    findDeps: 1,
     define: 1,
-    ensureBuild: 1,
     exports: 1,
     findModule: 1,
     modules: 1,
@@ -1195,9 +1156,8 @@ test('import require from "require" works', function () {
   equal(require('foo'), 'I AM baz');
 
   deepEqual(require._stats, {
-    build: 2,
+    findDeps: 2,
     define: 2,
-    ensureBuild: 2,
     exports: 2,
     findModule: 2,
     modules: 2,
@@ -1222,9 +1182,8 @@ test('require has a has method', function () {
   equal(require('foo'), 'I AM baz');
 
   deepEqual(require._stats, {
-    build: 2,
+    findDeps: 2,
     define: 2,
-    ensureBuild: 2,
     exports: 2,
     findModule: 2,
     modules: 2,
