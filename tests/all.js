@@ -76,7 +76,8 @@ test('simple define/require', function() {
     reify: 0,
     require: 0,
     resolve: 0,
-    resolveRelative: 0
+    resolveRelative: 0,
+    pendingQueueLength: 0
   });
 
   var foo = require('foo');
@@ -93,7 +94,8 @@ test('simple define/require', function() {
     reify: 1,
     require: 1,
     resolve: 0,
-    resolveRelative: 0
+    resolveRelative: 0,
+    pendingQueueLength: 1
   });
 
   var fooAgain = require('foo');
@@ -109,7 +111,8 @@ test('simple define/require', function() {
     reify: 1,
     require: 2,
     resolve: 0,
-    resolveRelative: 0
+    resolveRelative: 0,
+    pendingQueueLength: 1
   });
 
   deepEqual(keys(requirejs.entries), ['foo']);
@@ -134,7 +137,8 @@ test('define without deps', function() {
     reify: 1,
     require: 1,
     resolve: 0,
-    resolveRelative: 0
+    resolveRelative: 0,
+    pendingQueueLength: 1
   });
 
   equal(foo, undefined);
@@ -159,7 +163,8 @@ test('multiple define/require', function() {
     reify: 0,
     require: 0,
     resolve: 0,
-    resolveRelative: 0
+    resolveRelative: 0,
+    pendingQueueLength: 0
   });
 
   define('bar', [], function() {
@@ -175,7 +180,8 @@ test('multiple define/require', function() {
     reify: 0,
     require: 0,
     resolve: 0,
-    resolveRelative: 0
+    resolveRelative: 0,
+    pendingQueueLength: 0
   });
 
   deepEqual(keys(requirejs.entries), ['foo', 'bar']);
@@ -206,7 +212,8 @@ test('simple import/export', function() {
     reify: 0,
     require: 0,
     resolve: 0,
-    resolveRelative: 0
+    resolveRelative: 0,
+    pendingQueueLength: 0
   });
 
   equal(require('foo'), 'baz');
@@ -220,7 +227,8 @@ test('simple import/export', function() {
     reify: 2,
     require: 1,
     resolve: 1,
-    resolveRelative: 0
+    resolveRelative: 0,
+    pendingQueueLength: 2
   });
 });
 
@@ -246,7 +254,8 @@ test('simple import/export with `exports`', function() {
     reify: 0,
     require: 0,
     resolve: 0,
-    resolveRelative: 0
+    resolveRelative: 0,
+    pendingQueueLength: 0
   });
 
   equal(require('foo').baz, 'baz');
@@ -260,7 +269,8 @@ test('simple import/export with `exports`', function() {
     reify: 2,
     require: 1,
     resolve: 1,
-    resolveRelative: 0
+    resolveRelative: 0,
+    pendingQueueLength: 2
   });
 });
 
@@ -287,7 +297,8 @@ test('relative import/export', function() {
     reify: 0,
     require: 0,
     resolve: 0,
-    resolveRelative: 0
+    resolveRelative: 0,
+    pendingQueueLength: 0
   });
 
   equal(require('foo/a'), 'baz');
@@ -301,7 +312,8 @@ test('relative import/export', function() {
     reify: 2,
     require: 1,
     resolve: 1,
-    resolveRelative: 1
+    resolveRelative: 1,
+    pendingQueueLength: 2
   });
 });
 
@@ -329,7 +341,8 @@ test('deep nested relative import/export', function() {
     reify: 0,
     require: 0,
     resolve: 0,
-    resolveRelative: 0
+    resolveRelative: 0,
+    pendingQueueLength: 0
   });
 
   equal(require('foo/a/b/c'), 'baz');
@@ -343,7 +356,8 @@ test('deep nested relative import/export', function() {
     reify: 2,
     require: 1,
     resolve: 1,
-    resolveRelative: 1
+    resolveRelative: 1,
+    pendingQueueLength: 2
   });
 });
 
@@ -392,7 +406,8 @@ test('top-level relative import/export', function() {
     reify: 2,
     require: 1,
     resolve: 1,
-    resolveRelative: 1
+    resolveRelative: 1,
+    pendingQueueLength: 2
   });
 });
 
@@ -421,7 +436,8 @@ test('runtime cycles', function() {
     reify: 2,
     require: 2,
     resolve: 2,
-    resolveRelative: 0
+    resolveRelative: 0,
+    pendingQueueLength: 3
   });
 
   ok(foo.quz());
@@ -429,6 +445,48 @@ test('runtime cycles', function() {
 
   equal(foo.quz(), bar.baz, 'cycle foo depends on bar');
   equal(bar.baz(), foo.quz, 'cycle bar depends on foo');
+});
+
+test('already evaluated modules are not pushed into the queue', function() {
+  define('foo', ['bar', 'exports'], function(bar, __exports__) {
+    __exports__.quz = function() {
+      return bar.baz;
+    };
+  });
+
+  define('bar', ['foo', 'exports'], function(foo, __exports__) {
+    __exports__.baz = function() {
+      return foo.quz;
+    };
+  });
+
+  var bar = require('bar');
+  deepEqual(require._stats, {
+    findDeps: 2,
+    define: 2,
+    exports: 2,
+    findModule: 3,
+    modules: 2,
+    reify: 2,
+    require: 1,
+    resolve: 2,
+    resolveRelative: 0,
+    pendingQueueLength: 3
+  });
+
+  var foo = require('foo');
+  deepEqual(require._stats, {
+    findDeps: 2,
+    define: 2,
+    exports: 2,
+    findModule: 4,
+    modules: 2,
+    reify: 2,
+    require: 2,
+    resolve: 2,
+    resolveRelative: 0,
+    pendingQueueLength: 3
+  });
 });
 
 test('basic CJS mode', function() {
@@ -453,7 +511,8 @@ test('basic CJS mode', function() {
     reify: 2,
     require: 2,
     resolve: 1,
-    resolveRelative: 1
+    resolveRelative: 1,
+    pendingQueueLength: 2
   });
 
   equal(foo.bar, 'bar');
@@ -486,7 +545,8 @@ test('if factory returns a value it is used as export', function() {
     reify: 1,
     require: 1,
     resolve: 0,
-    resolveRelative: 0
+    resolveRelative: 0,
+    pendingQueueLength: 1
   });
 
   equal(foo.bar, 'bar');
@@ -510,7 +570,8 @@ test('if a module has no default property assume the return is the default', fun
     reify: 1,
     require: 1,
     resolve: 0,
-    resolveRelative: 0
+    resolveRelative: 0,
+    pendingQueueLength: 1
   });
 
   equal(foo.bar, 'bar');
@@ -538,7 +599,8 @@ test('if a CJS style module has no default export assume module.exports is the d
     reify: 1,
     require: 1,
     resolve: 0,
-    resolveRelative: 0
+    resolveRelative: 0,
+    pendingQueueLength: 1
   });
 });
 
@@ -561,7 +623,8 @@ test('if a module has no default property assume its export is default (function
     reify: 1,
     require: 2,
     resolve: 0,
-    resolveRelative: 0
+    resolveRelative: 0,
+    pendingQueueLength: 1
   });
 });
 
@@ -645,6 +708,7 @@ test('relative CJS esq require (with exports and module);', function() {
     require: 3,
     resolve: 2,
     resolveRelative: 2,
+    pendingQueueLength: 3
   });
 });
 
@@ -671,6 +735,7 @@ test('foo foo/index are the same thing', function() {
     require: 2,
     resolve: 0,
     resolveRelative: 0,
+    pendingQueueLength: 1
   });
 });
 
@@ -695,6 +760,7 @@ test('foo automatically falls back to foo/index', function() {
     require: 2,
     resolve: 0,
     resolveRelative: 0,
+    pendingQueueLength: 1
   });
 });
 
@@ -721,6 +787,7 @@ test('automatic /index fallback no ambiguity', function() {
     require: 3,
     resolve: 1,
     resolveRelative: 0,
+    pendingQueueLength: 2
   });
 });
 
@@ -751,6 +818,7 @@ test('automatic /index fallback is not used if module is defined', function() {
     require: 3,
     resolve: 1,
     resolveRelative: 0,
+    pendingQueueLength: 3
   });
 });
 
@@ -783,6 +851,7 @@ test('unsee', function() {
     require: 4,
     resolve: 0,
     resolveRelative: 0,
+    pendingQueueLength: 2
   });
 });
 
@@ -811,6 +880,7 @@ test('manual /index fallback no ambiguity', function() {
     require: 3,
     resolve: 1,
     resolveRelative: 0,
+    pendingQueueLength: 2
   });
 });
 
@@ -843,6 +913,7 @@ test('manual /index fallback with ambiguity (alias after)', function() {
     require: 3,
     resolve: 1,
     resolveRelative: 0,
+    pendingQueueLength: 2
   });
 });
 
@@ -875,6 +946,7 @@ test('manual /index fallback with ambiguity (alias after all defines but before 
     require: 3,
     resolve: 1,
     resolveRelative: 0,
+    pendingQueueLength: 2
   });
 });
 
@@ -903,6 +975,7 @@ test('alias entries share same module instance', function() {
     require: 2,
     resolve: 0,
     resolveRelative: 0,
+    pendingQueueLength: 1
   });
 });
 
@@ -941,6 +1014,7 @@ test('/index fallback + unsee', function() {
     require: 4,
     resolve: 0,
     resolveRelative: 0,
+    pendingQueueLength: 3
   });
 });
 
@@ -967,6 +1041,7 @@ test('alias with target \w deps', function() {
     require: 1,
     resolve: 1,
     resolveRelative: 0,
+    pendingQueueLength: 2
   });
 });
 
@@ -990,6 +1065,7 @@ test('alias chain (simple)', function() {
     require: 1,
     resolve: 0,
     resolveRelative: 0,
+    pendingQueueLength: 1
   });
 });
 
@@ -1015,6 +1091,7 @@ test('alias chain (long)', function() {
     require: 1,
     resolve: 0,
     resolveRelative: 0,
+    pendingQueueLength: 1
   });
 });
 
@@ -1050,6 +1127,7 @@ test('alias chains are lazy', function() {
     require: 2,
     resolve: 0,
     resolveRelative: 0,
+    pendingQueueLength: 2
   });
 });
 
@@ -1084,6 +1162,7 @@ test('alias chains propogate unsee', function() {
     require: 3,
     resolve: 0,
     resolveRelative: 0,
+    pendingQueueLength: 2
   });
 });
 
@@ -1113,6 +1192,7 @@ test('alias chaining with relative deps works', function() {
     require: 3,
     resolve: 1,
     resolveRelative: 1,
+    pendingQueueLength: 2
   });
 });
 
@@ -1141,6 +1221,7 @@ test('wrapModules is called when present', function() {
     require: 1,
     resolve: 0,
     resolveRelative: 0,
+    pendingQueueLength: 1
   });
 });
 
@@ -1165,6 +1246,7 @@ test('import require from "require" works', function () {
     require: 2,
     resolve: 1,
     resolveRelative: 1,
+    pendingQueueLength: 2
   });
 });
 
@@ -1191,5 +1273,6 @@ test('require has a has method', function () {
     require: 2,
     resolve: 2,
     resolveRelative: 2,
+    pendingQueueLength: 2
   });
 });
