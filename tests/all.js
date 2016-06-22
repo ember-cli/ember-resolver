@@ -437,7 +437,7 @@ test('runtime cycles', function() {
     require: 2,
     resolve: 2,
     resolveRelative: 0,
-    pendingQueueLength: 3
+    pendingQueueLength: 2
   });
 
   ok(foo.quz());
@@ -471,7 +471,7 @@ test('already evaluated modules are not pushed into the queue', function() {
     require: 1,
     resolve: 2,
     resolveRelative: 0,
-    pendingQueueLength: 3
+    pendingQueueLength: 2
   });
 
   var foo = require('foo');
@@ -485,9 +485,37 @@ test('already evaluated modules are not pushed into the queue', function() {
     require: 2,
     resolve: 2,
     resolveRelative: 0,
-    pendingQueueLength: 3
+    pendingQueueLength: 2
   });
 });
+
+test('same pending modules should not be pushed to the queue more than once', function() {
+  define('foo', ['bar', 'exports'], function(bar, __exports__) {
+    __exports__.quz = function() {
+      return bar.baz;
+    };
+  });
+
+  define('bar', ['foo', 'exports'], function(foo, __exports__) {
+    __exports__.baz = function() {
+      return foo.quz;
+    };
+  });
+
+  var bar = require('bar');
+  deepEqual(require._stats, {
+    findDeps: 2,
+    define: 2,
+    exports: 2,
+    findModule: 3,
+    modules: 2,
+    reify: 2,
+    require: 1,
+    resolve: 2,
+    resolveRelative: 0,
+    pendingQueueLength: 2
+  });
+})
 
 test('basic CJS mode', function() {
   define('a/foo', ['require', 'exports', 'module'], function(require, exports, module) {
