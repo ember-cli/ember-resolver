@@ -1,7 +1,8 @@
 {
   "framework": "qunit",
   "src_files": [
-    "loader.js"
+    "lib/loader/loader.js",
+    "tests/all.js"
   ],
   "test_page": "tests/index.html?hidepassed",
   "launch_in_dev": [
