@@ -9,13 +9,15 @@
   "dependencies": {},
   "devDependencies": {
     "ara": "0.0.3",
+    "jscs": "^2.11.0",
+    "jshint": "^2.9.2",
     "ora": "^0.2.1",
     "promise-map-series": "^0.2.2",
     "qunitjs": "^1.20.0",
     "testem": "^1.0.0"
   },
   "scripts": {
-    "test": "testem ci",
+    "test": "testem ci && jshint lib tests && jscs lib tests",
     "test:dev": "testem"
   },
   "author": "",
