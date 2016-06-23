@@ -1,5 +1,6 @@
 /*globals newDefine:false, newLoader:false, newRequire:false*/
-/*globals define:true, loader:true, require:true*/
+/*globals define:true, loader:true, require:true, requirejs:true */
+/* jshint -W097 */
 
 'use strict';
 
@@ -460,7 +461,7 @@ test('already evaluated modules are not pushed into the queue', function() {
     };
   });
 
-  var bar = require('bar');
+  require('bar');
   deepEqual(require._stats, {
     findDeps: 2,
     define: 2,
@@ -474,7 +475,7 @@ test('already evaluated modules are not pushed into the queue', function() {
     pendingQueueLength: 2
   });
 
-  var foo = require('foo');
+  require('foo');
   deepEqual(require._stats, {
     findDeps: 2,
     define: 2,
@@ -502,7 +503,7 @@ test('same pending modules should not be pushed to the queue more than once', fu
     };
   });
 
-  var bar = require('bar');
+  require('bar');
   deepEqual(require._stats, {
     findDeps: 2,
     define: 2,
@@ -515,7 +516,7 @@ test('same pending modules should not be pushed to the queue more than once', fu
     resolveRelative: 0,
     pendingQueueLength: 2
   });
-})
+});
 
 test('basic CJS mode', function() {
   define('a/foo', ['require', 'exports', 'module'], function(require, exports, module) {
@@ -1051,7 +1052,7 @@ test('alias with target \w deps', function() {
     return bar;
   });
 
-  define('bar', [], function(bar) {
+  define('bar', [], function() {
     return 'I AM BAR';
   });
 
@@ -1074,7 +1075,7 @@ test('alias with target \w deps', function() {
 });
 
 test('alias chain (simple)', function() {
-  define('bar', [], function(bar) {
+  define('bar', [], function() {
     return 'I AM BAR';
   });
 
@@ -1098,7 +1099,7 @@ test('alias chain (simple)', function() {
 });
 
 test('alias chain (long)', function() {
-  define('bar', [], function(bar) {
+  define('bar', [], function() {
     return 'I AM BAR';
   });
 
@@ -1124,11 +1125,11 @@ test('alias chain (long)', function() {
 });
 
 test('alias chains are lazy', function() {
-  define('bar', [], function(bar) {
+  define('bar', [], function() {
     return 'I AM BAR';
   });
 
-  define('bar2', [], function(bar) {
+  define('bar2', [], function() {
     return 'I AM BAR2';
   });
 
@@ -1162,7 +1163,7 @@ test('alias chains are lazy', function() {
 test('alias chains propogate unsee', function() {
   var counter = 0;
 
-  define('bar', [], function(bar) {
+  define('bar', [], function() {
     counter++;
     return 'I AM BAR';
   });
