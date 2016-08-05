@@ -254,16 +254,13 @@ var Resolver = DefaultResolver.extend({
   chooseModuleName: function(moduleName) {
     var underscoredModuleName = underscore(moduleName);
 
-    var moduleLookup = this._moduleRegistry.has(moduleName);
-    var underscoredModuleLookup = this._moduleRegistry.has(underscoredModuleName);
-
-    if (moduleName !== underscoredModuleName && moduleLookup && underscoredModuleLookup) {
+    if (moduleName !== underscoredModuleName && this._moduleRegistry.has(moduleName) && this._moduleRegistry.has(underscoredModuleName)) {
       throw new TypeError("Ambiguous module names: `" + moduleName + "` and `" + underscoredModuleName + "`");
     }
 
-    if (moduleLookup) {
+    if (this._moduleRegistry.has(moduleName)) {
       return moduleName;
-    } else if (underscoredModuleLookup) {
+    } else if (this._moduleRegistry.has(underscoredModuleName)) {
       return underscoredModuleName;
     } else {
       // workaround for dasherized partials:
