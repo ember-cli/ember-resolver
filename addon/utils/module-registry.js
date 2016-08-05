@@ -12,11 +12,15 @@ function ModuleRegistry(entries) {
 }
 
 ModuleRegistry.prototype.moduleNames = function ModuleRegistry_moduleNames() {
-  return requirejs.moduleNames();
+  let moduleNames = [];
+  let entries = (Object.keys || Ember.keys)(this._entries);
+  let stringRegistry = (Object.keys || Ember.keys)(this._stringRegistry);
+  moduleNames.push.apply(entries, stringRegistry);
+  return moduleNames;
 };
 
 ModuleRegistry.prototype.has = function ModuleRegistry_has(moduleName) {
-  return requirejs.has(moduleName);
+  return this._entries[moduleName] || this._stringRegistry[moduleName];
 };
 
 ModuleRegistry.prototype.get = function ModuleRegistry_get(moduleName, exportName = 'default') {
