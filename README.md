@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Ember Resolver [![Build Status](https://travis-ci.org/ember-cli/ember-resolver.svg?branch=master)](https://travis-ci.org/ember-cli/ember-resolver)
 
 
