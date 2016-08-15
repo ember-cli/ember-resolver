@@ -20,7 +20,7 @@
   "author": "Robert Jackson <me@rwjblue.com>",
   "license": "MIT",
   "devDependencies": {
-    "broccoli-asset-rev": "^2.1.2",
+    "broccoli-asset-rev": "^2.4.6",
     "ember-cli": "1.13.8",
     "ember-cli-app-version": "0.5.1",
     "ember-cli-content-security-policy": "0.4.0",
