@@ -1,19 +1,19 @@
 import { module, test } from 'qunit';
 import Ember from 'ember';
-import Resolver from 'ember-resolver/resolver';
+import Resolver from 'ember-resolver';
 import ContainerDebugAdapter from 'ember-resolver/container-debug-adapter';
 import ContainerDebugAdapterInitializer from 'dummy/initializers/container-debug-adapter';
 
 let containerDebugAdapter, App;
 
 var modules = {};
-function def(module) {
-  modules[module] = {};
+function defineModule(fakeModule) {
+  modules[fakeModule] = {};
 }
 
-function undef(module) {
-  if (module) {
-    delete modules[module];
+function undefineModule(fakeModule) {
+  if (fakeModule) {
+    delete modules[fakeModule];
   } else {
     modules = {};
   }
@@ -54,7 +54,7 @@ module("Container Debug Adapter Tests", {
       App.destroy();
       App = null;
     });
-    undef();
+    undefineModule();
   }
 });
 
@@ -67,19 +67,19 @@ test("can access Container Debug Adapter which can catalog typical entries by ty
 });
 
 test("the default ContainerDebugAdapter catalogs controller entries", function(assert) {
-  def('appkit/controllers/foo');
-  def('appkit/controllers/users/foo');
+  defineModule('appkit/controllers/foo');
+  defineModule('appkit/controllers/users/foo');
 
   var controllers = containerDebugAdapter.catalogEntriesByType('controller');
 
-  assert.equal(controllers.length, 2, "controllers discovered");
-  assert.equal(controllers[0], 'foo', "found the right class");
-  assert.equal(controllers[1], 'users/foo', "the name is correct");
+  assert.equal(controllers.length, 2, `controllers discovered (${controllers.length})`);
+  assert.equal(controllers[0], 'foo', `found class (${controllers[0]})`);
+  assert.equal(controllers[1], 'users/foo', `the name (${controllers[1]}) is correct`);
 });
 
 test("Does not duplicate entries", function(assert) {
-  def('appkit/models/foo');
-  def('appkit/more/models/foo');
+  defineModule('appkit/models/foo');
+  defineModule('appkit/more/models/foo');
 
   var models = containerDebugAdapter.catalogEntriesByType('model');
 
@@ -88,8 +88,8 @@ test("Does not duplicate entries", function(assert) {
 });
 
 test("Pods support", function(assert) {
-  def('appkit/user/model');
-  def('appkit/post/model');
+  defineModule('appkit/user/model');
+  defineModule('appkit/post/model');
 
   var models = containerDebugAdapter.catalogEntriesByType('model');
 
@@ -101,8 +101,8 @@ test("Pods support", function(assert) {
 test("Pods podModulePrefix support", function(assert) {
   App.podModulePrefix = 'my-prefix';
 
-  def('my-prefix/user/model');
-  def('my-prefix/users/user/model');
+  defineModule('my-prefix/user/model');
+  defineModule('my-prefix/users/user/model');
 
   var models = containerDebugAdapter.catalogEntriesByType('model');
 
