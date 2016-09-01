@@ -181,6 +181,28 @@ var Resolver = DefaultResolver.extend({
     }
   },
 
+  resolveEngine(parsedName) {
+    let engineName = parsedName.fullNameWithoutType;
+    let engineModule = engineName + '/engine';
+
+    if (this._moduleRegistry.has(engineModule)) {
+      return this._extractDefaultExport(engineModule);
+    }
+  },
+
+  resolveRouteMap(parsedName) {
+    let engineName = parsedName.fullNameWithoutType;
+    let engineRoutesModule = engineName + '/routes';
+
+    if (this._moduleRegistry.has(engineRoutesModule)) {
+      let routeMap = this._extractDefaultExport(engineRoutesModule);
+
+      Ember.assert(`The route map for ${engineName} should be wrapped by 'buildRoutes' before exporting.` , routeMap.isRouteMap);
+
+      return routeMap;
+    }
+  },
+
   mainModuleName: function(parsedName) {
     // if router:main or adapter:main look for a module with just the type first
     var tmpModuleName = parsedName.prefix + '/' + parsedName.type;
