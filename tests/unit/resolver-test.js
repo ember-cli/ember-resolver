@@ -190,6 +190,53 @@ test("can lookup a view", function(assert) {
   assert.equal(view, expected, 'default export was returned');
 });
 
+test('can lookup an engine', function(assert) {
+  assert.expect(3);
+
+  let expected = {};
+  define('appkit/engine', [], function(){
+    assert.ok(true, 'engine was invoked properly');
+
+    return { default: expected };
+  });
+
+  let engine = resolver.resolve('engine:appkit');
+
+  assert.ok(engine, 'engine was returned');
+  assert.equal(engine, expected, 'default export was returned');
+});
+
+test('can lookup a route-map', function(assert) {
+  assert.expect(3);
+
+  let expected = { isRouteMap: true };
+  define('appkit/routes', [], function(){
+    assert.ok(true, 'route-map was invoked properly');
+
+    return { default: expected };
+  });
+
+  let routeMap = resolver.resolve('route-map:appkit');
+
+  assert.ok(routeMap, 'route-map was returned');
+  assert.equal(routeMap, expected, 'default export was returned');
+});
+
+test('errors if lookup of a route-map does not specify isRouteMap', function(assert) {
+  assert.expect(2);
+
+  let expected = { isRouteMap: false };
+  define('appkit/routes', [], function(){
+    assert.ok(true, 'route-map was invoked properly');
+
+    return { default: expected };
+  });
+
+  assert.throws(() => {
+    resolver.resolve('route-map:appkit');
+  }, /The route map for appkit should be wrapped by 'buildRoutes' before exporting/);
+});
+
 test("will return the raw value if no 'default' is available", function(assert) {
   define('appkit/fruits/orange', [], function(){
     return 'is awesome';
