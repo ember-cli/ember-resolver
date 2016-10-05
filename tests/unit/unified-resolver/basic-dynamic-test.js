@@ -35,9 +35,11 @@ module('ember-resolver/unified-resolver', {
 class FakeRegistry {
   constructor(entries) {
     this._entries = entries;
+    this._get = [];
   }
 
   get(moduleName) {
+    this._get.push(moduleName);
     return this._entries[moduleName];
   }
 }
@@ -70,8 +72,16 @@ test('resolving router:main loads src/router.js', function(assert) {
 });
 
 test('resolving an unknown type throws an error', function(assert) {
-  assert.expect(1);
+  assert.expect(2);
+
+  let expectedPath = `${this.namespace}/unresolvable`;
+  let expectedObject = {};
+  let fakeRegistry = new FakeRegistry({
+    [expectedPath]: { default: expectedObject }
+  });
+
   let resolver = Resolver.create({
+    _moduleRegistry: fakeRegistry,
     config: {
       types: {
         router: { collection: '' }
@@ -84,20 +94,19 @@ test('resolving an unknown type throws an error', function(assert) {
     }
   });
 
-  let expected = {};
-  define(`${this.namespace}/unresolvable`, ['exports'], function(exports) {
-    assert.ok(false, 'should not be invoked');
-    exports.default = expected;
-  });
-
   assert.throws(() => {
     resolver.resolve('unresolvable:main', { namespace: this.namespace });
   }, '"unresolvable" not a recognized type');
+
+  assert.equal(fakeRegistry._get.length, 0, 'nothing is required from registry');
 });
 
 test('resolving router:main throws when module is not defined', function(assert) {
   assert.expect(1);
+
+  let fakeRegistry = new FakeRegistry();
   let resolver = Resolver.create({
+    _moduleRegistry: fakeRegistry,
     config: {
       types: {
         router: { collection: '' }
