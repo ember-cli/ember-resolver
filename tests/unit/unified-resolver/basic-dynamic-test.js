@@ -1,7 +1,7 @@
 /* globals requirejs */
 
 import Ember from 'ember';
-import { module, test } from 'qunit';
+import { module, test, skip } from 'qunit';
 import Resolver from 'ember-resolver/unified-resolver';
 
 function resetRegistry() {
@@ -11,7 +11,7 @@ function resetRegistry() {
 
 let originalRegistryEntries, originalEmberDeprecate, originalEmberLoggerInfo;
 
-module('ember-resolver/new-resolver dynamic', {
+module('ember-resolver/unified-resolver', {
   beforeEach() {
     this.namespace = 'test-namespace';
     originalRegistryEntries = Ember.merge({}, requirejs.entries);
@@ -26,11 +26,24 @@ module('ember-resolver/new-resolver dynamic', {
   }
 });
 
+/*
+ * "Rule 1" of the unification RFC.
+ *
+ * See: https://github.com/dgeb/rfcs/blob/module-unification/text/0000-module-unification.md#module-type
+ */
+
 test('resolving router:main loads src/router.js', function(assert) {
   assert.expect(2);
   let resolver = Resolver.create({
     config: {
-      types: [ 'router' ]
+      types: {
+        router: { collection: '' }
+      },
+      collections: {
+        '': {
+          types: [ 'router' ]
+        }
+      }
     }
   });
 
@@ -48,7 +61,14 @@ test('resolving an unknown type throws an error', function(assert) {
   assert.expect(1);
   let resolver = Resolver.create({
     config: {
-      types: [ 'router' ]
+      types: {
+        router: { collection: '' }
+      },
+      collections: {
+        '': {
+          types: [ 'router' ]
+        }
+      }
     }
   });
 
@@ -63,11 +83,18 @@ test('resolving an unknown type throws an error', function(assert) {
   }, '"unresolvable" not a recognized type');
 });
 
-test('resolving router:main returns null when module is not defined', function(assert) {
+test('resolving router:main throws when module is not defined', function(assert) {
   assert.expect(1);
   let resolver = Resolver.create({
     config: {
-      types: [ 'router' ]
+      types: {
+        router: { collection: '' }
+      },
+      collections: {
+        '': {
+          types: [ 'router' ]
+        }
+      }
     }
   });
 
@@ -75,6 +102,111 @@ test('resolving router:main returns null when module is not defined', function(a
     resolver.resolve('router:main', { namespace: this.namespace });
   }, `Could not find module \`${this.namespace}/router\` imported from \`(require)\``);
 });
+
+/*
+ * "Rule 2" of the unification RFC.
+ *
+ * See: https://github.com/dgeb/rfcs/blob/module-unification/text/0000-module-unification.md#module-type
+ */
+
+test('resolving service:i18n requires src/services/i18n/service.js', function(assert) {
+  let resolver = Resolver.create({
+    config: {
+      types: {
+        service: { collection: 'services' }
+      },
+      collections: {
+        services: {
+          types: [ 'service' ]
+        }
+      }
+    }
+  });
+
+  let expected = {};
+  define(`${this.namespace}/services/i18n/service`, [], function() {
+    assert.ok(true, 'should be invoked');
+    return expected;
+  });
+
+  assert.strictEqual(resolver.resolve('service:i18n', {namespace: this.namespace}), expected, 'service is resolved');
+});
+
+test('resolving service:i18n requires src/services/i18n.js', function(assert) {
+  let resolver = Resolver.create({
+    config: {
+      types: {
+        service: { collection: 'services' }
+      },
+      collections: {
+        services: {
+          defaultType: 'service',
+          types: [ 'service' ]
+        }
+      }
+    }
+  });
+
+  let expected = {};
+  define(`${this.namespace}/services/i18n`, [], function() {
+    assert.ok(true, 'should be invoked');
+    return expected;
+  });
+
+  assert.strictEqual(resolver.resolve('service:i18n', {namespace: this.namespace}), expected, 'service is resolved');
+});
+
+test('resolving service:i18n throws when src/services/i18n.js register without default', function(assert) {
+  let resolver = Resolver.create({
+    config: {
+      types: {
+        service: { collection: 'services' }
+      },
+      collections: {
+        services: {
+          types: [ 'service' ]
+        }
+      }
+    }
+  });
+
+  let expected = {};
+  define(`${this.namespace}/services/i18n`, [], function() {
+    assert.ok(true, 'should be invoked');
+    return expected;
+  });
+
+  assert.throws(() => {
+    resolver.resolve('service:i18n', {namespace: this.namespace});
+  }, `Could not find module \`${this.namespace}/services/i18n\` imported from \`(require)\``);
+});
+
+skip('resolving helper:nested/capitalize requires src/ui/components/nested/capitalize/helper.js', function(assert) {
+  let resolver = Resolver.create({
+    config: {
+      types: {
+        helper: {
+          collection: 'ui/components'
+        }
+      },
+      collections: {
+        'ui/components': {
+          types: [ 'helper' ]
+        }
+      }
+    }
+  });
+
+  let expected = {};
+  define(`${this.namespace}/ui/components/nested/capitalize/helper`, [], function() {
+    assert.ok(true, 'should be invoked');
+    return expected;
+  });
+
+  assert.strictEqual(resolver.resolve('helper:nested/capitalize'), expected, 'helper is resolved');
+});
+
+
 
 
 /**

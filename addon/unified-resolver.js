@@ -2,6 +2,7 @@ import Ember from 'ember';
 import ModuleRegistry from './utils/module-registry';
 
 const { DefaultResolver } = Ember;
+
 const Resolver = DefaultResolver.extend({
 
   init() {
@@ -100,21 +101,50 @@ const Resolver = DefaultResolver.extend({
   },
 
   // this returns the actual module
-  resolve(factoryName, options) {
-    let [type, name] = factoryName.split(':');
+  resolve(lookupString, options) {
+    let {type, collection, isDefaultType, name} = this._parseLookupString(lookupString);
 
-    if (this.config.types.indexOf(type) === -1) {
+    // main factories have a simple lookup strategy.
+    if (name === 'main') {
+      // throw if the collection is not ''
+      let path = `${options.namespace}/${type}`;
+      return this._moduleRegistry.get(path);
+    }
+
+    // other factories have a collection
+    let path = `${options.namespace}/${collection}/${name}/${type}`;
+    try {
+      // TODO: Why can we not requirejs.has?
+      return this._moduleRegistry.get(path);
+    } catch(e) {
+      if (isDefaultType) {
+        let path = `${options.namespace}/${collection}/${name}`;
+        return this._moduleRegistry.get(path);
+      }
+      throw e;
+    }
+  },
+
+  _parseLookupString(lookupString) {
+    let [type, name] = lookupString.split(':');
+    let {collection} = this.config.types[type];
+
+    let collectionConfig = this.config.collections[collection];
+    if (collectionConfig.types.indexOf(type) === -1) {
       throw new Error(`"${type}" not a recognized type`);
     }
 
-    if (name === 'main') {
-      let path = `${options.namespace}/${type}`;
-      let factory = this._moduleRegistry.get(path);
-      return factory;
-    }
+    let isDefaultType = collectionConfig.defaultType === type;
 
-    throw new Error('unimplemented');
+    return {type, collection, isDefaultType, name};
   }
 });
+
+/*
+function parseFactoryName(factoryName, collection) {
+  let parts = new RegExp(`${collection}/(.*)/([^/]*)`).exec(factoryName);
+  return [parts[1], parts[2]];
+}
+*/
 
 export default Resolver;
