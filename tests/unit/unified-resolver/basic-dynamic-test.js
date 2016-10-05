@@ -288,6 +288,59 @@ expectResolutions({
   }
 });
 
+test('resolving component:my-form/my-input', function(assert) {
+  assert.expect(1);
+
+  let expectedObject = {};
+  let fakeRegistry = new FakeRegistry({
+    [`${this.namespace}/ui/components/my-form/my-input`]: { default: expectedObject }
+  });
+
+  let resolver = Resolver.create({
+    _moduleRegistry: fakeRegistry,
+    config: {
+      types: {
+        component: { collection: 'components' }
+      },
+      collections: {
+        components: {
+          group: 'ui',
+          types: [ 'component' ],
+          defaultType: 'component'
+        }
+      }
+    }
+  });
+
+  assert.strictEqual(resolver.resolve('component:my-form/my-input', {namespace: this.namespace}), expectedObject, 'component is resolved');
+});
+
+test('resolving component:my-form/my-input to /ui/components/my-form/my-input/component', function(assert) {
+  assert.expect(1);
+
+  let expectedObject = {};
+  let fakeRegistry = new FakeRegistry({
+    [`${this.namespace}/ui/components/my-form/my-input/component`]: { default: expectedObject }
+  });
+
+  let resolver = Resolver.create({
+    _moduleRegistry: fakeRegistry,
+    config: {
+      types: {
+        component: { collection: 'components' }
+      },
+      collections: {
+        components: {
+          group: 'ui',
+          types: [ 'component' ]
+        }
+      }
+    }
+  });
+
+  assert.strictEqual(resolver.resolve('component:my-form/my-input', {namespace: this.namespace}), expectedObject, 'component is resolved');
+});
+
 /**
 
 to do:
@@ -299,6 +352,7 @@ to do:
  * Tests that show you cannot resolve anything from the utils directory, per spec
  * Tests that do private collections. Will involve respecting the `source` (I
  *   think) argument to the resolve method.
+ * We need a word for `app` vs `src` (right now we call it namespace which is already used in the spec).
 
 
  ember-cli/loader.js  open issue, public API for require/define    can import from loader instead of global requirejs https://github.com/ember-cli/loader.js/issues/82
