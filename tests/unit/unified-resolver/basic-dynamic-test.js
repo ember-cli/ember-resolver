@@ -32,9 +32,27 @@ module('ember-resolver/unified-resolver', {
  * See: https://github.com/dgeb/rfcs/blob/module-unification/text/0000-module-unification.md#module-type
  */
 
+class FakeRegistry {
+  constructor(entries) {
+    this._entries = entries;
+  }
+
+  get(moduleName) {
+    return this._entries[moduleName];
+  }
+}
+
 test('resolving router:main loads src/router.js', function(assert) {
-  assert.expect(2);
+  assert.expect(1);
+
+  let expectedPath = `${this.namespace}/router`;
+  let expectedObject = {};
+  let fakeRegistry = new FakeRegistry({
+    [expectedPath]: { default: expectedObject }
+  });
+
   let resolver = Resolver.create({
+    _moduleRegistry: fakeRegistry,
     config: {
       types: {
         router: { collection: '' }
@@ -47,14 +65,8 @@ test('resolving router:main loads src/router.js', function(assert) {
     }
   });
 
-  let expected = {};
-  define(`${this.namespace}/router`, ['exports'], function(exports) {
-    assert.ok(true, 'router was invoked correctly');
-    exports.default = expected;
-  });
-
   let factory = resolver.resolve('router:main', { namespace: this.namespace });
-  assert.equal(factory, expected);
+  assert.deepEqual(factory, expectedObject, 'factory returned');
 });
 
 test('resolving an unknown type throws an error', function(assert) {
