@@ -18,9 +18,8 @@ ModuleRegistry.prototype.has = function ModuleRegistry_has(moduleName) {
   return moduleName in this._entries;
 };
 
-ModuleRegistry.prototype.get = function ModuleRegistry_get(moduleName, exportName = 'default') {
-  let module = require(moduleName);
-  return module && module[exportName];
+ModuleRegistry.prototype.get = function ModuleRegistry_get(moduleName) {
+  return require(moduleName);
 };
 
 export default ModuleRegistry;

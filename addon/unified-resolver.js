@@ -1,8 +1,16 @@
-/* globals require */
-
 import Ember from 'ember';
+import ModuleRegistry from './utils/module-registry';
+
 const { DefaultResolver } = Ember;
 const Resolver = DefaultResolver.extend({
+
+  init() {
+    this._super(...arguments);
+
+    if (!this._moduleRegistry) {
+      this._moduleRegistry = new ModuleRegistry();
+    }
+  },
 
   _privateLookup(typeName, moduleName, options) {
     let privateCollection = this._collection.privateCollections[options.source];
@@ -101,7 +109,7 @@ const Resolver = DefaultResolver.extend({
 
     if (name === 'main') {
       let path = `${options.namespace}/${type}`;
-      let factory = require(path);
+      let factory = this._moduleRegistry.get(path);
       return factory;
     }
 
