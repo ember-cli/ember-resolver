@@ -19,7 +19,7 @@ const Resolver = DefaultResolver.extend({
     if (name === 'main') {
       // throw if the collection is not ''
       let path = `${options.namespace}/${type}`;
-      return this._moduleRegistry.get(path).default;
+      return this._moduleRegistry.get(path);
     }
 
     // other factories have a collection
@@ -27,15 +27,14 @@ const Resolver = DefaultResolver.extend({
     let path = `${options.namespace}/${groupSegment}${collection}/${name}/${type}`;
     try {
       // TODO: Why can we not requirejs.has or this._moduleRegistry.has?
-      return this._moduleRegistry.get(path).default;
+      return this._moduleRegistry.get(path);
     } catch(e) {
       let path = `${options.namespace}/${groupSegment}${collection}/${name}`;
-      let exports = this._moduleRegistry.get(path);
 
       if (isDefaultType) {
-        return exports.default;
+        return this._moduleRegistry.get(path);
       } else {
-        let factory = exports[type];
+        let factory = this._moduleRegistry.get(path, type);
         if (factory) {
           return factory;
         }

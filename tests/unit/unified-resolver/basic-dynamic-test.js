@@ -1,11 +1,9 @@
 import { module, test } from 'qunit';
 import Resolver from 'ember-resolver/unified-resolver';
 
-module('ember-resolver/unified-resolver', {
-  beforeEach() {
-    this.namespace = 'test-namespace';
-  }
-});
+let namespace = 'test-namespace';
+
+module('ember-resolver/unified-resolver', {});
 
 /*
  * "Rule 1" of the unification RFC.
@@ -25,37 +23,53 @@ class FakeRegistry {
   }
 }
 
-test('resolving router:main loads src/router.js', function(assert) {
-  assert.expect(1);
+class NewFakeRegistry {
+  constructor() {
+    this._lastReturned = null;
+  }
 
-  let expectedPath = `${this.namespace}/router`;
-  let expectedObject = {};
-  let fakeRegistry = new FakeRegistry({
-    [expectedPath]: { default: expectedObject }
-  });
+  get(moduleName, exportName = 'default') {
+    this._lastReturned = { moduleName, exportName };
+    return {};
+  }
+}
 
-  let resolver = Resolver.create({
-    _moduleRegistry: fakeRegistry,
-    config: {
-      types: {
-        router: { collection: '' }
-      },
-      collections: {
-        '': {
-          types: [ 'router' ]
-        }
+function expectResolutions({ namespace, message, config, resolutions }) {
+  let fakeRegistry = new NewFakeRegistry();
+  let resolver = Resolver.create({ config, _moduleRegistry: fakeRegistry });
+
+  for (let lookupKey in resolutions) {
+    let expectedModuleName = resolutions[lookupKey];
+    test(`expectResolutions() - ${message} Resolves ${lookupKey} -> ${expectedModuleName}`, function(assert) {
+      resolver.resolve(lookupKey, { namespace: namespace });
+      assert.deepEqual(fakeRegistry._lastReturned, { moduleName: expectedModuleName, exportName: 'default' });
+    });
+  }
+}
+
+expectResolutions({
+  message: 'Modules named main.',
+  namespace,
+  config: {
+    types: {
+      router: { collection: '' }
+    },
+    collections: {
+      '': {
+        types: [ 'router' ]
       }
     }
-  });
+  },
 
-  let factory = resolver.resolve('router:main', { namespace: this.namespace });
-  assert.deepEqual(factory, expectedObject, 'factory returned');
+  resolutions: {
+    'router:main': `${namespace}/router`
+  }
 });
 
 test('resolving an unknown type throws an error', function(assert) {
   assert.expect(2);
 
-  let expectedPath = `${this.namespace}/unresolvable`;
+  let expectedPath = `${namespace}/unresolvable`;
   let expectedObject = {};
   let fakeRegistry = new FakeRegistry({
     [expectedPath]: { default: expectedObject }
@@ -76,7 +90,7 @@ test('resolving an unknown type throws an error', function(assert) {
   });
 
   assert.throws(() => {
-    resolver.resolve('unresolvable:main', { namespace: this.namespace });
+    resolver.resolve('unresolvable:main', { namespace: namespace });
   }, '"unresolvable" not a recognized type');
 
   assert.equal(fakeRegistry._get.length, 0, 'nothing is required from registry');
@@ -101,8 +115,8 @@ test('resolving router:main throws when module is not defined', function(assert)
   });
 
   assert.throws(() => {
-    resolver.resolve('router:main', { namespace: this.namespace });
-  }, `Could not find module \`${this.namespace}/router\` imported from \`(require)\``);
+    resolver.resolve('router:main', { namespace: namespace });
+  }, `Could not find module \`${namespace}/router\` imported from \`(require)\``);
 });
 
 /*
@@ -114,7 +128,7 @@ test('resolving router:main throws when module is not defined', function(assert)
 test('resolving service:i18n requires src/services/i18n/service.js', function(assert) {
   assert.expect(1);
 
-  let expectedPath = `${this.namespace}/services/i18n/service`;
+  let expectedPath = `${namespace}/services/i18n/service`;
   let expectedObject = {};
   let fakeRegistry = new FakeRegistry({
     [expectedPath]: { default: expectedObject }
@@ -134,7 +148,7 @@ test('resolving service:i18n requires src/services/i18n/service.js', function(as
     }
   });
 
-  assert.strictEqual(resolver.resolve('service:i18n', {namespace: this.namespace}), expectedObject, 'service is resolved');
+  assert.strictEqual(resolver.resolve('service:i18n', {namespace: namespace}), expectedObject, 'service is resolved');
 });
 
 /*
@@ -144,7 +158,7 @@ test('resolving service:i18n requires src/services/i18n/service.js', function(as
 test('resolving helper:capitalize requires src/ui/components/capitalize/helper.js', function(assert) {
   assert.expect(1);
 
-  let expectedPath = `${this.namespace}/ui/components/capitalize/helper`;
+  let expectedPath = `${namespace}/ui/components/capitalize/helper`;
   let expected = {};
   let fakeRegistry = new FakeRegistry({
     [expectedPath]: { default: expected }
@@ -167,13 +181,13 @@ test('resolving helper:capitalize requires src/ui/components/capitalize/helper.j
     }
   });
 
-  assert.strictEqual(resolver.resolve('helper:capitalize', {namespace: this.namespace}), expected, 'helper is resolved');
+  assert.strictEqual(resolver.resolve('helper:capitalize', {namespace: namespace}), expected, 'helper is resolved');
 });
 
 test('resolving component:capitalize requires src/ui/components/capitalize.js', function(assert) {
   assert.expect(1);
 
-  let expectedPath = `${this.namespace}/ui/components/capitalize`;
+  let expectedPath = `${namespace}/ui/components/capitalize`;
   let expected = {};
   let fakeRegistry = new FakeRegistry({
     [expectedPath]: { default: expected }
@@ -200,7 +214,7 @@ test('resolving component:capitalize requires src/ui/components/capitalize.js', 
     }
   });
 
-  assert.strictEqual(resolver.resolve('component:capitalize', {namespace: this.namespace}), expected, 'component is resolved');
+  assert.strictEqual(resolver.resolve('component:capitalize', {namespace: namespace}), expected, 'component is resolved');
 });
 
 
@@ -213,7 +227,7 @@ test('resolving component:capitalize requires src/ui/components/capitalize.js', 
 test('resolving service:i18n requires src/services/i18n.js', function(assert) {
   assert.expect(1);
 
-  let expectedPath = `${this.namespace}/services/i18n`;
+  let expectedPath = `${namespace}/services/i18n`;
   let expected = {};
   let fakeRegistry = new FakeRegistry({
     [expectedPath]: { default: expected }
@@ -234,13 +248,13 @@ test('resolving service:i18n requires src/services/i18n.js', function(assert) {
     }
   });
 
-  assert.strictEqual(resolver.resolve('service:i18n', {namespace: this.namespace}), expected, 'service is resolved');
+  assert.strictEqual(resolver.resolve('service:i18n', {namespace: namespace}), expected, 'service is resolved');
 });
 
 test('resolving service:i18n throws when src/services/i18n.js register without default', function(assert) {
   assert.expect(1);
 
-  let expectedPath = `${this.namespace}/services/i18n`;
+  let expectedPath = `${namespace}/services/i18n`;
   let expected = {};
   let fakeRegistry = new FakeRegistry({
     [expectedPath]: { default: expected }
@@ -261,14 +275,14 @@ test('resolving service:i18n throws when src/services/i18n.js register without d
   });
 
   assert.throws(() => {
-    resolver.resolve('service:i18n', {namespace: this.namespace});
-  }, `Could not find module \`${this.namespace}/services/i18n\` imported from \`(require)\``);
+    resolver.resolve('service:i18n', {namespace: namespace});
+  }, `Could not find module \`${namespace}/services/i18n\` imported from \`(require)\``);
 });
 
 test('resolving helper:capitalize requires src/ui/components/capitalize.js with `helper` named export', function(assert) {
   assert.expect(1);
 
-  let expectedPath = `${this.namespace}/ui/components/capitalize`;
+  let expectedPath = `${namespace}/ui/components/capitalize`;
   let expected = {};
   let fakeRegistry = new FakeRegistry({
     [expectedPath]: { helper: expected }
@@ -291,7 +305,7 @@ test('resolving helper:capitalize requires src/ui/components/capitalize.js with 
     }
   });
 
-  assert.strictEqual(resolver.resolve('helper:capitalize', {namespace: this.namespace}), expected, 'helper is resolved');
+  assert.strictEqual(resolver.resolve('helper:capitalize', {namespace: namespace}), expected, 'helper is resolved');
 });
 
 
