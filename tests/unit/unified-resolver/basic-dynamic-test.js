@@ -24,25 +24,43 @@ class FakeRegistry {
 }
 
 class NewFakeRegistry {
-  constructor() {
+  constructor({moduleOverrides}) {
     this._lastReturned = null;
+    this._moduleOverrides = moduleOverrides || {};
   }
 
   get(moduleName, exportName = 'default') {
+    if (Object.keys(this._moduleOverrides).indexOf(moduleName) !== -1) {
+      let result = this._moduleOverrides[moduleName];
+      if (!result) {
+        throw new Error('missing: ' + moduleName);
+      } else {
+        return result;
+      }
+    }
     this._lastReturned = { moduleName, exportName };
     return {};
   }
 }
 
-function expectResolutions({ namespace, message, config, resolutions }) {
-  let fakeRegistry = new NewFakeRegistry();
+function expectResolutions({ namespace, message, config, resolutions, moduleOverrides }) {
+  let fakeRegistry = new NewFakeRegistry({
+    moduleOverrides
+  });
   let resolver = Resolver.create({ config, _moduleRegistry: fakeRegistry });
 
   for (let lookupKey in resolutions) {
     let expectedModuleName = resolutions[lookupKey];
-    test(`expectResolutions() - ${message} Resolves ${lookupKey} -> ${expectedModuleName}`, function(assert) {
+    let expectedExportName = 'default';
+
+    if (expectedModuleName.indexOf(':') !== -1) {
+      let pieces = expectedModuleName.split(':');
+      expectedModuleName = pieces[0];
+      expectedExportName = pieces[1];
+    }
+    test(`expectResolutions() - ${message} Resolves ${lookupKey} -> ${expectedModuleName}:${expectedExportName}`, function(assert) {
       resolver.resolve(lookupKey, { namespace: namespace });
-      assert.deepEqual(fakeRegistry._lastReturned, { moduleName: expectedModuleName, exportName: 'default' });
+      assert.deepEqual(fakeRegistry._lastReturned, { moduleName: expectedModuleName, exportName: expectedExportName });
     });
   }
 }
@@ -125,131 +143,128 @@ test('resolving router:main throws when module is not defined', function(assert)
  * See: https://github.com/dgeb/rfcs/blob/module-unification/text/0000-module-unification.md#module-type
  */
 
-test('resolving service:i18n requires src/services/i18n/service.js', function(assert) {
-  assert.expect(1);
-
-  let expectedPath = `${namespace}/services/i18n/service`;
-  let expectedObject = {};
-  let fakeRegistry = new FakeRegistry({
-    [expectedPath]: { default: expectedObject }
-  });
-
-  let resolver = Resolver.create({
-    _moduleRegistry: fakeRegistry,
-    config: {
-      types: {
-        service: { collection: 'services' }
-      },
-      collections: {
-        services: {
-          types: [ 'service' ]
-        }
+expectResolutions({
+  namespace,
+  message: 'resolving service:i18n',
+  config: {
+    types: {
+      service: { collection: 'services' }
+    },
+    collections: {
+      services: {
+        types: [ 'service' ]
       }
     }
-  });
-
-  assert.strictEqual(resolver.resolve('service:i18n', {namespace: namespace}), expectedObject, 'service is resolved');
+  },
+  resolutions: {
+    'service:i18n': `${namespace}/services/i18n/service`
+  }
 });
 
 /*
  * "Rule 2" of the unification RFC with a group.
  */
 
-test('resolving helper:capitalize requires src/ui/components/capitalize/helper.js', function(assert) {
-  assert.expect(1);
-
-  let expectedPath = `${namespace}/ui/components/capitalize/helper`;
-  let expected = {};
-  let fakeRegistry = new FakeRegistry({
-    [expectedPath]: { default: expected }
-  });
-
-  let resolver = Resolver.create({
-    _moduleRegistry: fakeRegistry,
-    config: {
-      types: {
-        helper: {
-          collection: 'components'
-        }
-      },
-      collections: {
-        'components': {
-          group: 'ui',
-          types: [ 'helper' ]
-        }
+expectResolutions({
+  message: 'rule 2 with a group',
+  namespace,
+  config: {
+    types: {
+      helper: {
+        collection: 'components'
+      }
+    },
+    collections: {
+      'components': {
+        group: 'ui',
+        types: [ 'helper' ]
       }
     }
-  });
-
-  assert.strictEqual(resolver.resolve('helper:capitalize', {namespace: namespace}), expected, 'helper is resolved');
+  },
+  resolutions: {
+    'helper:capitalize': `${namespace}/ui/components/capitalize/helper`
+  }
 });
 
-test('resolving component:capitalize requires src/ui/components/capitalize.js', function(assert) {
-  assert.expect(1);
-
-  let expectedPath = `${namespace}/ui/components/capitalize`;
-  let expected = {};
-  let fakeRegistry = new FakeRegistry({
-    [expectedPath]: { default: expected }
-  });
-
-  let resolver = Resolver.create({
-    _moduleRegistry: fakeRegistry,
-    config: {
-      types: {
-        helper: {
-          collection: 'components'
-        },
-        component: {
-          collection: 'components'
-        }
+expectResolutions({
+  message: 'rule 2 with a group and multiple types',
+  namespace,
+  config: {
+    types: {
+      helper: {
+        collection: 'components'
       },
-      collections: {
-        'components': {
-          group: 'ui',
-          defaultType: 'component',
-          types: [ 'helper', 'component' ]
-        }
+      component: {
+        collection: 'components'
+      }
+    },
+    collections: {
+      'components': {
+        group: 'ui',
+        defaultType: 'component',
+        types: [ 'helper', 'component' ]
       }
     }
-  });
-
-  assert.strictEqual(resolver.resolve('component:capitalize', {namespace: namespace}), expected, 'component is resolved');
+  },
+  moduleOverrides: {
+    [`${namespace}/ui/components/capitalize/component`]: null
+  },
+  resolutions: {
+    'component:capitalize': `${namespace}/ui/components/capitalize`
+  }
 });
-
-
 
 /*
  * "Rule 3" of the unification RFC. Rule 3 means a default type for a collection
  * is configured.
  */
 
-test('resolving service:i18n requires src/services/i18n.js', function(assert) {
-  assert.expect(1);
-
-  let expectedPath = `${namespace}/services/i18n`;
-  let expected = {};
-  let fakeRegistry = new FakeRegistry({
-    [expectedPath]: { default: expected }
-  });
-
-  let resolver = Resolver.create({
-    _moduleRegistry: fakeRegistry,
-    config: {
-      types: {
-        service: { collection: 'services' }
-      },
-      collections: {
-        services: {
-          defaultType: 'service',
-          types: [ 'service' ]
-        }
+expectResolutions({
+  message: 'rule 3: resolving when a default type is configured',
+  namespace,
+  config: {
+    types: {
+      service: { collection: 'services' }
+    },
+    collections: {
+      services: {
+        defaultType: 'service',
+        types: [ 'service' ]
       }
     }
-  });
-
-  assert.strictEqual(resolver.resolve('service:i18n', {namespace: namespace}), expected, 'service is resolved');
+  },
+  moduleOverrides: {
+    [`${namespace}/services/i18n/service`]: null
+  },
+  resolutions: {
+    'service:i18n': `${namespace}/services/i18n`
+  }
 });
+
+/*
+ * TODO:
+expectResolutions({
+  message: 'rule 3: throws when missing default',
+  namespace,
+  config: {
+    types: {
+      service: { collection: 'services' }
+    },
+    collections: {
+      services: {
+        types: [ 'service' ]
+      }
+    }
+  },
+  moduleOverrides: {
+    [`${namespace}/services/i18n`]: null,
+    [`${namespace}/services/i18n/service`]: null
+  },
+  errors: {
+    'service:i18n': `Could not find module \`${namespace}/services/i18n\` imported from \`(require)\``
+  }
+});
+*/
 
 test('resolving service:i18n throws when src/services/i18n.js register without default', function(assert) {
   assert.expect(1);
@@ -279,35 +294,29 @@ test('resolving service:i18n throws when src/services/i18n.js register without d
   }, `Could not find module \`${namespace}/services/i18n\` imported from \`(require)\``);
 });
 
-test('resolving helper:capitalize requires src/ui/components/capitalize.js with `helper` named export', function(assert) {
-  assert.expect(1);
-
-  let expectedPath = `${namespace}/ui/components/capitalize`;
-  let expected = {};
-  let fakeRegistry = new FakeRegistry({
-    [expectedPath]: { helper: expected }
-  });
-
-  let resolver = Resolver.create({
-    _moduleRegistry: fakeRegistry,
-    config: {
-      types: {
-        helper: {
-          collection: 'components'
-        }
-      },
-      collections: {
-        components: {
-          group: 'ui',
-          types: [ 'helper' ]
-        }
+expectResolutions({
+  message: 'resolving with named "helper" export',
+  namespace,
+  config: {
+    types: {
+      helper: {
+        collection: 'components'
+      }
+    },
+    collections: {
+      components: {
+        group: 'ui',
+        types: [ 'helper' ]
       }
     }
-  });
-
-  assert.strictEqual(resolver.resolve('helper:capitalize', {namespace: namespace}), expected, 'helper is resolved');
+  },
+  moduleOverrides: {
+    [`${namespace}/ui/components/capitalize/helper`]: null
+  },
+  resolutions: {
+    'helper:capitalize': `${namespace}/ui/components/capitalize:helper` // <-- if there's a ':', it means expect a named export (not "default")
+  }
 });
-
 
 /**
 
