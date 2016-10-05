@@ -1,28 +1,9 @@
-/* globals requirejs */
-
-import Ember from 'ember';
 import { module, test } from 'qunit';
 import Resolver from 'ember-resolver/unified-resolver';
-
-function resetRegistry() {
-  requirejs.clear();
-  Ember.merge(requirejs.entries, originalRegistryEntries);
-}
-
-let originalRegistryEntries, originalEmberDeprecate, originalEmberLoggerInfo;
 
 module('ember-resolver/unified-resolver', {
   beforeEach() {
     this.namespace = 'test-namespace';
-    originalRegistryEntries = Ember.merge({}, requirejs.entries);
-    originalEmberDeprecate = Ember.deprecate;
-    originalEmberLoggerInfo = Ember.Logger.info;
-  },
-
-  afterEach() {
-    resetRegistry();
-    Ember.deprecate = originalEmberDeprecate;
-    Ember.Logger.info = originalEmberLoggerInfo;
   }
 });
 
@@ -131,7 +112,16 @@ test('resolving router:main throws when module is not defined', function(assert)
  */
 
 test('resolving service:i18n requires src/services/i18n/service.js', function(assert) {
+  assert.expect(1);
+
+  let expectedPath = `${this.namespace}/services/i18n/service`;
+  let expectedObject = {};
+  let fakeRegistry = new FakeRegistry({
+    [expectedPath]: { default: expectedObject }
+  });
+
   let resolver = Resolver.create({
+    _moduleRegistry: fakeRegistry,
     config: {
       types: {
         service: { collection: 'services' }
@@ -144,13 +134,7 @@ test('resolving service:i18n requires src/services/i18n/service.js', function(as
     }
   });
 
-  let expected = {};
-  define(`${this.namespace}/services/i18n/service`, ['exports'], function(exports) {
-    assert.ok(true, 'should be invoked');
-    exports.default = expected;
-  });
-
-  assert.strictEqual(resolver.resolve('service:i18n', {namespace: this.namespace}), expected, 'service is resolved');
+  assert.strictEqual(resolver.resolve('service:i18n', {namespace: this.namespace}), expectedObject, 'service is resolved');
 });
 
 /*
@@ -158,7 +142,16 @@ test('resolving service:i18n requires src/services/i18n/service.js', function(as
  */
 
 test('resolving helper:capitalize requires src/ui/components/capitalize/helper.js', function(assert) {
+  assert.expect(1);
+
+  let expectedPath = `${this.namespace}/ui/components/capitalize/helper`;
+  let expected = {};
+  let fakeRegistry = new FakeRegistry({
+    [expectedPath]: { default: expected }
+  });
+
   let resolver = Resolver.create({
+    _moduleRegistry: fakeRegistry,
     config: {
       types: {
         helper: {
@@ -174,17 +167,20 @@ test('resolving helper:capitalize requires src/ui/components/capitalize/helper.j
     }
   });
 
-  let expected = {};
-  define(`${this.namespace}/ui/components/capitalize/helper`, ['exports'], function(exports) {
-    assert.ok(true, 'should be invoked');
-    exports.default = expected;
-  });
-
   assert.strictEqual(resolver.resolve('helper:capitalize', {namespace: this.namespace}), expected, 'helper is resolved');
 });
 
 test('resolving component:capitalize requires src/ui/components/capitalize.js', function(assert) {
+  assert.expect(1);
+
+  let expectedPath = `${this.namespace}/ui/components/capitalize`;
+  let expected = {};
+  let fakeRegistry = new FakeRegistry({
+    [expectedPath]: { default: expected }
+  });
+
   let resolver = Resolver.create({
+    _moduleRegistry: fakeRegistry,
     config: {
       types: {
         helper: {
@@ -204,12 +200,6 @@ test('resolving component:capitalize requires src/ui/components/capitalize.js', 
     }
   });
 
-  let expected = {};
-  define(`${this.namespace}/ui/components/capitalize`, ['exports'], function(exports) {
-    assert.ok(true, 'should be invoked');
-    exports.default = expected;
-  });
-
   assert.strictEqual(resolver.resolve('component:capitalize', {namespace: this.namespace}), expected, 'component is resolved');
 });
 
@@ -221,7 +211,16 @@ test('resolving component:capitalize requires src/ui/components/capitalize.js', 
  */
 
 test('resolving service:i18n requires src/services/i18n.js', function(assert) {
+  assert.expect(1);
+
+  let expectedPath = `${this.namespace}/services/i18n`;
+  let expected = {};
+  let fakeRegistry = new FakeRegistry({
+    [expectedPath]: { default: expected }
+  });
+
   let resolver = Resolver.create({
+    _moduleRegistry: fakeRegistry,
     config: {
       types: {
         service: { collection: 'services' }
@@ -235,17 +234,20 @@ test('resolving service:i18n requires src/services/i18n.js', function(assert) {
     }
   });
 
-  let expected = {};
-  define(`${this.namespace}/services/i18n`, ['exports'], function(exports) {
-    assert.ok(true, 'should be invoked');
-    exports.default = expected;
-  });
-
   assert.strictEqual(resolver.resolve('service:i18n', {namespace: this.namespace}), expected, 'service is resolved');
 });
 
 test('resolving service:i18n throws when src/services/i18n.js register without default', function(assert) {
+  assert.expect(1);
+
+  let expectedPath = `${this.namespace}/services/i18n`;
+  let expected = {};
+  let fakeRegistry = new FakeRegistry({
+    [expectedPath]: { default: expected }
+  });
+
   let resolver = Resolver.create({
+    _moduleRegistry: fakeRegistry,
     config: {
       types: {
         service: { collection: 'services' }
@@ -258,19 +260,22 @@ test('resolving service:i18n throws when src/services/i18n.js register without d
     }
   });
 
-  let expected = {};
-  define(`${this.namespace}/services/i18n`, ['exports'], function(exports) {
-    assert.ok(true, 'should be invoked');
-    exports.default = expected;
-  });
-
   assert.throws(() => {
     resolver.resolve('service:i18n', {namespace: this.namespace});
   }, `Could not find module \`${this.namespace}/services/i18n\` imported from \`(require)\``);
 });
 
 test('resolving helper:capitalize requires src/ui/components/capitalize.js with `helper` named export', function(assert) {
+  assert.expect(1);
+
+  let expectedPath = `${this.namespace}/ui/components/capitalize`;
+  let expected = {};
+  let fakeRegistry = new FakeRegistry({
+    [expectedPath]: { helper: expected }
+  });
+
   let resolver = Resolver.create({
+    _moduleRegistry: fakeRegistry,
     config: {
       types: {
         helper: {
@@ -278,18 +283,12 @@ test('resolving helper:capitalize requires src/ui/components/capitalize.js with 
         }
       },
       collections: {
-        'components': {
+        components: {
           group: 'ui',
           types: [ 'helper' ]
         }
       }
     }
-  });
-
-  let expected = {};
-  define(`${this.namespace}/ui/components/capitalize`, ['exports'], function(exports) {
-    assert.ok(true, 'should be invoked');
-    exports.helper = expected;
   });
 
   assert.strictEqual(resolver.resolve('helper:capitalize', {namespace: this.namespace}), expected, 'helper is resolved');
@@ -300,7 +299,6 @@ test('resolving helper:capitalize requires src/ui/components/capitalize.js with 
 
 to do:
  * figure out the signature for instantiating the resolver -- what is it now, and where does the new config stuff go in?
- * figure out how to stub requirejs/define appropriately so that we don't have to muck about with requirejs internals to clean up state between tests
  * figure out the structure of the config
  * the tests in resolver-test.js should be made to work simply by making the new resolver fallback to delegating to the old resolver
  *   ^^^ mixonic thinks this is incorrect. You should opt-in to the new resolver.
