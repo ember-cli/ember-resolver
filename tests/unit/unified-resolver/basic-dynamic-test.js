@@ -1,7 +1,7 @@
 /* globals requirejs */
 
 import Ember from 'ember';
-import { module, test, skip } from 'qunit';
+import { module, test } from 'qunit';
 import Resolver from 'ember-resolver/unified-resolver';
 
 function resetRegistry() {
@@ -48,9 +48,9 @@ test('resolving router:main loads src/router.js', function(assert) {
   });
 
   let expected = {};
-  define(`${this.namespace}/router`, [], function() {
+  define(`${this.namespace}/router`, ['exports'], function(exports) {
     assert.ok(true, 'router was invoked correctly');
-    return expected;
+    exports.default = expected;
   });
 
   let factory = resolver.resolve('router:main', { namespace: this.namespace });
@@ -73,9 +73,9 @@ test('resolving an unknown type throws an error', function(assert) {
   });
 
   let expected = {};
-  define(`${this.namespace}/unresolvable`, [], function() {
+  define(`${this.namespace}/unresolvable`, ['exports'], function(exports) {
     assert.ok(false, 'should not be invoked');
-    return expected;
+    exports.default = expected;
   });
 
   assert.throws(() => {
@@ -124,13 +124,80 @@ test('resolving service:i18n requires src/services/i18n/service.js', function(as
   });
 
   let expected = {};
-  define(`${this.namespace}/services/i18n/service`, [], function() {
+  define(`${this.namespace}/services/i18n/service`, ['exports'], function(exports) {
     assert.ok(true, 'should be invoked');
-    return expected;
+    exports.default = expected;
   });
 
   assert.strictEqual(resolver.resolve('service:i18n', {namespace: this.namespace}), expected, 'service is resolved');
 });
+
+/*
+ * "Rule 2" of the unification RFC with a group.
+ */
+
+test('resolving helper:capitalize requires src/ui/components/capitalize/helper.js', function(assert) {
+  let resolver = Resolver.create({
+    config: {
+      types: {
+        helper: {
+          collection: 'components'
+        }
+      },
+      collections: {
+        'components': {
+          group: 'ui',
+          types: [ 'helper' ]
+        }
+      }
+    }
+  });
+
+  let expected = {};
+  define(`${this.namespace}/ui/components/capitalize/helper`, ['exports'], function(exports) {
+    assert.ok(true, 'should be invoked');
+    exports.default = expected;
+  });
+
+  assert.strictEqual(resolver.resolve('helper:capitalize', {namespace: this.namespace}), expected, 'helper is resolved');
+});
+
+test('resolving component:capitalize requires src/ui/components/capitalize.js', function(assert) {
+  let resolver = Resolver.create({
+    config: {
+      types: {
+        helper: {
+          collection: 'components'
+        },
+        component: {
+          collection: 'components'
+        }
+      },
+      collections: {
+        'components': {
+          group: 'ui',
+          defaultType: 'component',
+          types: [ 'helper', 'component' ]
+        }
+      }
+    }
+  });
+
+  let expected = {};
+  define(`${this.namespace}/ui/components/capitalize`, ['exports'], function(exports) {
+    assert.ok(true, 'should be invoked');
+    exports.default = expected;
+  });
+
+  assert.strictEqual(resolver.resolve('component:capitalize', {namespace: this.namespace}), expected, 'component is resolved');
+});
+
+
+
+/*
+ * "Rule 3" of the unification RFC. Rule 3 means a default type for a collection
+ * is configured.
+ */
 
 test('resolving service:i18n requires src/services/i18n.js', function(assert) {
   let resolver = Resolver.create({
@@ -148,9 +215,9 @@ test('resolving service:i18n requires src/services/i18n.js', function(assert) {
   });
 
   let expected = {};
-  define(`${this.namespace}/services/i18n`, [], function() {
+  define(`${this.namespace}/services/i18n`, ['exports'], function(exports) {
     assert.ok(true, 'should be invoked');
-    return expected;
+    exports.default = expected;
   });
 
   assert.strictEqual(resolver.resolve('service:i18n', {namespace: this.namespace}), expected, 'service is resolved');
@@ -171,9 +238,9 @@ test('resolving service:i18n throws when src/services/i18n.js register without d
   });
 
   let expected = {};
-  define(`${this.namespace}/services/i18n`, [], function() {
+  define(`${this.namespace}/services/i18n`, ['exports'], function(exports) {
     assert.ok(true, 'should be invoked');
-    return expected;
+    exports.default = expected;
   });
 
   assert.throws(() => {
@@ -181,16 +248,17 @@ test('resolving service:i18n throws when src/services/i18n.js register without d
   }, `Could not find module \`${this.namespace}/services/i18n\` imported from \`(require)\``);
 });
 
-skip('resolving helper:nested/capitalize requires src/ui/components/nested/capitalize/helper.js', function(assert) {
+test('resolving helper:capitalize requires src/ui/components/capitalize.js with `helper` named export', function(assert) {
   let resolver = Resolver.create({
     config: {
       types: {
         helper: {
-          collection: 'ui/components'
+          collection: 'components'
         }
       },
       collections: {
-        'ui/components': {
+        'components': {
+          group: 'ui',
           types: [ 'helper' ]
         }
       }
@@ -198,15 +266,13 @@ skip('resolving helper:nested/capitalize requires src/ui/components/nested/capit
   });
 
   let expected = {};
-  define(`${this.namespace}/ui/components/nested/capitalize/helper`, [], function() {
+  define(`${this.namespace}/ui/components/capitalize`, ['exports'], function(exports) {
     assert.ok(true, 'should be invoked');
-    return expected;
+    exports.helper = expected;
   });
 
-  assert.strictEqual(resolver.resolve('helper:nested/capitalize'), expected, 'helper is resolved');
+  assert.strictEqual(resolver.resolve('helper:capitalize', {namespace: this.namespace}), expected, 'helper is resolved');
 });
-
-
 
 
 /**
@@ -215,10 +281,12 @@ to do:
  * figure out the signature for instantiating the resolver -- what is it now, and where does the new config stuff go in?
  * figure out how to stub requirejs/define appropriately so that we don't have to muck about with requirejs internals to clean up state between tests
  * figure out the structure of the config
- * figure out whether the resolver ever reads anything other than the "default" export now, and whether that needs to change for new stuff (e.g., when some file/amd-module exports a named "helper" or "controller" etc)
  * the tests in resolver-test.js should be made to work simply by making the new resolver fallback to delegating to the old resolver
- * add new tests for new places that the module unification rfc says we should look for things -- need to read the spec to figure this out
- * figure out what the rfc says about how the config can influence how the looked-up module names change, and add tests for these scenarios (e.g., custom collection, private collections, etc)
+ *   ^^^ mixonic thinks this is incorrect. You should opt-in to the new resolver.
+ *   Or perhaps only if you have a src dir?
+ * Tests that show you cannot resolve anything from the utils directory, per spec
+ * Tests that do private collections. Will involve respecting the `source` (I
+ *   think) argument to the resolve method.
 
 
  ember-cli/loader.js  open issue, public API for require/define    can import from loader instead of global requirejs https://github.com/ember-cli/loader.js/issues/82
