@@ -1,112 +1,118 @@
+/* globals require */
+/*jshint -W082 */
 import { module, test } from 'qunit';
 import Ember from 'ember';
 import Resolver from 'ember-resolver/resolver';
-import ContainerDebugAdapter from 'ember-resolver/container-debug-adapter';
-import ContainerDebugAdapterInitializer from 'dummy/initializers/container-debug-adapter';
+import hasEmberVersion from 'ember-test-helpers/has-ember-version';
 
-let containerDebugAdapter, App;
+if (!hasEmberVersion(2,0)) {
 
-var modules = {};
-function def(module) {
-  modules[module] = {};
-}
+  let ContainerDebugAdapter = require('ember-resolver/container-debug-adapter').default;
+  let ContainerDebugAdapterInitializer = require('dummy/initializers/container-debug-adapter').default;
 
-function undef(module) {
-  if (module) {
-    delete modules[module];
-  } else {
-    modules = {};
+  let containerDebugAdapter, App;
+
+  var modules = {};
+  function def(module) {
+    modules[module] = {};
   }
-}
 
-
-module("Container Debug Adapter Tests", {
-  beforeEach:function() {
-    let BaseApplication = Ember.Application.extend({
-      Resolver,
-      ContainerDebugAdapter,
-      modulePrefix: 'appkit',
-
-      init() {
-        this._super(...arguments);
-        this.deferReadiness();
-      },
-
-      toString() {
-        return 'App';
-      }
-    });
-
-    BaseApplication.initializer(ContainerDebugAdapterInitializer);
-
-    Ember.run(function() {
-      App = BaseApplication.create();
-    });
-
-    Ember.run(function() {
-      containerDebugAdapter = App.__container__.lookup('container-debug-adapter:main');
-      containerDebugAdapter._moduleRegistry._entries = modules;
-    });
-  },
-  afterEach: function() {
-    Ember.run(function() {
-      containerDebugAdapter.destroy();
-      App.destroy();
-      App = null;
-    });
-    undef();
+  function undef(module) {
+    if (module) {
+      delete modules[module];
+    } else {
+      modules = {};
+    }
   }
-});
 
-test("can access Container Debug Adapter which can catalog typical entries by type", function(assert) {
-  assert.equal(containerDebugAdapter.canCatalogEntriesByType('model'), true, "canCatalogEntriesByType should return false for model");
-  assert.equal(containerDebugAdapter.canCatalogEntriesByType('template'), true, "canCatalogEntriesByType should return false for template");
-  assert.equal(containerDebugAdapter.canCatalogEntriesByType('controller'), true, "canCatalogEntriesByType should return true for controller");
-  assert.equal(containerDebugAdapter.canCatalogEntriesByType('route'), true, "canCatalogEntriesByType should return true for route");
-  assert.equal(containerDebugAdapter.canCatalogEntriesByType('view'), true, "canCatalogEntriesByType should return true for view");
-});
+  module("Container Debug Adapter Tests", {
+    beforeEach:function() {
+      let BaseApplication = Ember.Application.extend({
+        Resolver,
+        ContainerDebugAdapter,
+        modulePrefix: 'appkit',
 
-test("the default ContainerDebugAdapter catalogs controller entries", function(assert) {
-  def('appkit/controllers/foo');
-  def('appkit/controllers/users/foo');
+        init() {
+          this._super(...arguments);
+          this.deferReadiness();
+        },
 
-  var controllers = containerDebugAdapter.catalogEntriesByType('controller');
+        toString() {
+          return 'App';
+        }
+      });
 
-  assert.equal(controllers.length, 2, "controllers discovered");
-  assert.equal(controllers[0], 'foo', "found the right class");
-  assert.equal(controllers[1], 'users/foo', "the name is correct");
-});
+      BaseApplication.initializer(ContainerDebugAdapterInitializer);
 
-test("Does not duplicate entries", function(assert) {
-  def('appkit/models/foo');
-  def('appkit/more/models/foo');
+      Ember.run(function() {
+        App = BaseApplication.create();
+      });
 
-  var models = containerDebugAdapter.catalogEntriesByType('model');
+      Ember.run(function() {
+        containerDebugAdapter = App.__container__.lookup('container-debug-adapter:main');
+        containerDebugAdapter._moduleRegistry._entries = modules;
+      });
+    },
+    afterEach: function() {
+      Ember.run(function() {
+        containerDebugAdapter.destroy();
+        App.destroy();
+        App = null;
+      });
+      undef();
+    }
+  });
 
-  assert.equal(models.length, 1, "Only one is returned");
-  assert.equal(models[0], 'foo', "the name is correct");
-});
+  test("can access Container Debug Adapter which can catalog typical entries by type", function(assert) {
+    assert.equal(containerDebugAdapter.canCatalogEntriesByType('model'), true, "canCatalogEntriesByType should return false for model");
+    assert.equal(containerDebugAdapter.canCatalogEntriesByType('template'), true, "canCatalogEntriesByType should return false for template");
+    assert.equal(containerDebugAdapter.canCatalogEntriesByType('controller'), true, "canCatalogEntriesByType should return true for controller");
+    assert.equal(containerDebugAdapter.canCatalogEntriesByType('route'), true, "canCatalogEntriesByType should return true for route");
+    assert.equal(containerDebugAdapter.canCatalogEntriesByType('view'), true, "canCatalogEntriesByType should return true for view");
+  });
 
-test("Pods support", function(assert) {
-  def('appkit/user/model');
-  def('appkit/post/model');
+  test("the default ContainerDebugAdapter catalogs controller entries", function(assert) {
+    def('appkit/controllers/foo');
+    def('appkit/controllers/users/foo');
 
-  var models = containerDebugAdapter.catalogEntriesByType('model');
+    var controllers = containerDebugAdapter.catalogEntriesByType('controller');
 
-  assert.equal(models.length, 2, "All models are found");
-  assert.equal(models[0], 'user', "the name is correct");
-  assert.equal(models[1], 'post', "the name is correct");
-});
+    assert.equal(controllers.length, 2, "controllers discovered");
+    assert.equal(controllers[0], 'foo', "found the right class");
+    assert.equal(controllers[1], 'users/foo', "the name is correct");
+  });
 
-test("Pods podModulePrefix support", function(assert) {
-  App.podModulePrefix = 'my-prefix';
+  test("Does not duplicate entries", function(assert) {
+    def('appkit/models/foo');
+    def('appkit/more/models/foo');
 
-  def('my-prefix/user/model');
-  def('my-prefix/users/user/model');
+    var models = containerDebugAdapter.catalogEntriesByType('model');
 
-  var models = containerDebugAdapter.catalogEntriesByType('model');
+    assert.equal(models.length, 1, "Only one is returned");
+    assert.equal(models[0], 'foo', "the name is correct");
+  });
 
-  assert.equal(models.length, 2, "models discovered");
-  assert.equal(models[0], 'user', "the name is correct");
-  assert.equal(models[1], 'users/user', "the name is correct");
-});
+  test("Pods support", function(assert) {
+    def('appkit/user/model');
+    def('appkit/post/model');
+
+    var models = containerDebugAdapter.catalogEntriesByType('model');
+
+    assert.equal(models.length, 2, "All models are found");
+    assert.equal(models[0], 'user', "the name is correct");
+    assert.equal(models[1], 'post', "the name is correct");
+  });
+
+  test("Pods podModulePrefix support", function(assert) {
+    App.podModulePrefix = 'my-prefix';
+
+    def('my-prefix/user/model');
+    def('my-prefix/users/user/model');
+
+    var models = containerDebugAdapter.catalogEntriesByType('model');
+
+    assert.equal(models.length, 2, "models discovered");
+    assert.equal(models[0], 'user', "the name is correct");
+    assert.equal(models[1], 'users/user', "the name is correct");
+  });
+}

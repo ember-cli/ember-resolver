@@ -2,6 +2,8 @@
 'use strict';
 
 var VersionChecker = require('ember-cli-version-checker');
+var path = require('path');
+var mergeTrees = require('broccoli-merge-trees');
 
 module.exports = {
   name: 'ember-resolver',
@@ -17,6 +19,19 @@ module.exports = {
     }
 
     this.app.import('vendor/ember-resolver/legacy-shims.js');
+  },
+
+  treeForApp: function(defaultTree) {
+    var checker = new VersionChecker(this);
+    var emberVersion = checker.for('ember', 'bower');
+
+    if (emberVersion.satisfies('<= 1.13')) {
+      var trees = [defaultTree];
+      trees.push(this.treeGenerator(path.resolve(this.root, 'app-lt-2-0')));
+      return mergeTrees(trees, { overwrite: true });
+    }
+
+    return defaultTree;
   },
 
   monkeyPatchVendorFiles: function() {
