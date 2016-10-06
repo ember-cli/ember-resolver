@@ -13,28 +13,26 @@ const Resolver = DefaultResolver.extend({
   },
 
   resolve(lookupString, options) {
-    let {type, collection, group, isDefaultType, name} = this._parseLookupString(lookupString);
+    let { type, collection, group, isDefaultType, name } = this._parseLookupString(lookupString);
 
-    // main factories have a simple lookup strategy.
+    // Main factories have no collection
     if (name === 'main') {
       // throw if the collection is not ''
       let path = `${options.namespace}/${type}`;
       return this._moduleRegistry.get(path);
     }
 
-    // other factories have a collection
+    // Other factories have a collection
     let groupSegment = group ? `${group}/` : '';
-    let path = `${options.namespace}/${groupSegment}${collection}/${name}/${type}`;
+    let namePath = `${options.namespace}/${groupSegment}${collection}/${name}`;
     try {
-      // TODO: Why can we not requirejs.has or this._moduleRegistry.has?
-      return this._moduleRegistry.get(path);
+      // TODO: Why can we not requirejs.has?
+      return this._moduleRegistry.get(`${namePath}/${type}`);
     } catch(e) {
-      let path = `${options.namespace}/${groupSegment}${collection}/${name}`;
-
       if (isDefaultType) {
-        return this._moduleRegistry.get(path);
+        return this._moduleRegistry.get(namePath);
       } else {
-        let factory = this._moduleRegistry.get(path, type);
+        let factory = this._moduleRegistry.get(namePath, type);
         if (factory) {
           return factory;
         }
@@ -54,17 +52,34 @@ const Resolver = DefaultResolver.extend({
       throw new Error(`"${type}" not a recognized type`);
     }
 
-    let {collection} = configForType;
+    // TODO If we have a private collection (e.g. '-components') then that
+    // collection should be used. However we don't have a test case for this yet.
+    // yet.
+    let { definitiveCollection: collection, fallbackCollectionPrefixes } = configForType;
+
+    // Handle a collection prefix like 'template:components/my-component'
+    if (fallbackCollectionPrefixes) {
+      let collectionPrefix = Object.keys(fallbackCollectionPrefixes).find(prefix => {
+        return name.indexOf(prefix) === 0;
+      });
+
+      if (collectionPrefix) {
+        name = name.slice(collectionPrefix.length);
+        collection = fallbackCollectionPrefixes[collectionPrefix];
+      }
+    }
 
     let collectionConfig = this.config.collections[collection];
+
+    /* TODO validation incorrect */
     if (collectionConfig.types.indexOf(type) === -1) {
-      throw new Error(`"${type}" not a recognized type`);
+      throw new Error(`"${type}" not a recognized type for ${collection} collection`);
     }
 
     let isDefaultType = collectionConfig.defaultType === type;
-    let {group} = collectionConfig;
+    let { group } = collectionConfig;
 
-    return {type, collection, group, isDefaultType, name};
+    return { type, collection, group, isDefaultType, name };
   }
 });
 
