@@ -6,29 +6,6 @@ let namespace = 'test-namespace';
 
 module('ember-resolver/unified-resolver', {});
 
-/*
- * "Rule 1" of the unification RFC.
- *
- * See: https://github.com/dgeb/rfcs/blob/module-unification/text/0000-module-unification.md#module-type
- */
-
-class FakeRegistry {
-  constructor(entries) {
-    this._entries = entries;
-    this._get = [];
-  }
-
-  get(moduleName) {
-    this._get.push(moduleName);
-    let val = this._entries[moduleName];
-    if (!val) {
-      throw new Error(`missing ${moduleName}`);
-    }
-
-    return val.default;
-  }
-}
-
 class NewFakeRegistry {
   constructor({moduleOverrides}) {
     this._lastReturned = null;
@@ -46,6 +23,10 @@ class NewFakeRegistry {
     }
     this._lastReturned = { moduleName, exportName };
     return {};
+  }
+
+  has(moduleName) {
+    return this._moduleOverrides.hasOwnProperty(moduleName) ? this._moduleOverrides[moduleName] : true;
   }
 }
 
@@ -85,6 +66,11 @@ function expectResolutions({ namespace, message, config, resolutions, moduleOver
   }
 }
 
+/*
+ * "Rule 1" of the unification RFC.
+ *
+ * See: https://github.com/dgeb/rfcs/blob/module-unification/text/0000-module-unification.md#module-type
+ */
 expectResolutions({
   message: 'Modules named main.',
   namespace,
@@ -137,7 +123,7 @@ expectResolutions({
     [`${namespace}/router`]: null
   },
   errors: {
-    'router:main': new RegExp(`missing: ${namespace}/router`)
+    'router:main': new RegExp(`Could not resolve factory 'router:main' at path '${namespace}/router'`)
   }
 });
 
@@ -248,7 +234,7 @@ expectResolutions({
 // Note: error format from require would be something like
 // `Could not find module \`${namespace}/services/i18n\` imported from \`(require)\`
 expectResolutions({
-  message: 'rule 3: throws when missing default',
+  message: 'rule 3: throws when resolving a module name without type but a defaultType is not configured',
   namespace,
   config: {
     types: {

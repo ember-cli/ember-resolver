@@ -12,37 +12,78 @@ const Resolver = DefaultResolver.extend({
     }
   },
 
-  resolve(lookupString, options) {
+  expandLocalLookup(lookupString, sourceLookupString, options) {
+    let { type, name } = this._parseLookupString(lookupString);
+    let { name: sourceName } = this._parseLookupString(sourceLookupString);
+
+    let expandedLookupString = `${type}:${sourceName}/${name}`;
+    let { name: moduleName, exportName } = this._resolveLookupStringToModuleName(expandedLookupString, options);
+
+    if (this._moduleRegistry.has(moduleName) && this._moduleRegistry.get(moduleName, exportName)) {
+      return expandedLookupString;
+    }
+
+    return null;
+  },
+
+  _resolveLookupStringToModuleName(lookupString, options) {
     let { type, collection, group, isDefaultType, name } = this._parseLookupString(lookupString);
 
     // Main factories have no collection
     if (name === 'main') {
       // throw if the collection is not ''
       let path = `${options.namespace}/${type}`;
-      return this._moduleRegistry.get(path);
+      if (this._moduleRegistry.has(path)) {
+        return {name: path, exportName: 'default'};
+      }
+      throw new Error(`Could not resolve factory '${lookupString}' at path '${path}'`);
+    }
+
+    let parts = name.split('/-');
+    if (parts.length === 2) {
+      // We have a private collection
+      let privateCollection = parts[1].split('/')[0];
+      if (collection === privateCollection) {
+        // The proposed source collection cannot be correct, since the
+        // private collection is the same. A private collection cannot be
+        // in itself. For example: src/ui/component/phone-book/-components/
+        let alternativeCollections = [];
+        Object.keys(this.config.collections).filter(collection => {
+          let collectionDef = this.config.collections[collection];
+          if (collectionDef.privateCollections && collectionDef.privateCollections.indexOf(privateCollection) !== -1) {
+            alternativeCollections.push(collection);
+          }
+        });
+        if (alternativeCollections.length > 1) {
+          throw new Error('a private collection should not be configured for more than one collection');
+        }
+        collection = alternativeCollections[0];
+        group = this.config.collections[collection].group;
+      }
+    } else if (parts.length > 2) {
+      throw new Error('Non-ambiguous, but painful to parse case');
     }
 
     // Other factories have a collection
     let groupSegment = group ? `${group}/` : '';
     let namePath = `${options.namespace}/${groupSegment}${collection}/${name}`;
-    try {
-      // TODO: Why can we not requirejs.has?
-      return this._moduleRegistry.get(`${namePath}/${type}`);
-    } catch(e) {
-      if (isDefaultType) {
-        return this._moduleRegistry.get(namePath);
-      } else {
-        let factory = this._moduleRegistry.get(namePath, type);
-        if (factory) {
-          return factory;
-        }
-        /*
-         * Don't throw a special error in this case. Allow the default error
-         * of a missing file with name/type expected in the path to be thrown.
-         */
-      }
-      throw e;
+
+    let path = `${namePath}/${type}`;
+    if (this._moduleRegistry.has(path)) {
+      return {name: path, exportName: 'default'};
     }
+
+    if (isDefaultType) {
+      return { name: namePath, exportName: 'default' };
+    }
+
+    return { name: namePath, exportName: type };
+  },
+
+  // this returns the actual module
+  resolve(lookupString, options) {
+    let { name, exportName } = this._resolveLookupStringToModuleName(lookupString, options);
+    return this._moduleRegistry.get(name, exportName);
   },
 
   _parseLookupString(lookupString) {
@@ -52,9 +93,6 @@ const Resolver = DefaultResolver.extend({
       throw new Error(`"${type}" not a recognized type`);
     }
 
-    // TODO If we have a private collection (e.g. '-components') then that
-    // collection should be used. However we don't have a test case for this yet.
-    // yet.
     let { definitiveCollection: collection, fallbackCollectionPrefixes } = configForType;
 
     // Handle a collection prefix like 'template:components/my-component'
@@ -82,12 +120,5 @@ const Resolver = DefaultResolver.extend({
     return { type, collection, group, isDefaultType, name };
   }
 });
-
-/*
-function parseFactoryName(factoryName, collection) {
-  let parts = new RegExp(`${collection}/(.*)/([^/]*)`).exec(factoryName);
-  return [parts[1], parts[2]];
-}
-*/
 
 export default Resolver;

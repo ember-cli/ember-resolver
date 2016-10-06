@@ -1,0 +1,187 @@
+import { module, test } from 'qunit';
+import Resolver from 'ember-resolver/unified-resolver';
+
+module('ember-resolver/unified-resolver #expandLocalLookup', {
+  beforeEach() {
+    this.namespace = 'test-namespace';
+  }
+});
+
+class FakeRegistry {
+  constructor(entries) {
+    this._entries = entries;
+    this._get = [];
+  }
+
+  get(moduleName) {
+    this._get.push(moduleName);
+    let module = this._entries[moduleName];
+    if (module) {
+      return module;
+    }
+    throw new Error(`Module not found: ${moduleName}`);
+  }
+
+  has(moduleName) {
+    return !!this._entries[moduleName];
+  }
+}
+
+test('expandLocalLookup expands to a namespace when the source is in a collection containing that type (with type in filename)', function(assert) {
+  assert.expect(1);
+
+  let expectedObject = {};
+  let fakeRegistry = new FakeRegistry({
+    [`${this.namespace}/ui/components/my-form/my-input/component`]: { default: expectedObject }
+  });
+
+  let resolver = Resolver.create({
+    _moduleRegistry: fakeRegistry,
+    config: {
+      types: {
+        component: { definitiveCollection: 'components' }
+      },
+      collections: {
+        components: {
+          group: 'ui',
+          types: [ 'component' ]
+        }
+      }
+    }
+  });
+
+  let factoryName = resolver.expandLocalLookup('component:my-input', 'component:my-form', {namespace: this.namespace});
+
+  assert.strictEqual(factoryName, 'component:my-form/my-input', 'returns a module namespace of "my-form"');
+});
+
+test('expandLocalLookup expands to a namespace when the source is in a collection containing that type (with default type)', function(assert) {
+  assert.expect(1);
+
+  let expectedObject = {};
+  let fakeRegistry = new FakeRegistry({
+    [`${this.namespace}/ui/components/my-form/my-input`]: { default: expectedObject }
+  });
+
+  let resolver = Resolver.create({
+    _moduleRegistry: fakeRegistry,
+    config: {
+      types: {
+        component: { definitiveCollection: 'components' }
+      },
+      collections: {
+        components: {
+          defaultType: 'component',
+          group: 'ui',
+          types: [ 'component' ]
+        }
+      }
+    }
+  });
+
+  let factoryName = resolver.expandLocalLookup('component:my-input', 'component:my-form', {namespace: this.namespace});
+
+  assert.strictEqual(factoryName, 'component:my-form/my-input', 'returns a module namespace of "my-form"');
+});
+
+test('expandLocalLookup expands to a namespace when the source is in a collection containing that type (with named export)', function(assert) {
+  assert.expect(1);
+
+  let expectedObject = {};
+  let fakeRegistry = new FakeRegistry({
+    [`${this.namespace}/ui/components/my-form/my-input`]: { component: expectedObject }
+  });
+
+  let resolver = Resolver.create({
+    _moduleRegistry: fakeRegistry,
+    config: {
+      types: {
+        component: { definitiveCollection: 'components' }
+      },
+      collections: {
+        components: {
+          group: 'ui',
+          types: [ 'component' ]
+        }
+      }
+    }
+  });
+
+  let factoryName = resolver.expandLocalLookup('component:my-input', 'component:my-form', {namespace: this.namespace});
+
+  assert.strictEqual(factoryName, 'component:my-form/my-input', 'returns a module namespace of "my-form"');
+});
+
+test('expandLocalLookup returns null when no module exists in a namespaces lookup', function(assert) {
+  assert.expect(1);
+
+  let fakeRegistry = new FakeRegistry({
+  });
+
+  let resolver = Resolver.create({
+    _moduleRegistry: fakeRegistry,
+    config: {
+      types: {
+        component: { definitiveCollection: 'components' }
+      },
+      collections: {
+        components: {
+          group: 'ui',
+          types: [ 'component' ]
+        }
+      }
+    }
+  });
+
+  let factoryName = resolver.expandLocalLookup('component:my-input', 'component:my-form', {namespace: this.namespace});
+
+  assert.strictEqual(factoryName, null, 'returns null when there is no local lookup module');
+});
+
+test('expandLocalLookup expands to a namespace when the source is in a private collection', function(assert) {
+  assert.expect(1);
+
+  let fakeRegistry = new FakeRegistry({
+    [`${this.namespace}/ui/routes/my-route/-components/my-component/my-helper/helper`]: { default: {} }
+  });
+
+  let resolver = Resolver.create({
+    _moduleRegistry: fakeRegistry,
+    config: {
+      types: {
+        component: { definitiveCollection: 'components' },
+        helper: { definitiveCollection: 'components' }
+      },
+      collections: {
+        routes: {
+          group: 'ui',
+          types: [],
+          privateCollections: ['components']
+        },
+        components: {
+          types: ['helper', 'component'],
+          // Perhaps configure this like so
+          privateOf: 'routes'
+        }
+      }
+    }
+  });
+
+  let factoryName = resolver.expandLocalLookup('helper:my-helper', 'component:my-route/-components/my-component', {namespace: this.namespace});
+
+  assert.strictEqual(factoryName, 'helper:my-route/-components/my-component/my-helper', '-component namespace included in lookup');
+});
+
+
+/*
+test('expandLocalLookup expands to a private collection', function(assert) {
+});
+
+
+test('expandLocalLookup returns null when no module exists in a private collection', function(asset) {
+});
+*/
+
+
+
+
