@@ -336,176 +336,163 @@ expectResolutions({
   }
 });
 
-test('resolving template:components/my-form/my-input to /ui/components/my-form/my-input/template', function(assert) {
-  assert.expect(3);
-
-  let expectedObject = {};
-  let fakeRegistry = new FakeRegistry({
-    [`${namespace}/ui/components/my-form/my-input/template`]: { default: expectedObject }
-  });
-
-  let resolver = Resolver.create({
-    _moduleRegistry: fakeRegistry,
-    config: {
-      types: {
-        route: {
-          definitiveCollection: 'routes'
-        },
-        template: {
-          definitiveCollection: 'routes',
-          fallbackCollectionPrefixes: {
-            'components/': 'components'
-          }
-        }
+expectResolutions({
+  message: 'resolving template:components/my-form/my-input to /ui/components/my-form/my-input/template',
+  namespace,
+  config: {
+    types: {
+      route: {
+        definitiveCollection: 'routes'
       },
-      collections: {
-        components: {
-          group: 'ui',
-          types: [ 'template' ],
-          defaultType: 'component'
-        },
-        routes: {
-          group: 'ui',
-          types: [ 'template' ],
-          defaultType: 'route'
+      template: {
+        definitiveCollection: 'routes',
+        fallbackCollectionPrefixes: {
+          'components/': 'components'
         }
       }
+    },
+    collections: {
+      components: {
+        group: 'ui',
+        types: [ 'template' ],
+        defaultType: 'component'
+      },
+      routes: {
+        group: 'ui',
+        types: [ 'template' ],
+        defaultType: 'route'
+      }
     }
-  });
+  },
+  moduleOverrides: {
+    [`${namespace}/ui/routes/my-form/my-input/template`]: null,
+    [`${namespace}/ui/routes/my-form/my-input`]: null,
+    [`${namespace}/ui/routes/my-form/-components/my-input/template`]: null,
+    [`${namespace}/ui/routes/my-form/-components/my-input`]: null
 
-  assert.strictEqual(resolver.resolve('template:components/my-form/my-input', {namespace}), expectedObject, 'template is resolved');
-  assert.throws(() => {
-    resolver.resolve('template:my-form/my-input', {namespace});
-  }, 'template not resolved at template:my-form/my-input');
-  assert.throws(() => {
-    resolver.resolve('template:my-form/-components/my-input', {namespace});
-  }, 'template not resolved at template:my-form/-components/my-input');
+  },
+  resolutions: {
+    'template:components/my-form/my-input': `${namespace}/ui/components/my-form/my-input/template`
+  },
+  errors: {
+    'template:my-form/my-input': new RegExp(`missing: ${namespace}/ui/routes/my-form/my-input`),
+    'template:my-form/-components/my-input': new RegExp(`missing: ${namespace}/ui/routes/my-form/-components/my-input`)
+  }
 });
 
-test('resolving template:my-form/my-input to /ui/routes/my-form/my-input/template', function(assert) {
-  assert.expect(2);
-
-  let expectedObject = {};
-  let fakeRegistry = new FakeRegistry({
-    [`${namespace}/ui/routes/my-form/my-input/template`]: { default: expectedObject }
-  });
-
-  let resolver = Resolver.create({
-    _moduleRegistry: fakeRegistry,
-    config: {
-      types: {
-        route: {
-          definitiveCollection: 'routes'
-        },
-        template: {
-          definitiveCollection: 'routes',
-          fallbackCollectionPrefixes: {
-            'components/': 'components'
-          }
-        }
+expectResolutions({
+  message: 'resolving template:my-form/my-input to /ui/routes/my-form/my-input/template',
+  namespace,
+  config: {
+    types: {
+      route: {
+        definitiveCollection: 'routes'
       },
-      collections: {
-        components: {
-          group: 'ui',
-          types: [ 'template' ],
-          defaultType: 'component'
-        },
-        routes: {
-          group: 'ui',
-          types: [ 'template' ],
-          defaultType: 'route'
+      template: {
+        definitiveCollection: 'routes',
+        fallbackCollectionPrefixes: {
+          'components/': 'components'
         }
       }
+    },
+    collections: {
+      components: {
+        group: 'ui',
+        types: [ 'template' ],
+        defaultType: 'component'
+      },
+      routes: {
+        group: 'ui',
+        types: [ 'template' ],
+        defaultType: 'route'
+      }
     }
-  });
-
-  assert.strictEqual(resolver.resolve('template:my-form/my-input', {namespace}), expectedObject, 'template is resolved');
-  assert.throws(() => {
-    resolver.resolve('template:components/my-form/my-input', {namespace});
-  }, 'template not resolved at template:components/my-form/my-input');
+  },
+  moduleOverrides: {
+    [`${namespace}/ui/components/my-form/my-input/template`]: null,
+    [`${namespace}/ui/components/my-form/my-input`]: null
+  },
+  resolutions: {
+    'template:my-form/my-input': `${namespace}/ui/routes/my-form/my-input/template`
+  },
+  errors: {
+    'template:components/my-form/my-input': new RegExp(`missing: ${namespace}/ui/components/my-form/my-input`)
+  }
 });
 
 /**
  * Private Collections
  */
-test('resolving template:my-form/-components/my-input to /ui/routes/my-form/-components/my-input/template', function(assert) {
-  assert.expect(3);
 
-  let expectedObject = {};
-  let fakeRegistry = new FakeRegistry({
-    [`${namespace}/ui/routes/my-form/-components/my-input/template`]: { default: expectedObject }
-  });
-
-  let resolver = Resolver.create({
-    _moduleRegistry: fakeRegistry,
-    config: {
-      types: {
-        route: {
-          definitiveCollection: 'routes'
-        },
-        template: {
-          definitiveCollection: 'routes',
-          fallbackCollectionPrefixes: {
-            'components/': 'components'
-          }
-        }
+expectResolutions({
+  message: 'resolving template:my-form/-components/my-input to /ui/routes/my-form/-components/my-input/template',
+  namespace,
+  config: {
+    types: {
+      route: {
+        definitiveCollection: 'routes'
       },
-      collections: {
-        components: {
-          group: 'ui',
-          types: ['template'],
-          defaultType: 'component'
-        },
-        routes: {
-          group: 'ui',
-          types: ['template'],
-          defaultType: 'route',
-          privateCollections: ['components']
+      template: {
+        definitiveCollection: 'routes',
+        fallbackCollectionPrefixes: {
+          'components/': 'components'
         }
       }
+    },
+    collections: {
+      components: {
+        group: 'ui',
+        types: ['template'],
+        defaultType: 'component'
+      },
+      routes: {
+        group: 'ui',
+        types: ['template'],
+        defaultType: 'route',
+        privateCollections: ['components']
+      }
     }
-  });
-
-  assert.strictEqual(resolver.resolve('template:my-form/-components/my-input', {namespace}), expectedObject, 'template is resolved');
-  assert.throws(() => {
-    resolver.resolve('template:components/my-form/my-input', {namespace});
-  }, 'template not resolved at template:components/my-form/my-input');
-  assert.throws(() => {
-    resolver.resolve('template:my-form/my-input', {namespace});
-  }, 'template not resolved at template:my-form/my-input');
+  },
+  moduleOverrides: {
+    [`${namespace}/ui/components/my-form/my-input/template`]: null,
+    [`${namespace}/ui/components/my-form/my-input`]: null,
+    [`${namespace}/ui/routes/my-form/my-input/template`]: null,
+    [`${namespace}/ui/routes/my-form/my-input`]: null
+  },
+  resolutions: {
+    'template:my-form/-components/my-input': `${namespace}/ui/routes/my-form/-components/my-input/template`
+  },
+  errors: {
+    'template:components/my-form/my-input': new RegExp(`missing: ${namespace}/ui/components/my-form/my-input`),
+    'template:my-form/my-input': new RegExp(`missing: ${namespace}/ui/routes/my-form/my-input`)
+  }
 });
 
-test('failing to resolve component:my-form/my-input as /ui/components/my-form/-component/my-input', function(assert) {
-  assert.expect(2);
-
-  let expectedObject = {};
-  let fakeRegistry = new FakeRegistry({
-    [`${namespace}/ui/components/my-form/-components/my-input/component`]: { default: expectedObject }
-  });
-
-  let resolver = Resolver.create({
-    _moduleRegistry: fakeRegistry,
-    config: {
-      types: {
-        component: { definitiveCollection: 'components' }
-      },
-      collections: {
-        components: {
-          group: 'ui',
-          types: [ 'component' ],
-          privateCollections: ['components']
-        }
+expectResolutions({
+  message: 'failing to resolve component:my-form/my-input as /ui/components/my-form/-component/my-input',
+  namespace,
+  config: {
+    types: {
+      component: { definitiveCollection: 'components' }
+    },
+    collections: {
+      components: {
+        group: 'ui',
+        types: [ 'component' ],
+        privateCollections: ['components']
       }
     }
-  });
-
-  assert.throws(() => {
-    resolver.resolve('component:my-form/my-input', {namespace});
-  }, 'component not resolved with full namespace');
-
-  assert.throws(() => {
-    resolver.resolve('component:my-input', {namespace});
-  }, 'component not resolved with name');
+  },
+  moduleOverrides: {
+    [`${namespace}/ui/components/my-form/my-input/component`]: null,
+    [`${namespace}/ui/components/my-form/my-input`]: null,
+    [`${namespace}/ui/components/my-input/component`]: null,
+    [`${namespace}/ui/components/my-input`]: null
+  },
+  errors: {
+    'component:my-form/my-input': new RegExp(`missing: ${namespace}/ui/components/my-form/my-input`),
+    'component:my-input': new RegExp(`missing: ${namespace}/ui/components/my-input`)
+  }
 });
 
 /*
