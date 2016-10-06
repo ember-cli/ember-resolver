@@ -67,7 +67,11 @@ function expectResolutions({ namespace, message, config, resolutions, moduleOver
 
   for(let lookupKey in errors) {
     let expectedError = errors[lookupKey];
-    // TODO assert expectedError is a type RegExp and not a string
+
+    if (!(expectedError instanceof RegExp)) {
+      throw new Error(`typeof expectedError must be a RegExp, not "${expectedError}"`);
+    }
+
     test(`expectResolutions() - ${message} throws error when resolving ${lookupKey}`, function(assert) {
       assert.throws(() => {
         resolver.resolve(lookupKey, { namespace });
@@ -89,40 +93,26 @@ expectResolutions({
       }
     }
   },
-
   resolutions: {
     'router:main': `${namespace}/router`
   }
 });
 
-test('resolving an unknown type throws an error', function(assert) {
-  assert.expect(2);
-
-  let expectedPath = `${namespace}/unresolvable`;
-  let expectedObject = {};
-  let fakeRegistry = new FakeRegistry({
-    [expectedPath]: { default: expectedObject }
-  });
-
-  let resolver = Resolver.create({
-    _moduleRegistry: fakeRegistry,
-    config: {
-      types: {
-        router: { collection: '' }
-      },
-      collections: {
-        '': {
-          types: [ 'router' ]
-        }
+expectResolutions({
+  message: 'resolving an unknown type throws an error',
+  config: {
+    types: {
+      router: { collection: '' }
+    },
+    collections: {
+      '': {
+        types: [ 'router' ]
       }
     }
-  });
-
-  assert.throws(() => {
-    resolver.resolve('unresolvable:main', { namespace: namespace });
-  }, '"unresolvable" not a recognized type');
-
-  assert.equal(fakeRegistry._get.length, 0, 'nothing is required from registry');
+  },
+  errors: {
+    'unresolvable:main': new RegExp('"unresolvable" not a recognized type')
+  }
 });
 
 expectResolutions({

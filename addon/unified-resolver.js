@@ -49,7 +49,12 @@ const Resolver = DefaultResolver.extend({
 
   _parseLookupString(lookupString) {
     let [type, name] = lookupString.split(':');
-    let {collection} = this.config.types[type];
+    let configForType = this.config.types[type];
+    if (!configForType) {
+      throw new Error(`"${type}" not a recognized type`);
+    }
+
+    let {collection} = configForType;
 
     let collectionConfig = this.config.collections[collection];
     if (collectionConfig.types.indexOf(type) === -1) {
