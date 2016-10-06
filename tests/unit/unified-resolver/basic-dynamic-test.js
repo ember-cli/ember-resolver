@@ -1,3 +1,4 @@
+/* jshint loopfunc:true */
 import { module, test } from 'qunit';
 import Resolver from 'ember-resolver/unified-resolver';
 
@@ -43,7 +44,7 @@ class NewFakeRegistry {
   }
 }
 
-function expectResolutions({ namespace, message, config, resolutions, moduleOverrides }) {
+function expectResolutions({ namespace, message, config, resolutions, moduleOverrides, errors }) {
   let fakeRegistry = new NewFakeRegistry({
     moduleOverrides
   });
@@ -59,8 +60,18 @@ function expectResolutions({ namespace, message, config, resolutions, moduleOver
       expectedExportName = pieces[1];
     }
     test(`expectResolutions() - ${message} Resolves ${lookupKey} -> ${expectedModuleName}:${expectedExportName}`, function(assert) {
-      resolver.resolve(lookupKey, { namespace: namespace });
+      resolver.resolve(lookupKey, { namespace });
       assert.deepEqual(fakeRegistry._lastReturned, { moduleName: expectedModuleName, exportName: expectedExportName });
+    });
+  }
+
+  for(let lookupKey in errors) {
+    let expectedError = errors[lookupKey];
+    // TODO assert expectedError is a type RegExp and not a string
+    test(`expectResolutions() - ${message} throws error when resolving ${lookupKey}`, function(assert) {
+      assert.throws(() => {
+        resolver.resolve(lookupKey, { namespace });
+      }, expectedError, `threw '${expectedError}'`);
     });
   }
 }
@@ -114,27 +125,25 @@ test('resolving an unknown type throws an error', function(assert) {
   assert.equal(fakeRegistry._get.length, 0, 'nothing is required from registry');
 });
 
-test('resolving router:main throws when module is not defined', function(assert) {
-  assert.expect(1);
-
-  let fakeRegistry = new FakeRegistry();
-  let resolver = Resolver.create({
-    _moduleRegistry: fakeRegistry,
-    config: {
-      types: {
-        router: { collection: '' }
-      },
-      collections: {
-        '': {
+expectResolutions({
+  message: 'resolving router:main throws when module is not defined',
+  namespace,
+  config: {
+    types: {
+      router: { collection: '' }
+    },
+    collections: {
+      '': {
           types: [ 'router' ]
-        }
       }
     }
-  });
-
-  assert.throws(() => {
-    resolver.resolve('router:main', { namespace: namespace });
-  }, `Could not find module \`${namespace}/router\` imported from \`(require)\``);
+  },
+  moduleOverrides: {
+    [`${namespace}/router`]: null
+  },
+  errors: {
+    'router:main': new RegExp(`missing: ${namespace}/router`)
+  }
 });
 
 /*
@@ -241,8 +250,8 @@ expectResolutions({
   }
 });
 
-/*
- * TODO:
+// Note: error format from require would be something like
+// `Could not find module \`${namespace}/services/i18n\` imported from \`(require)\`
 expectResolutions({
   message: 'rule 3: throws when missing default',
   namespace,
@@ -261,37 +270,8 @@ expectResolutions({
     [`${namespace}/services/i18n/service`]: null
   },
   errors: {
-    'service:i18n': `Could not find module \`${namespace}/services/i18n\` imported from \`(require)\``
+    'service:i18n': new RegExp(`missing: ${namespace}/services/i18n`)
   }
-});
-*/
-
-test('resolving service:i18n throws when src/services/i18n.js register without default', function(assert) {
-  assert.expect(1);
-
-  let expectedPath = `${namespace}/services/i18n`;
-  let expected = {};
-  let fakeRegistry = new FakeRegistry({
-    [expectedPath]: { default: expected }
-  });
-
-  let resolver = Resolver.create({
-    _moduleRegistry: fakeRegistry,
-    config: {
-      types: {
-        service: { collection: 'services' }
-      },
-      collections: {
-        services: {
-          types: [ 'service' ]
-        }
-      }
-    }
-  });
-
-  assert.throws(() => {
-    resolver.resolve('service:i18n', {namespace: namespace});
-  }, `Could not find module \`${namespace}/services/i18n\` imported from \`(require)\``);
 });
 
 expectResolutions({
