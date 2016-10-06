@@ -7,13 +7,13 @@ import ContainerDebugAdapterInitializer from 'dummy/initializers/container-debug
 let containerDebugAdapter, App;
 
 var modules = {};
-function def(module) {
-  modules[module] = {};
+function def(_module) {
+  modules[_module] = {};
 }
 
-function undef(module) {
-  if (module) {
-    delete modules[module];
+function undef(_module) {
+  if (_module) {
+    delete modules[_module];
   } else {
     modules = {};
   }
