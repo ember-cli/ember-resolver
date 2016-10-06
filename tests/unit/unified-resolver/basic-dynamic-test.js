@@ -293,57 +293,47 @@ expectResolutions({
   }
 });
 
-test('resolving component:my-form/my-input to /ui/components/my-form/my-input', function(assert) {
-  assert.expect(1);
-
-  let expectedObject = {};
-  let fakeRegistry = new FakeRegistry({
-    [`${namespace}/ui/components/my-form/my-input`]: { default: expectedObject }
-  });
-
-  let resolver = Resolver.create({
-    _moduleRegistry: fakeRegistry,
-    config: {
-      types: {
-        component: { definitiveCollection: 'components' }
-      },
-      collections: {
-        components: {
-          group: 'ui',
-          types: [ 'component' ],
-          defaultType: 'component'
-        }
+expectResolutions({
+  message: 'resolving component:my-form/my-input to /ui/components/my-form/my-input',
+  namespace,
+  config: {
+    types: {
+      component: { definitiveCollection: 'components' }
+    },
+    collections: {
+      components: {
+        group: 'ui',
+        types: [ 'component' ],
+        defaultType: 'component'
       }
     }
-  });
-
-  assert.strictEqual(resolver.resolve('component:my-form/my-input', {namespace}), expectedObject, 'component is resolved');
+  },
+  moduleOverrides: {
+    [`${namespace}/ui/components/my-form/my-input/component`]: null
+  },
+  resolutions: {
+    'component:my-form/my-input': `${namespace}/ui/components/my-form/my-input`
+  }
 });
 
-test('resolving component:my-form/my-input to /ui/components/my-form/my-input/component', function(assert) {
-  assert.expect(1);
-
-  let expectedObject = {};
-  let fakeRegistry = new FakeRegistry({
-    [`${namespace}/ui/components/my-form/my-input/component`]: { default: expectedObject }
-  });
-
-  let resolver = Resolver.create({
-    _moduleRegistry: fakeRegistry,
-    config: {
-      types: {
-        component: { definitiveCollection: 'components' }
-      },
-      collections: {
-        components: {
-          group: 'ui',
-          types: [ 'component' ]
-        }
+expectResolutions({
+  message: 'resolving component:my-form/my-input to /ui/components/my-form/my-input/component',
+  namespace,
+  config: {
+    types: {
+      component: { definitiveCollection: 'components' }
+    },
+    collections: {
+      components: {
+        group: 'ui',
+        types: [ 'component' ],
+        defaultType: 'component'
       }
     }
-  });
-
-  assert.strictEqual(resolver.resolve('component:my-form/my-input', {namespace}), expectedObject, 'component is resolved');
+  },
+  resolutions: {
+    'component:my-form/my-input': `${namespace}/ui/components/my-form/my-input/component`
+  }
 });
 
 test('resolving template:components/my-form/my-input to /ui/components/my-form/my-input/template', function(assert) {
