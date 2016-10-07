@@ -481,6 +481,29 @@ expectResolutions({
   }
 });
 
+expectResolutions({
+  message: 'Unresolvable collections (utils)',
+  namespace,
+  config: {
+    types: {
+      service: { definitiveCollection: 'services' }
+    },
+    collections: {
+      utils: {
+        resolvable: false
+      },
+      services: {
+        types: ['service']
+      }
+    }
+  },
+  moduleOverrides: {},
+  errors: {
+    'util:my-util': /"util" not a recognized type/,
+    'service:services/-utils/my-service': /attempted to resolve a module in the unresolvable collection "utils"/
+  }
+});
+
 /*
 to do:
  * figure out the signature for instantiating the resolver -- what is it now, and where does the new config stuff go in?

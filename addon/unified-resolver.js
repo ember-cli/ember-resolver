@@ -59,9 +59,11 @@ const Resolver = DefaultResolver.extend({
     }
 
     let parts = name.split('/-');
+
+    // If we have a private collection
     if (parts.length === 2) {
-      // We have a private collection
       let privateCollection = parts[1].split('/')[0];
+
       if (collection === privateCollection) {
         // The proposed source collection cannot be correct, since the
         // private collection is the same. A private collection cannot be
@@ -78,6 +80,12 @@ const Resolver = DefaultResolver.extend({
         }
         collection = alternativeCollections[0];
         group = this.config.collections[collection].group;
+      } else if (this.config.collections[privateCollection].resolvable === false) {
+        // Configuring a collection to be { resolvable: false } stops that
+        // collection from being resolved at the top level. It also means that
+        // the collection cannot be used as a private collection regardless of
+        // whether it is listed explicitly as a private collection.
+        throw new Error(`attempted to resolve a module in the unresolvable collection "${privateCollection}"`);
       }
     } else if (parts.length > 2) {
       throw new Error('Non-ambiguous, but painful to parse case');
