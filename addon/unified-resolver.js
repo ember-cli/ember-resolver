@@ -1,6 +1,7 @@
 import Ember from 'ember';
 import ModuleRegistry from './utils/module-registry';
 import DefaultConfig from './ember-config';
+import makeDictionary from './utils/make-dictionary';
 
 const { DefaultResolver } = Ember;
 
@@ -15,6 +16,25 @@ const Resolver = DefaultResolver.extend({
     this._modulePrefix = `${this.namespace.modulePrefix}/src`;
     if (!this._moduleRegistry) {
       this._moduleRegistry = new ModuleRegistry();
+    }
+
+    this._normalizeCache = makeDictionary();
+  },
+
+  normalize: function(fullName) {
+    return this._normalizeCache[fullName] || (this._normalizeCache[fullName] = this._normalize(fullName));
+  },
+
+  _normalize: function(fullName) {
+    // replace `.` with `/` in order to make nested controllers work in the following cases
+    // 1. `needs: ['posts/post']`
+    // 2. `{{render "posts/post"}}`
+    // 3. `this.render('posts/post')` from Route
+    var split = fullName.split(':');
+    if (split.length > 1) {
+      return split[0] + ':' + Ember.String.dasherize(split[1].replace(/\./g, '/'));
+    } else {
+      return fullName;
     }
   },
 
