@@ -1,6 +1,7 @@
 /*jshint node:true*/
 'use strict';
 
+var VersionChecker = require('ember-cli-version-checker');
 var Funnel = require('broccoli-funnel');
 var MergeTrees = require('broccoli-merge-trees');
 
@@ -9,16 +10,6 @@ var renameMap = {
   'src/resolver.js': 'resolver.js',
   'src/ui/styles/app.css': 'styles/app.css',
   'src/ui/index.html': 'index.html'
-};
-
-var VersionChecker = require('ember-cli-version-checker');
-var Funnel = require('broccoli-funnel');
-var MergeTrees = require('broccoli-merge-trees')
-
-var renameMap = {
-  'src/main.js': 'app.js',
-  'src/resolver.js': 'resolver.js',
-  'src/ui/styles/app.css': 'styles/app.css' // Need a glob strategy
 };
 
 module.exports = {
