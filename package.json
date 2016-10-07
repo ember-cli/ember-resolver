@@ -1,7 +1,7 @@
 {
-  "name": "ember-resolver",
+  "name": "dangerously-set-unified-resolver",
   "version": "2.1.0",
-  "description": "The default modules based resolver for Ember CLI.",
+  "description": "experimental resolver for Ember CLI that implements the module unification rfc",
   "directories": {
     "test": "tests"
   },
@@ -12,7 +12,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ember-cli/ember-resolver.git"
+    "url": "git+https://github.com/201-created/dangerously-set-unified-resolver.git"
   },
   "engines": {
     "node": ">= 0.10.0"

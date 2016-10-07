@@ -8,13 +8,18 @@
 export default {
   types: {
     adapter: { definitiveCollection: 'models' },
+    application: { definitiveCollection: '' },
     controller: { definitiveCollection: 'routes' },
     component: { definitiveCollection: 'components' },
+    event_dispatcher: { definitiveCollection: '' },
     initializer: { definitiveCollection: 'initializers' },
     'instance-initializers': { definitiveCollection: 'instance-initializer' },
+    location: { definitiveCollection: '' },
     model: { definitiveCollection: 'models' },
     partial: { definitiveCollection: 'partials' },
+    renderer: { definitiveCollection: '' },
     route: { definitiveCollection: 'routes' },
+    router: { definitiveCollection: '' },
     serializer: { definitiveCollection: 'models' },
     service: { definitiveCollection: 'services' },
     template: {
@@ -24,12 +29,18 @@ export default {
       }
     },
     transform: { definitiveCollection: 'transforms' },
-    util: { definitiveCollection: 'utils' }
+    util: { definitiveCollection: 'utils' },
+    view: { definitiveCollection: 'views' },
+    '-view-registry': { definitiveCollection: '' },
+    '-bucket-cache': { definitiveCollection: '' }
   },
   unresolvableCollections: {
     utils: false
   },
   collections: {
+    '': {
+      types: ['router', '-bucket-cache', '-view-registry', 'event_dispatcher', 'application', 'location', 'renderer']
+    },
     components: {
       group: 'ui',
       types: ['component', 'helper', 'template']
@@ -57,6 +68,9 @@ export default {
     },
     services: {
       types: ['service']
+    },
+    views: {
+      types: ['view']
     },
     transforms: {
       group: 'data',

@@ -56,7 +56,8 @@ const Resolver = DefaultResolver.extend({
       if (this._moduleRegistry.has(path)) {
         return {name: path, exportName: 'default'};
       }
-      throw new Error(`Could not resolve factory '${lookupString}' at path '${path}'`);
+      return null;
+      // throw new Error(`Could not resolve factory '${lookupString}' at path '${path}'`);
     }
 
     let parts = name.split('/-');
@@ -113,8 +114,10 @@ const Resolver = DefaultResolver.extend({
 
   // this returns the actual module
   resolve(lookupString) {
-    let { name, exportName } = this._resolveLookupStringToModuleName(lookupString);
-    return this._moduleRegistry.get(name, exportName);
+    let moduleDef = this._resolveLookupStringToModuleName(lookupString);
+    if (moduleDef && this._moduleRegistry.has(moduleDef.name)) {
+      return this._moduleRegistry.get(moduleDef.name, moduleDef.exportName);
+    }
   },
 
   _parseLookupString(lookupString) {
