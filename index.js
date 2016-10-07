@@ -4,7 +4,7 @@
 var VersionChecker = require('ember-cli-version-checker');
 
 module.exports = {
-  name: 'ember-resolver',
+  name: 'dangerously-set-unified-resolver',
 
   isDevelopingAddon: function() {
     return true

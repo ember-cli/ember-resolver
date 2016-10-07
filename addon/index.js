@@ -1,1 +1,1 @@
-export { default } from './resolver';
+export { default } from './unified-resolver';

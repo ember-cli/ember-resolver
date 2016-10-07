@@ -1,11 +1,16 @@
 import Ember from 'ember';
 import ModuleRegistry from './utils/module-registry';
+import DefaultConfig from './ember-config';
 
 const { DefaultResolver } = Ember;
 
 const Resolver = DefaultResolver.extend({
   init() {
     this._super(...arguments);
+
+    if (!this.config) {
+      this.config = DefaultConfig;
+    }
 
     this._modulePrefix = `${this.namespace.modulePrefix}/src`;
     if (!this._moduleRegistry) {
@@ -116,7 +121,10 @@ const Resolver = DefaultResolver.extend({
   resolve(lookupString) {
     let moduleDef = this._resolveLookupStringToModuleName(lookupString);
     if (moduleDef && this._moduleRegistry.has(moduleDef.name)) {
+      console.log('resolve: ' + lookupString + ' √');
       return this._moduleRegistry.get(moduleDef.name, moduleDef.exportName);
+    } else {
+      console.log('resolve: ' + lookupString + ' []');
     }
   },
 
