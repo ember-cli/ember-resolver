@@ -2,7 +2,7 @@
 import { module, test } from 'qunit';
 import Resolver from 'ember-resolver/unified-resolver';
 
-let namespace = 'test-namespace';
+let modulePrefix = 'test-namespace';
 
 module('ember-resolver/unified-resolver', {});
 
@@ -30,11 +30,15 @@ class NewFakeRegistry {
   }
 }
 
-function expectResolutions({ namespace, message, config, resolutions, moduleOverrides, errors }) {
+function expectResolutions({ message, config, resolutions, moduleOverrides, errors }) {
   let fakeRegistry = new NewFakeRegistry({
     moduleOverrides
   });
-  let resolver = Resolver.create({ config, _moduleRegistry: fakeRegistry });
+  let resolver = Resolver.create({
+    config,
+    _moduleRegistry: fakeRegistry,
+    namespace: {modulePrefix}
+  });
 
   for (let lookupKey in resolutions) {
     let expectedModuleName = resolutions[lookupKey];
@@ -46,7 +50,7 @@ function expectResolutions({ namespace, message, config, resolutions, moduleOver
       expectedExportName = pieces[1];
     }
     test(`expectResolutions() - ${message} Resolves ${lookupKey} -> ${expectedModuleName}:${expectedExportName}`, function(assert) {
-      resolver.resolve(lookupKey, { namespace });
+      resolver.resolve(lookupKey);
       assert.deepEqual(fakeRegistry._lastReturned, { moduleName: expectedModuleName, exportName: expectedExportName });
     });
   }
@@ -60,7 +64,7 @@ function expectResolutions({ namespace, message, config, resolutions, moduleOver
 
     test(`expectResolutions() - ${message} throws error when resolving ${lookupKey}`, function(assert) {
       assert.throws(() => {
-        resolver.resolve(lookupKey, { namespace });
+        resolver.resolve(lookupKey);
       }, expectedError, `threw '${expectedError}'`);
     });
   }
@@ -73,7 +77,6 @@ function expectResolutions({ namespace, message, config, resolutions, moduleOver
  */
 expectResolutions({
   message: 'Modules named main.',
-  namespace,
   config: {
     types: {
       router: { definitiveCollection: '' }
@@ -85,7 +88,7 @@ expectResolutions({
     }
   },
   resolutions: {
-    'router:main': `${namespace}/router`
+    'router:main': `${modulePrefix}/src/router`
   }
 });
 
@@ -108,7 +111,6 @@ expectResolutions({
 
 expectResolutions({
   message: 'resolving router:main throws when module is not defined',
-  namespace,
   config: {
     types: {
       router: { definitiveCollection: '' }
@@ -120,10 +122,10 @@ expectResolutions({
     }
   },
   moduleOverrides: {
-    [`${namespace}/router`]: null
+    [`${modulePrefix}/src/router`]: null
   },
   errors: {
-    'router:main': new RegExp(`Could not resolve factory 'router:main' at path '${namespace}/router'`)
+    'router:main': new RegExp(`Could not resolve factory 'router:main' at path '${modulePrefix}/src/router'`)
   }
 });
 
@@ -134,7 +136,6 @@ expectResolutions({
  */
 
 expectResolutions({
-  namespace,
   message: 'resolving service:i18n',
   config: {
     types: {
@@ -147,7 +148,7 @@ expectResolutions({
     }
   },
   resolutions: {
-    'service:i18n': `${namespace}/services/i18n/service`
+    'service:i18n': `${modulePrefix}/src/services/i18n/service`
   }
 });
 
@@ -157,7 +158,6 @@ expectResolutions({
 
 expectResolutions({
   message: 'rule 2 with a group',
-  namespace,
   config: {
     types: {
       helper: {
@@ -172,13 +172,12 @@ expectResolutions({
     }
   },
   resolutions: {
-    'helper:capitalize': `${namespace}/ui/components/capitalize/helper`
+    'helper:capitalize': `${modulePrefix}/src/ui/components/capitalize/helper`
   }
 });
 
 expectResolutions({
   message: 'rule 2 with a group and multiple types',
-  namespace,
   config: {
     types: {
       helper: {
@@ -197,10 +196,10 @@ expectResolutions({
     }
   },
   moduleOverrides: {
-    [`${namespace}/ui/components/capitalize/component`]: null
+    [`${modulePrefix}/src/ui/components/capitalize/component`]: null
   },
   resolutions: {
-    'component:capitalize': `${namespace}/ui/components/capitalize`
+    'component:capitalize': `${modulePrefix}/src/ui/components/capitalize`
   }
 });
 
@@ -211,7 +210,6 @@ expectResolutions({
 
 expectResolutions({
   message: 'rule 3: resolving when a default type is configured',
-  namespace,
   config: {
     types: {
       service: { definitiveCollection: 'services' }
@@ -224,18 +222,17 @@ expectResolutions({
     }
   },
   moduleOverrides: {
-    [`${namespace}/services/i18n/service`]: null
+    [`${modulePrefix}/src/services/i18n/service`]: null
   },
   resolutions: {
-    'service:i18n': `${namespace}/services/i18n`
+    'service:i18n': `${modulePrefix}/src/services/i18n`
   }
 });
 
 // Note: error format from require would be something like
-// `Could not find module \`${namespace}/services/i18n\` imported from \`(require)\`
+// `Could not find module \`${modulePrefix}/src/services/i18n\` imported from \`(require)\`
 expectResolutions({
   message: 'rule 3: throws when resolving a module name without type but a defaultType is not configured',
-  namespace,
   config: {
     types: {
       service: { definitiveCollection: 'services' }
@@ -247,17 +244,16 @@ expectResolutions({
     }
   },
   moduleOverrides: {
-    [`${namespace}/services/i18n`]: null,
-    [`${namespace}/services/i18n/service`]: null
+    [`${modulePrefix}/src/services/i18n`]: null,
+    [`${modulePrefix}/src/services/i18n/service`]: null
   },
   errors: {
-    'service:i18n': new RegExp(`missing: ${namespace}/services/i18n`)
+    'service:i18n': new RegExp(`missing: ${modulePrefix}/src/services/i18n`)
   }
 });
 
 expectResolutions({
   message: 'resolving with named "helper" export',
-  namespace,
   config: {
     types: {
       helper: {
@@ -272,16 +268,15 @@ expectResolutions({
     }
   },
   moduleOverrides: {
-    [`${namespace}/ui/components/capitalize/helper`]: null
+    [`${modulePrefix}/src/ui/components/capitalize/helper`]: null
   },
   resolutions: {
-    'helper:capitalize': `${namespace}/ui/components/capitalize:helper` // <-- if there's a ':', it means expect a named export (not "default")
+    'helper:capitalize': `${modulePrefix}/src/ui/components/capitalize:helper` // <-- if there's a ':', it means expect a named export (not "default")
   }
 });
 
 expectResolutions({
   message: 'resolving component:my-form/my-input to /ui/components/my-form/my-input',
-  namespace,
   config: {
     types: {
       component: { definitiveCollection: 'components' }
@@ -295,16 +290,15 @@ expectResolutions({
     }
   },
   moduleOverrides: {
-    [`${namespace}/ui/components/my-form/my-input/component`]: null
+    [`${modulePrefix}/src/ui/components/my-form/my-input/component`]: null
   },
   resolutions: {
-    'component:my-form/my-input': `${namespace}/ui/components/my-form/my-input`
+    'component:my-form/my-input': `${modulePrefix}/src/ui/components/my-form/my-input`
   }
 });
 
 expectResolutions({
   message: 'resolving component:my-form/my-input to /ui/components/my-form/my-input/component',
-  namespace,
   config: {
     types: {
       component: { definitiveCollection: 'components' }
@@ -318,13 +312,12 @@ expectResolutions({
     }
   },
   resolutions: {
-    'component:my-form/my-input': `${namespace}/ui/components/my-form/my-input/component`
+    'component:my-form/my-input': `${modulePrefix}/src/ui/components/my-form/my-input/component`
   }
 });
 
 expectResolutions({
   message: 'resolving template:components/my-form/my-input to /ui/components/my-form/my-input/template',
-  namespace,
   config: {
     types: {
       route: {
@@ -351,24 +344,23 @@ expectResolutions({
     }
   },
   moduleOverrides: {
-    [`${namespace}/ui/routes/my-form/my-input/template`]: null,
-    [`${namespace}/ui/routes/my-form/my-input`]: null,
-    [`${namespace}/ui/routes/my-form/-components/my-input/template`]: null,
-    [`${namespace}/ui/routes/my-form/-components/my-input`]: null
+    [`${modulePrefix}/src/ui/routes/my-form/my-input/template`]: null,
+    [`${modulePrefix}/src/ui/routes/my-form/my-input`]: null,
+    [`${modulePrefix}/src/ui/routes/my-form/-components/my-input/template`]: null,
+    [`${modulePrefix}/src/ui/routes/my-form/-components/my-input`]: null
 
   },
   resolutions: {
-    'template:components/my-form/my-input': `${namespace}/ui/components/my-form/my-input/template`
+    'template:components/my-form/my-input': `${modulePrefix}/src/ui/components/my-form/my-input/template`
   },
   errors: {
-    'template:my-form/my-input': new RegExp(`missing: ${namespace}/ui/routes/my-form/my-input`),
-    'template:my-form/-components/my-input': new RegExp(`missing: ${namespace}/ui/routes/my-form/-components/my-input`)
+    'template:my-form/my-input': new RegExp(`missing: ${modulePrefix}/src/ui/routes/my-form/my-input`),
+    'template:my-form/-components/my-input': new RegExp(`missing: ${modulePrefix}/src/ui/routes/my-form/-components/my-input`)
   }
 });
 
 expectResolutions({
   message: 'resolving template:my-form/my-input to /ui/routes/my-form/my-input/template',
-  namespace,
   config: {
     types: {
       route: {
@@ -395,14 +387,14 @@ expectResolutions({
     }
   },
   moduleOverrides: {
-    [`${namespace}/ui/components/my-form/my-input/template`]: null,
-    [`${namespace}/ui/components/my-form/my-input`]: null
+    [`${modulePrefix}/src/ui/components/my-form/my-input/template`]: null,
+    [`${modulePrefix}/src/ui/components/my-form/my-input`]: null
   },
   resolutions: {
-    'template:my-form/my-input': `${namespace}/ui/routes/my-form/my-input/template`
+    'template:my-form/my-input': `${modulePrefix}/src/ui/routes/my-form/my-input/template`
   },
   errors: {
-    'template:components/my-form/my-input': new RegExp(`missing: ${namespace}/ui/components/my-form/my-input`)
+    'template:components/my-form/my-input': new RegExp(`missing: ${modulePrefix}/src/ui/components/my-form/my-input`)
   }
 });
 
@@ -412,7 +404,6 @@ expectResolutions({
 
 expectResolutions({
   message: 'resolving template:my-form/-components/my-input to /ui/routes/my-form/-components/my-input/template',
-  namespace,
   config: {
     types: {
       route: {
@@ -440,23 +431,22 @@ expectResolutions({
     }
   },
   moduleOverrides: {
-    [`${namespace}/ui/components/my-form/my-input/template`]: null,
-    [`${namespace}/ui/components/my-form/my-input`]: null,
-    [`${namespace}/ui/routes/my-form/my-input/template`]: null,
-    [`${namespace}/ui/routes/my-form/my-input`]: null
+    [`${modulePrefix}/src/ui/components/my-form/my-input/template`]: null,
+    [`${modulePrefix}/src/ui/components/my-form/my-input`]: null,
+    [`${modulePrefix}/src/ui/routes/my-form/my-input/template`]: null,
+    [`${modulePrefix}/src/ui/routes/my-form/my-input`]: null
   },
   resolutions: {
-    'template:my-form/-components/my-input': `${namespace}/ui/routes/my-form/-components/my-input/template`
+    'template:my-form/-components/my-input': `${modulePrefix}/src/ui/routes/my-form/-components/my-input/template`
   },
   errors: {
-    'template:components/my-form/my-input': new RegExp(`missing: ${namespace}/ui/components/my-form/my-input`),
-    'template:my-form/my-input': new RegExp(`missing: ${namespace}/ui/routes/my-form/my-input`)
+    'template:components/my-form/my-input': new RegExp(`missing: ${modulePrefix}/src/ui/components/my-form/my-input`),
+    'template:my-form/my-input': new RegExp(`missing: ${modulePrefix}/src/ui/routes/my-form/my-input`)
   }
 });
 
 expectResolutions({
   message: 'failing to resolve component:my-form/my-input as /ui/components/my-form/-component/my-input',
-  namespace,
   config: {
     types: {
       component: { definitiveCollection: 'components' }
@@ -470,20 +460,19 @@ expectResolutions({
     }
   },
   moduleOverrides: {
-    [`${namespace}/ui/components/my-form/my-input/component`]: null,
-    [`${namespace}/ui/components/my-form/my-input`]: null,
-    [`${namespace}/ui/components/my-input/component`]: null,
-    [`${namespace}/ui/components/my-input`]: null
+    [`${modulePrefix}/src/ui/components/my-form/my-input/component`]: null,
+    [`${modulePrefix}/src/ui/components/my-form/my-input`]: null,
+    [`${modulePrefix}/src/ui/components/my-input/component`]: null,
+    [`${modulePrefix}/src/ui/components/my-input`]: null
   },
   errors: {
-    'component:my-form/my-input': new RegExp(`missing: ${namespace}/ui/components/my-form/my-input`),
-    'component:my-input': new RegExp(`missing: ${namespace}/ui/components/my-input`)
+    'component:my-form/my-input': new RegExp(`missing: ${modulePrefix}/src/ui/components/my-form/my-input`),
+    'component:my-input': new RegExp(`missing: ${modulePrefix}/src/ui/components/my-input`)
   }
 });
 
 expectResolutions({
   message: 'Unresolvable collections (utils)',
-  namespace,
   config: {
     types: {
       service: { definitiveCollection: 'services' }
