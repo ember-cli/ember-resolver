@@ -30,7 +30,7 @@ class NewFakeRegistry {
   }
 }
 
-function expectResolutions({ message, config, resolutions, moduleOverrides, errors }) {
+function expectResolutions({ message, config, resolutions, moduleOverrides, errors, returns }) {
   let fakeRegistry = new NewFakeRegistry({
     moduleOverrides
   });
@@ -52,6 +52,15 @@ function expectResolutions({ message, config, resolutions, moduleOverrides, erro
     test(`expectResolutions() - ${message} Resolves ${lookupKey} -> ${expectedModuleName}:${expectedExportName}`, function(assert) {
       resolver.resolve(lookupKey);
       assert.deepEqual(fakeRegistry._lastReturned, { moduleName: expectedModuleName, exportName: expectedExportName });
+    });
+  }
+
+  for(let lookupKey in returns) {
+    let expectedValue = returns[lookupKey];
+
+    test(`expectResolutions() - ${message} returns ${expectedValue} when resolving ${lookupKey}`, function(assert) {
+      let response = resolver.resolve(lookupKey);
+      assert.deepEqual(response, expectedValue);
     });
   }
 
@@ -110,7 +119,7 @@ expectResolutions({
 });
 
 expectResolutions({
-  message: 'resolving router:main throws when module is not defined',
+  message: 'resolving router:main returns null when module is not defined',
   config: {
     types: {
       router: { definitiveCollection: '' }
@@ -124,8 +133,8 @@ expectResolutions({
   moduleOverrides: {
     [`${modulePrefix}/src/router`]: null
   },
-  errors: {
-    'router:main': new RegExp(`Could not resolve factory 'router:main' at path '${modulePrefix}/src/router'`)
+  returns: {
+    'router:main': undefined
   }
 });
 
@@ -247,8 +256,8 @@ expectResolutions({
     [`${modulePrefix}/src/services/i18n`]: null,
     [`${modulePrefix}/src/services/i18n/service`]: null
   },
-  errors: {
-    'service:i18n': new RegExp(`missing: ${modulePrefix}/src/services/i18n`)
+  returns: {
+    'service:i18n': undefined
   }
 });
 
@@ -353,9 +362,9 @@ expectResolutions({
   resolutions: {
     'template:components/my-form/my-input': `${modulePrefix}/src/ui/components/my-form/my-input/template`
   },
-  errors: {
-    'template:my-form/my-input': new RegExp(`missing: ${modulePrefix}/src/ui/routes/my-form/my-input`),
-    'template:my-form/-components/my-input': new RegExp(`missing: ${modulePrefix}/src/ui/routes/my-form/-components/my-input`)
+  returns: {
+    'template:my-form/my-input': undefined,
+    'template:my-form/-components/my-input': undefined
   }
 });
 
@@ -393,8 +402,8 @@ expectResolutions({
   resolutions: {
     'template:my-form/my-input': `${modulePrefix}/src/ui/routes/my-form/my-input/template`
   },
-  errors: {
-    'template:components/my-form/my-input': new RegExp(`missing: ${modulePrefix}/src/ui/components/my-form/my-input`)
+  returns: {
+    'template:components/my-form/my-input': undefined
   }
 });
 
@@ -439,9 +448,9 @@ expectResolutions({
   resolutions: {
     'template:my-form/-components/my-input': `${modulePrefix}/src/ui/routes/my-form/-components/my-input/template`
   },
-  errors: {
-    'template:components/my-form/my-input': new RegExp(`missing: ${modulePrefix}/src/ui/components/my-form/my-input`),
-    'template:my-form/my-input': new RegExp(`missing: ${modulePrefix}/src/ui/routes/my-form/my-input`)
+  returns: {
+    'template:components/my-form/my-input': undefined,
+    'template:my-form/my-input': undefined
   }
 });
 
@@ -465,9 +474,9 @@ expectResolutions({
     [`${modulePrefix}/src/ui/components/my-input/component`]: null,
     [`${modulePrefix}/src/ui/components/my-input`]: null
   },
-  errors: {
-    'component:my-form/my-input': new RegExp(`missing: ${modulePrefix}/src/ui/components/my-form/my-input`),
-    'component:my-input': new RegExp(`missing: ${modulePrefix}/src/ui/components/my-input`)
+  returns: {
+    'component:my-form/my-input': undefined,
+    'component:my-input': undefined
   }
 });
 
