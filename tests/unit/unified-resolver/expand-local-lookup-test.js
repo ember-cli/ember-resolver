@@ -159,9 +159,8 @@ test('expandLocalLookup expands to a namespace when the source is in a private c
           privateCollections: ['components']
         },
         components: {
-          types: ['helper', 'component'],
-          // Perhaps configure this like so
-          privateOf: 'routes'
+          group: 'ui',
+          types: ['helper', 'component']
         }
       }
     }
@@ -172,16 +171,46 @@ test('expandLocalLookup expands to a namespace when the source is in a private c
   assert.strictEqual(factoryName, 'helper:my-route/-components/my-component/my-helper', '-component namespace included in lookup');
 });
 
-
-/*
 test('expandLocalLookup expands to a private collection', function(assert) {
+  assert.expect(1);
+
+  let fakeRegistry = new FakeRegistry({
+    [`${this.namespace}/ui/routes/my-route/-components/my-helper/helper`]: { default: {} }
+  });
+
+  let resolver = Resolver.create({
+    _moduleRegistry: fakeRegistry,
+    config: {
+      types: {
+        template: {
+          definitiveCollection: 'routes',
+          fallbackCollectionPrefixes: {
+            'components/': 'components'
+          }
+        },
+        helper: { definitiveCollection: 'components' }
+      },
+      collections: {
+        routes: {
+          group: 'ui',
+          types: ['template'],
+          privateCollections: ['components']
+        },
+        components: {
+          group: 'ui',
+          types: ['helper']
+        }
+      }
+    }
+  });
+
+  let factoryName = resolver.expandLocalLookup('helper:my-helper', 'template:my-route', {namespace: this.namespace});
+
+  assert.strictEqual(factoryName, 'helper:my-route/-components/my-helper', '-component namespace included in lookup');
 });
 
 
+/*
 test('expandLocalLookup returns null when no module exists in a private collection', function(asset) {
 });
 */
-
-
-
-

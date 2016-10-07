@@ -14,9 +14,31 @@ const Resolver = DefaultResolver.extend({
 
   expandLocalLookup(lookupString, sourceLookupString, options) {
     let { type, name } = this._parseLookupString(lookupString);
-    let { name: sourceName } = this._parseLookupString(sourceLookupString);
+    let { collection: sourceCollection, name: sourceName } = this._parseLookupString(sourceLookupString);
 
-    let expandedLookupString = `${type}:${sourceName}/${name}`;
+    let expandedLookupString;
+    // theTypeOfTheLookupIsNotValidInTheFinalCollectionOfTheSource
+    // so here sourceCollection is expected to be the private collection, if
+    // present
+    let sourceCollectionConfig = this.config.collections[sourceCollection];
+    // Perhaps should blow up if you are not in the types, TODO bad error state in here
+    if (sourceCollectionConfig.types.indexOf(type) === -1 && sourceCollectionConfig.privateCollections) {
+      let privateCollection;
+      sourceCollectionConfig.privateCollections.forEach(key => {
+        let privateCollectionConfig = this.config.collections[key];
+        // If the lookup type is permitted in this specific private collection
+        if (privateCollectionConfig.types.indexOf(type) !== -1) {
+          if (privateCollection) {
+            throw new Error(`More than one private collection supporting type "${type}" was available in collection ${sourceCollection}`);
+          }
+          privateCollection = key;
+        }
+      });
+      expandedLookupString = `${type}:${sourceName}/-${privateCollection}/${name}`;
+    } else {
+      expandedLookupString = `${type}:${sourceName}/${name}`;
+    }
+
     let { name: moduleName, exportName } = this._resolveLookupStringToModuleName(expandedLookupString, options);
 
     if (this._moduleRegistry.has(moduleName) && this._moduleRegistry.get(moduleName, exportName)) {
