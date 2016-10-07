@@ -26,6 +26,9 @@ export default {
     transform: { definitiveCollection: 'transforms' },
     util: { definitiveCollection: 'utils' }
   },
+  unresolvableCollections: {
+    utils: false
+  },
   collections: {
     components: {
       group: 'ui',
@@ -58,9 +61,6 @@ export default {
     transforms: {
       group: 'data',
       types: ['transform']
-    },
-    utils: {
-      resolvable: false
     }
   }
 };

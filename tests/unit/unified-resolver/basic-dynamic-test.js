@@ -488,10 +488,10 @@ expectResolutions({
     types: {
       service: { definitiveCollection: 'services' }
     },
+    unresolvableCollections: {
+      utils: true
+    },
     collections: {
-      utils: {
-        resolvable: false
-      },
       services: {
         types: ['service']
       }

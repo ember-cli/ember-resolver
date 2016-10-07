@@ -80,12 +80,15 @@ const Resolver = DefaultResolver.extend({
         }
         collection = alternativeCollections[0];
         group = this.config.collections[collection].group;
-      } else if (this.config.collections[privateCollection].resolvable === false) {
-        // Configuring a collection to be { resolvable: false } stops that
-        // collection from being resolved at the top level. It also means that
-        // the collection cannot be used as a private collection regardless of
-        // whether it is listed explicitly as a private collection.
-        throw new Error(`attempted to resolve a module in the unresolvable collection "${privateCollection}"`);
+      } else {
+        let { unresolvableCollections } = this.config;
+        if (unresolvableCollections && unresolvableCollections[privateCollection]) {
+          // Configuring a collection to be { resolvable: false } stops that
+          // collection from being resolved at the top level. It also means that
+          // the collection cannot be used as a private collection regardless of
+          // whether it is listed explicitly as a private collection.
+          throw new Error(`attempted to resolve a module in the unresolvable collection "${privateCollection}"`);
+        }
       }
     } else if (parts.length > 2) {
       throw new Error('Non-ambiguous, but painful to parse case');
