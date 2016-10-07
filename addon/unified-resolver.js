@@ -7,12 +7,13 @@ const Resolver = DefaultResolver.extend({
   init() {
     this._super(...arguments);
 
+    this._modulePrefix = `${this.namespace.modulePrefix}/src`;
     if (!this._moduleRegistry) {
       this._moduleRegistry = new ModuleRegistry();
     }
   },
 
-  expandLocalLookup(lookupString, sourceLookupString, options) {
+  expandLocalLookup(lookupString, sourceLookupString) {
     let { type, name } = this._parseLookupString(lookupString);
     let source = this._parseLookupString(sourceLookupString);
     let sourceCollectionConfig = this.config.collections[source.collection];
@@ -36,7 +37,7 @@ const Resolver = DefaultResolver.extend({
       expandedLookupString = `${type}:${source.name}/${name}`;
     }
 
-    let { name: moduleName, exportName } = this._resolveLookupStringToModuleName(expandedLookupString, options);
+    let { name: moduleName, exportName } = this._resolveLookupStringToModuleName(expandedLookupString);
 
     if (this._moduleRegistry.has(moduleName) && this._moduleRegistry.get(moduleName, exportName)) {
       return expandedLookupString;
@@ -45,13 +46,13 @@ const Resolver = DefaultResolver.extend({
     return null;
   },
 
-  _resolveLookupStringToModuleName(lookupString, options) {
+  _resolveLookupStringToModuleName(lookupString) {
     let { type, collection, group, isDefaultType, name } = this._parseLookupString(lookupString);
 
     // Main factories have no collection
     if (name === 'main') {
       // throw if the collection is not ''
-      let path = `${options.namespace}/${type}`;
+      let path = `${this._modulePrefix}/${type}`;
       if (this._moduleRegistry.has(path)) {
         return {name: path, exportName: 'default'};
       }
@@ -96,7 +97,7 @@ const Resolver = DefaultResolver.extend({
 
     // Other factories have a collection
     let groupSegment = group ? `${group}/` : '';
-    let namePath = `${options.namespace}/${groupSegment}${collection}/${name}`;
+    let namePath = `${this._modulePrefix}/${groupSegment}${collection}/${name}`;
 
     let path = `${namePath}/${type}`;
     if (this._moduleRegistry.has(path)) {
@@ -111,8 +112,8 @@ const Resolver = DefaultResolver.extend({
   },
 
   // this returns the actual module
-  resolve(lookupString, options) {
-    let { name, exportName } = this._resolveLookupStringToModuleName(lookupString, options);
+  resolve(lookupString) {
+    let { name, exportName } = this._resolveLookupStringToModuleName(lookupString);
     return this._moduleRegistry.get(name, exportName);
   },
 

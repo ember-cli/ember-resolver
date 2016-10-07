@@ -1,10 +1,9 @@
 import { module, test } from 'qunit';
 import Resolver from 'ember-resolver/unified-resolver';
 
+let modulePrefix = 'test-prefix';
+
 module('ember-resolver/unified-resolver #expandLocalLookup', {
-  beforeEach() {
-    this.namespace = 'test-namespace';
-  }
 });
 
 class FakeRegistry {
@@ -32,10 +31,11 @@ test('expandLocalLookup expands to a namespace when the source is in a collectio
 
   let expectedObject = {};
   let fakeRegistry = new FakeRegistry({
-    [`${this.namespace}/ui/components/my-form/my-input/component`]: { default: expectedObject }
+    [`${modulePrefix}/src/ui/components/my-form/my-input/component`]: { default: expectedObject }
   });
 
   let resolver = Resolver.create({
+    namespace: {modulePrefix},
     _moduleRegistry: fakeRegistry,
     config: {
       types: {
@@ -50,7 +50,7 @@ test('expandLocalLookup expands to a namespace when the source is in a collectio
     }
   });
 
-  let factoryName = resolver.expandLocalLookup('component:my-input', 'component:my-form', {namespace: this.namespace});
+  let factoryName = resolver.expandLocalLookup('component:my-input', 'component:my-form');
 
   assert.strictEqual(factoryName, 'component:my-form/my-input', 'returns a module namespace of "my-form"');
 });
@@ -60,10 +60,11 @@ test('expandLocalLookup expands to a namespace when the source is in a collectio
 
   let expectedObject = {};
   let fakeRegistry = new FakeRegistry({
-    [`${this.namespace}/ui/components/my-form/my-input`]: { default: expectedObject }
+    [`${modulePrefix}/src/ui/components/my-form/my-input`]: { default: expectedObject }
   });
 
   let resolver = Resolver.create({
+    namespace: {modulePrefix},
     _moduleRegistry: fakeRegistry,
     config: {
       types: {
@@ -79,7 +80,7 @@ test('expandLocalLookup expands to a namespace when the source is in a collectio
     }
   });
 
-  let factoryName = resolver.expandLocalLookup('component:my-input', 'component:my-form', {namespace: this.namespace});
+  let factoryName = resolver.expandLocalLookup('component:my-input', 'component:my-form');
 
   assert.strictEqual(factoryName, 'component:my-form/my-input', 'returns a module namespace of "my-form"');
 });
@@ -89,10 +90,11 @@ test('expandLocalLookup expands to a namespace when the source is in a collectio
 
   let expectedObject = {};
   let fakeRegistry = new FakeRegistry({
-    [`${this.namespace}/ui/components/my-form/my-input`]: { component: expectedObject }
+    [`${modulePrefix}/src/ui/components/my-form/my-input`]: { component: expectedObject }
   });
 
   let resolver = Resolver.create({
+    namespace: {modulePrefix},
     _moduleRegistry: fakeRegistry,
     config: {
       types: {
@@ -107,7 +109,7 @@ test('expandLocalLookup expands to a namespace when the source is in a collectio
     }
   });
 
-  let factoryName = resolver.expandLocalLookup('component:my-input', 'component:my-form', {namespace: this.namespace});
+  let factoryName = resolver.expandLocalLookup('component:my-input', 'component:my-form');
 
   assert.strictEqual(factoryName, 'component:my-form/my-input', 'returns a module namespace of "my-form"');
 });
@@ -119,6 +121,7 @@ test('expandLocalLookup returns null when no module exists in a namespaces looku
   });
 
   let resolver = Resolver.create({
+    namespace: {modulePrefix},
     _moduleRegistry: fakeRegistry,
     config: {
       types: {
@@ -133,7 +136,7 @@ test('expandLocalLookup returns null when no module exists in a namespaces looku
     }
   });
 
-  let factoryName = resolver.expandLocalLookup('component:my-input', 'component:my-form', {namespace: this.namespace});
+  let factoryName = resolver.expandLocalLookup('component:my-input', 'component:my-form');
 
   assert.strictEqual(factoryName, null, 'returns null when there is no local lookup module');
 });
@@ -142,10 +145,11 @@ test('expandLocalLookup expands to a namespace when the source is in a private c
   assert.expect(1);
 
   let fakeRegistry = new FakeRegistry({
-    [`${this.namespace}/ui/routes/my-route/-components/my-component/my-helper/helper`]: { default: {} }
+    [`${modulePrefix}/src/ui/routes/my-route/-components/my-component/my-helper/helper`]: { default: {} }
   });
 
   let resolver = Resolver.create({
+    namespace: {modulePrefix},
     _moduleRegistry: fakeRegistry,
     config: {
       types: {
@@ -166,7 +170,7 @@ test('expandLocalLookup expands to a namespace when the source is in a private c
     }
   });
 
-  let factoryName = resolver.expandLocalLookup('helper:my-helper', 'component:my-route/-components/my-component', {namespace: this.namespace});
+  let factoryName = resolver.expandLocalLookup('helper:my-helper', 'component:my-route/-components/my-component');
 
   assert.strictEqual(factoryName, 'helper:my-route/-components/my-component/my-helper', '-component namespace included in lookup');
 });
@@ -175,10 +179,11 @@ test('expandLocalLookup expands to a private collection', function(assert) {
   assert.expect(1);
 
   let fakeRegistry = new FakeRegistry({
-    [`${this.namespace}/ui/routes/my-route/-components/my-helper/helper`]: { default: {} }
+    [`${modulePrefix}/src/ui/routes/my-route/-components/my-helper/helper`]: { default: {} }
   });
 
   let resolver = Resolver.create({
+    namespace: {modulePrefix},
     _moduleRegistry: fakeRegistry,
     config: {
       types: {
@@ -204,7 +209,7 @@ test('expandLocalLookup expands to a private collection', function(assert) {
     }
   });
 
-  let factoryName = resolver.expandLocalLookup('helper:my-helper', 'template:my-route', {namespace: this.namespace});
+  let factoryName = resolver.expandLocalLookup('helper:my-helper', 'template:my-route');
 
   assert.strictEqual(factoryName, 'helper:my-route/-components/my-helper', '-component namespace included in lookup');
 });
@@ -215,6 +220,7 @@ test('expandLocalLookup returns null when no module exists in a private collecti
   let fakeRegistry = new FakeRegistry({});
 
   let resolver = Resolver.create({
+    namespace: {modulePrefix},
     _moduleRegistry: fakeRegistry,
     config: {
       types: {
@@ -240,7 +246,7 @@ test('expandLocalLookup returns null when no module exists in a private collecti
     }
   });
 
-  let factoryName = resolver.expandLocalLookup('helper:my-helper', 'template:my-route', {namespace: this.namespace});
+  let factoryName = resolver.expandLocalLookup('helper:my-helper', 'template:my-route');
 
   assert.strictEqual(factoryName, null, '-component namespace included in lookup');
 });
