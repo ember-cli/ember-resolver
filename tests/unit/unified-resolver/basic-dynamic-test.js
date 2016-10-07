@@ -1,6 +1,6 @@
 /* jshint loopfunc:true */
 import { module, test } from 'qunit';
-import Resolver from 'ember-resolver/unified-resolver';
+import Resolver from 'dangerously-set-unified-resolver/unified-resolver';
 
 let modulePrefix = 'test-namespace';
 

@@ -1,3 +1,3 @@
-import Resolver from 'ember-resolver';
+import Resolver from 'dangerously-set-unified-resolver';
 
 export default Resolver;

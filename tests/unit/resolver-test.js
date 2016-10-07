@@ -2,7 +2,7 @@
 
 import Ember from 'ember';
 import { module, test } from 'qunit';
-import Resolver from 'ember-resolver/resolver';
+import Resolver from 'dangerously-set-unified-resolver/resolver';
 
 let originalRegistryEntries, originalEmberDeprecate, originalEmberLoggerInfo, logCalls, resolver;
 
@@ -47,7 +47,7 @@ test("can access at deprecated 'resolver' module name", function(assert){
   // require manually here, because our resetting of the `requirejs.entries` hash
   // means that each test that is ran actually creates a new `Resolver` base class
   // this allows us to match using ===
-  let Resolver = require('ember-resolver/resolver')['default'];
+  let Resolver = require('dangerously-set-unified-resolver/resolver')['default'];
   let ResolverAlias = require('resolver')['default'];
 
   assert.equal(Resolver, ResolverAlias, "both 'ember/resolver' and 'resolver' return the same Resolver");
@@ -65,7 +65,7 @@ test("can access at deprecated 'ember/resolver' module name", function(assert){
   // require manually here, because our resetting of the `requirejs.entries` hash
   // means that each test that is ran actually creates a new `Resolver` base class
   // this allows us to match using ===
-  let Resolver = require('ember-resolver/resolver')['default'];
+  let Resolver = require('dangerously-set-unified-resolver/resolver')['default'];
   let ResolverAlias = require('ember/resolver')['default'];
 
   assert.equal(Resolver, ResolverAlias, "both 'ember/resolver' and 'resolver' return the same Resolver");
