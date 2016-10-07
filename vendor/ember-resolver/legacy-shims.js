@@ -1,7 +1,7 @@
 /* globals define */
 
 function createDeprecatedModule(moduleId) {
-  define(moduleId, ['exports', 'ember-resolver/resolver', 'ember'], function(exports, Resolver, Ember) {
+  define(moduleId, ['exports', 'dangerously-set-unified-resolver/resolver', 'ember'], function(exports, Resolver, Ember) {
     Ember['default'].deprecate(
       'Usage of `' + moduleId + '` module is deprecated, please update to `ember-resolver`.',
       false,
