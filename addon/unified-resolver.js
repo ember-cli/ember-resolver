@@ -14,14 +14,11 @@ const Resolver = DefaultResolver.extend({
 
   expandLocalLookup(lookupString, sourceLookupString, options) {
     let { type, name } = this._parseLookupString(lookupString);
-    let { collection: sourceCollection, name: sourceName } = this._parseLookupString(sourceLookupString);
+    let source = this._parseLookupString(sourceLookupString);
+    let sourceCollectionConfig = this.config.collections[source.collection];
 
-    let expandedLookupString;
-    // theTypeOfTheLookupIsNotValidInTheFinalCollectionOfTheSource
-    // so here sourceCollection is expected to be the private collection, if
-    // present
-    let sourceCollectionConfig = this.config.collections[sourceCollection];
     // Perhaps should blow up if you are not in the types, TODO bad error state in here
+    let expandedLookupString;
     if (sourceCollectionConfig.types.indexOf(type) === -1 && sourceCollectionConfig.privateCollections) {
       let privateCollection;
       sourceCollectionConfig.privateCollections.forEach(key => {
@@ -29,14 +26,14 @@ const Resolver = DefaultResolver.extend({
         // If the lookup type is permitted in this specific private collection
         if (privateCollectionConfig.types.indexOf(type) !== -1) {
           if (privateCollection) {
-            throw new Error(`More than one private collection supporting type "${type}" was available in collection ${sourceCollection}`);
+            throw new Error(`More than one private collection supporting type "${type}" was available in collection ${source.collection}`);
           }
           privateCollection = key;
         }
       });
-      expandedLookupString = `${type}:${sourceName}/-${privateCollection}/${name}`;
+      expandedLookupString = `${type}:${source.name}/-${privateCollection}/${name}`;
     } else {
-      expandedLookupString = `${type}:${sourceName}/${name}`;
+      expandedLookupString = `${type}:${source.name}/${name}`;
     }
 
     let { name: moduleName, exportName } = this._resolveLookupStringToModuleName(expandedLookupString, options);
@@ -62,9 +59,11 @@ const Resolver = DefaultResolver.extend({
     }
 
     let parts = name.split('/-');
+
+    // If we have a private collection
     if (parts.length === 2) {
-      // We have a private collection
       let privateCollection = parts[1].split('/')[0];
+
       if (collection === privateCollection) {
         // The proposed source collection cannot be correct, since the
         // private collection is the same. A private collection cannot be
@@ -81,6 +80,15 @@ const Resolver = DefaultResolver.extend({
         }
         collection = alternativeCollections[0];
         group = this.config.collections[collection].group;
+      } else {
+        let { unresolvableCollections } = this.config;
+        if (unresolvableCollections && unresolvableCollections[privateCollection]) {
+          // Configuring a collection to be { resolvable: false } stops that
+          // collection from being resolved at the top level. It also means that
+          // the collection cannot be used as a private collection regardless of
+          // whether it is listed explicitly as a private collection.
+          throw new Error(`attempted to resolve a module in the unresolvable collection "${privateCollection}"`);
+        }
       }
     } else if (parts.length > 2) {
       throw new Error('Non-ambiguous, but painful to parse case');

@@ -209,8 +209,38 @@ test('expandLocalLookup expands to a private collection', function(assert) {
   assert.strictEqual(factoryName, 'helper:my-route/-components/my-helper', '-component namespace included in lookup');
 });
 
+test('expandLocalLookup returns null when no module exists in a private collection', function(assert) {
+  assert.expect(1);
 
-/*
-test('expandLocalLookup returns null when no module exists in a private collection', function(asset) {
+  let fakeRegistry = new FakeRegistry({});
+
+  let resolver = Resolver.create({
+    _moduleRegistry: fakeRegistry,
+    config: {
+      types: {
+        template: {
+          definitiveCollection: 'routes',
+          fallbackCollectionPrefixes: {
+            'components/': 'components'
+          }
+        },
+        helper: { definitiveCollection: 'components' }
+      },
+      collections: {
+        routes: {
+          group: 'ui',
+          types: ['template'],
+          privateCollections: ['components']
+        },
+        components: {
+          group: 'ui',
+          types: ['helper']
+        }
+      }
+    }
+  });
+
+  let factoryName = resolver.expandLocalLookup('helper:my-helper', 'template:my-route', {namespace: this.namespace});
+
+  assert.strictEqual(factoryName, null, '-component namespace included in lookup');
 });
-*/

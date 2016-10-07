@@ -481,18 +481,35 @@ expectResolutions({
   }
 });
 
+expectResolutions({
+  message: 'Unresolvable collections (utils)',
+  namespace,
+  config: {
+    types: {
+      service: { definitiveCollection: 'services' }
+    },
+    unresolvableCollections: {
+      utils: true
+    },
+    collections: {
+      services: {
+        types: ['service']
+      }
+    }
+  },
+  moduleOverrides: {},
+  errors: {
+    'util:my-util': /"util" not a recognized type/,
+    'service:services/-utils/my-service': /attempted to resolve a module in the unresolvable collection "utils"/
+  }
+});
+
 /*
 to do:
  * figure out the signature for instantiating the resolver -- what is it now, and where does the new config stuff go in?
- * figure out the structure of the config
  * the tests in resolver-test.js should be made to work simply by making the new resolver fallback to delegating to the old resolver
  *   ^^^ mixonic thinks this is incorrect. You should opt-in to the new resolver.
  *   Or perhaps only if you have a src dir?
- * Tests that show you cannot resolve anything from the utils directory, per spec
- * Tests that do private collections. Will involve respecting the `source` (I
- *   think) argument to the resolve method.
- * We need a word for `app` vs `src` (right now we call it namespace which is already used in the spec).
-
 
  ember-cli/loader.js  open issue, public API for require/define    can import from loader instead of global requirejs https://github.com/ember-cli/loader.js/issues/82
  (bug) we don't fallback to index (like node does)
