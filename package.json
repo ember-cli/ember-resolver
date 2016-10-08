@@ -1,6 +1,6 @@
 {
   "name": "dangerously-set-unified-resolver",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "experimental resolver for Ember CLI that implements the module unification rfc",
   "directories": {
     "test": "tests"
