@@ -12,6 +12,7 @@ export default {
     controller: { definitiveCollection: 'routes' },
     component: { definitiveCollection: 'components' },
     event_dispatcher: { definitiveCollection: '' },
+    helper: { definitiveCollection: 'components' },
     initializer: { definitiveCollection: 'initializers' },
     'instance-initializers': { definitiveCollection: 'instance-initializer' },
     location: { definitiveCollection: '' },
