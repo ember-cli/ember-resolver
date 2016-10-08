@@ -12,7 +12,7 @@ class NewFakeRegistry {
     this._moduleOverrides = moduleOverrides || {};
   }
 
-  get(moduleName, exportName = 'default') {
+  getExport(moduleName, exportName = 'default') {
     if (Object.keys(this._moduleOverrides).indexOf(moduleName) !== -1) {
       let result = this._moduleOverrides[moduleName];
       if (!result) {

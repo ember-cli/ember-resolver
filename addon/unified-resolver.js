@@ -59,7 +59,7 @@ const Resolver = DefaultResolver.extend({
 
     let { name: moduleName, exportName } = this._resolveLookupStringToModuleName(expandedLookupString);
 
-    if (this._moduleRegistry.has(moduleName) && this._moduleRegistry.get(moduleName, exportName)) {
+    if (this._moduleRegistry.has(moduleName) && this._moduleRegistry.getExport(moduleName, exportName)) {
       return expandedLookupString;
     }
 
@@ -136,7 +136,7 @@ const Resolver = DefaultResolver.extend({
   resolve(lookupString) {
     let moduleDef = this._resolveLookupStringToModuleName(lookupString);
     if (moduleDef && this._moduleRegistry.has(moduleDef.name)) {
-      return this._moduleRegistry.get(moduleDef.name, moduleDef.exportName);
+      return this._moduleRegistry.getExport(moduleDef.name, moduleDef.exportName);
     }
   },
 

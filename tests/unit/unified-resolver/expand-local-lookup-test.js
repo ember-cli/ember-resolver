@@ -12,7 +12,7 @@ class FakeRegistry {
     this._get = [];
   }
 
-  get(moduleName) {
+  getExport(moduleName) {
     this._get.push(moduleName);
     let module = this._entries[moduleName];
     if (module) {
