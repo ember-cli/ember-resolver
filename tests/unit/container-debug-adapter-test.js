@@ -110,3 +110,18 @@ test("Pods podModulePrefix support", function(assert) {
   assert.equal(models[0], 'user', "the name is correct");
   assert.equal(models[1], 'users/user', "the name is correct");
 });
+
+test('Ignores browserify modules', function(assert) {
+  assert.expect(1);
+  def('npm:cool/model/package');
+  var models = containerDebugAdapter.catalogEntriesByType('model');
+  assert.equal(models.length, 0, 'Ignores the browserify modules');
+});
+
+test('Ignores modules that are not part of the main app', function(assert) {
+  assert.expect(1);
+  def('liquid/awesome/model');
+  def('liquid/models/awesome');
+  var models = containerDebugAdapter.catalogEntriesByType('model');
+  assert.equal(models.length, 0, 'Ignores packages not in the main app');
+});

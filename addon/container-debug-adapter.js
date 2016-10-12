@@ -81,7 +81,7 @@ if (typeof ContainerDebugAdapter !== 'undefined') {
       for (let i = 0, l = moduleNames.length; i < l; i++) {
         let key = moduleNames[i];
 
-        if(key.indexOf(type) !== -1) {
+        if (this.startsWithModuleOrPodModulePrefix(key) && key.indexOf(type) !== -1) {
           // Check if it's a pod module
           var name = getPod(type, key, this.namespace.podModulePrefix || prefix);
           if (!name) {
@@ -102,6 +102,16 @@ if (typeof ContainerDebugAdapter !== 'undefined') {
         }
       }
       return types;
+    },
+
+    /**
+      @private
+      @method startsWithModuleOrPodModulePrefix
+      @param {string} moduleName Name of module being tested
+      @return {Boolean}
+    */
+    startsWithModuleOrPodModulePrefix(moduleName) {
+      return moduleName.indexOf(this.namespace.modulePrefix) === 0  || moduleName.indexOf(this.namespace.podModulePrefix) === 0;
     }
   });
 }
