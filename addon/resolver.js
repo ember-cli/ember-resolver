@@ -20,7 +20,8 @@ import makeDictionary from './utils/make-dictionary';
 
 let {
   underscore,
-  classify
+  classify,
+  dasherize
 } = Ember.String;
 let {
   get,
@@ -131,7 +132,6 @@ var Resolver = DefaultResolver.extend({
     if (!this.pluralizedTypes.config) {
       this.pluralizedTypes.config = 'config';
     }
-
     this._deprecatedPodModulePrefix = false;
   },
 
@@ -140,13 +140,20 @@ var Resolver = DefaultResolver.extend({
   },
 
   _normalize: function(fullName) {
-    // replace `.` with `/` in order to make nested controllers work in the following cases
-    // 1. `needs: ['posts/post']`
-    // 2. `{{render "posts/post"}}`
-    // 3. `this.render('posts/post')` from Route
+    // A) Convert underscores to dashes
+    // B) Convert camelCase to dash-case, except for helpers where we want to avoid shadowing camelCase expressions
+    // C) replace `.` with `/` in order to make nested controllers work in the following cases
+    //      1. `needs: ['posts/post']`
+    //      2. `{{render "posts/post"}}`
+    //      3. `this.render('posts/post')` from Route
+
     var split = fullName.split(':');
     if (split.length > 1) {
-      return split[0] + ':' + Ember.String.dasherize(split[1].replace(/\./g, '/'));
+      if (split[0] === 'helper') {
+        return split[0] + ':' + split[1].replace(/_/g, '-');
+      } else {
+        return split[0] + ':' + dasherize(split[1].replace(/\./g, '/'));
+      }
     } else {
       return fullName;
     }
@@ -256,7 +263,7 @@ var Resolver = DefaultResolver.extend({
       // allow treat all dashed and all underscored as the same thing
       // supports components with dashes and other stuff with underscores.
       if (tmpModuleName) {
-        tmpModuleName = this.chooseModuleName(tmpModuleName);
+        tmpModuleName = this.chooseModuleName(tmpModuleName, parsedName);
       }
 
       if (tmpModuleName && this._moduleRegistry.has(tmpModuleName)) {
@@ -273,7 +280,7 @@ var Resolver = DefaultResolver.extend({
     }
   },
 
-  chooseModuleName: function(moduleName) {
+  chooseModuleName: function(moduleName, parsedName) {
     var underscoredModuleName = underscore(moduleName);
 
     if (moduleName !== underscoredModuleName && this._moduleRegistry.has(moduleName) && this._moduleRegistry.has(underscoredModuleName)) {
@@ -284,23 +291,38 @@ var Resolver = DefaultResolver.extend({
       return moduleName;
     } else if (this._moduleRegistry.has(underscoredModuleName)) {
       return underscoredModuleName;
-    } else {
-      // workaround for dasherized partials:
-      // something/something/-something => something/something/_something
-      var partializedModuleName = moduleName.replace(/\/-([^\/]*)$/, '/_$1');
-
-      if (this._moduleRegistry.has(partializedModuleName)) {
-        Ember.deprecate('Modules should not contain underscores. ' +
-                        'Attempted to lookup "'+moduleName+'" which ' +
-                        'was not found. Please rename "'+partializedModuleName+'" '+
-                        'to "'+moduleName+'" instead.', false,
-                        { id: 'ember-resolver.underscored-modules', until: '3.0.0' });
-
-        return partializedModuleName;
-      } else {
-        return moduleName;
-      }
     }
+    // workaround for dasherized partials:
+    // something/something/-something => something/something/_something
+    var partializedModuleName = moduleName.replace(/\/-([^\/]*)$/, '/_$1');
+
+    if (this._moduleRegistry.has(partializedModuleName)) {
+      Ember.deprecate('Modules should not contain underscores. ' +
+      'Attempted to lookup "'+moduleName+'" which ' +
+      'was not found. Please rename "'+partializedModuleName+'" '+
+      'to "'+moduleName+'" instead.', false,
+      { id: 'ember-resolver.underscored-modules', until: '3.0.0' });
+
+      return partializedModuleName;
+    }
+    Ember.runInDebug(() => {
+      var isCamelCaseHelper = parsedName.type === 'helper' && !!moduleName.match(/[a-z]+[A-Z]+/);
+      if (isCamelCaseHelper) {
+        this._camelCaseHelperWarnedNames = this._camelCaseHelperWarnedNames || [];
+        var alreadyWarned = this._camelCaseHelperWarnedNames.indexOf(parsedName.fullName) > -1;
+        if (!alreadyWarned && this._moduleRegistry.has(dasherize(moduleName))) {
+          this._camelCaseHelperWarnedNames.push(parsedName.fullName);
+          Ember.warn('Attempted to lookup "' + parsedName.fullName + '" which ' +
+          'was not found. In previous versions of ember-resolver, a bug would have ' +
+          'caused the module at "' + dasherize(moduleName) + '" to be ' +
+          'returned for this camel case helper name. This has been fixed. ' +
+          'Use the dasherized name to resolve the module that would have been ' +
+          'returned in previous versions.',
+          false,
+          { id: 'ember-resolver.camelcase-helper-names', until: '3.0.0' });
+        }
+      }
+    });
   },
 
   // used by Ember.DefaultResolver.prototype._logLookup
