@@ -55,4 +55,4 @@ Unable to find a suitable version for ember-resolver, please choose one:
     2) ember-resolver#~2.0.3 which resolved to 2.0.3 and is required by [APP_NAME]
 ```
 
-... you probably need to update your application accordingly.  See aptible/dashboard.aptible.com#423 as an example of how to update.
+... you probably need to update your application accordingly.  See [aptible/dashboard.aptible.com#423](https://github.com/aptible/dashboard.aptible.com/pull/423/files) as an example of how to update.
