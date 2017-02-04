@@ -306,22 +306,45 @@ var Resolver = DefaultResolver.extend({
       return partializedModuleName;
     }
     Ember.runInDebug(() => {
-      var isCamelCaseHelper = parsedName.type === 'helper' && !!moduleName.match(/[a-z]+[A-Z]+/);
-      if (isCamelCaseHelper) {
-        this._camelCaseHelperWarnedNames = this._camelCaseHelperWarnedNames || [];
-        var alreadyWarned = this._camelCaseHelperWarnedNames.indexOf(parsedName.fullName) > -1;
-        if (!alreadyWarned && this._moduleRegistry.has(dasherize(moduleName))) {
-          this._camelCaseHelperWarnedNames.push(parsedName.fullName);
-          Ember.warn('Attempted to lookup "' + parsedName.fullName + '" which ' +
-          'was not found. In previous versions of ember-resolver, a bug would have ' +
-          'caused the module at "' + dasherize(moduleName) + '" to be ' +
-          'returned for this camel case helper name. This has been fixed. ' +
-          'Use the dasherized name to resolve the module that would have been ' +
-          'returned in previous versions.',
-          false,
-          { id: 'ember-resolver.camelcase-helper-names', until: '3.0.0' });
+      var alreadyWarned = false;
+
+      if (parsedName.type === 'helper') {
+
+        var isCamelCaseHelper = !!moduleName.match(/[a-z]+[A-Z]+/);
+        if (isCamelCaseHelper) {
+          this._camelCaseHelperWarnedNames = this._camelCaseHelperWarnedNames || [];
+          alreadyWarned = this._camelCaseHelperWarnedNames.indexOf(parsedName.fullName) > -1;
+          if (!alreadyWarned && this._moduleRegistry.has(dasherize(moduleName))) {
+            this._camelCaseHelperWarnedNames.push(parsedName.fullName);
+            Ember.warn('Attempted to lookup "' + parsedName.fullName + '" which ' +
+              'was not found. In previous versions of ember-resolver, a bug would have ' +
+              'caused the module at "' + dasherize(moduleName) + '" to be ' +
+              'returned for this camel case helper name. This has been fixed. ' +
+              'Use the dasherized name to resolve the module that would have been ' +
+              'returned in previous versions.',
+              false,
+              {id: 'ember-resolver.camelcase-helper-names', until: '3.0.0'});
+          }
+
         }
+        else if (parsedName.name.indexOf('.') !== -1) {
+          this._dotNotationHelperWarnedNames = this._dotNotationHelperWarnedNames || [];
+          alreadyWarned = this._dotNotationHelperWarnedNames.indexOf(parsedName.fullName) > -1;
+          if (!alreadyWarned && this._moduleRegistry.has(moduleName.replace(/\./g, '/'))) {
+            this._dotNotationHelperWarnedNames.push(parsedName.fullName);
+            Ember.warn('Attempted to lookup "' + parsedName.name + '" which ' +
+              'was not found. In ember-resolver < 2.1.1, "' + parsedName.name + '" would have ' +
+              'resolved to the module at "' + moduleName.replace(/\./g, '/') + '". This will fail in Ember 2.10+' +
+              ' and ember-resolver now emulates that. To fix this, change "' + parsedName.name +
+              '" to "' + parsedName.name.replace(/\./g, '/') + '".',
+              false,
+              {id: 'ember-resolver.dotnotation-helper-names', until: '3.0.0'});
+          }
+
+        }
+
       }
+
     });
   },
 
