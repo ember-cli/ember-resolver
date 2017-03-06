@@ -1,5 +1,3 @@
-/*globals require */
-
 import Ember from 'ember';
 import ModuleRegistry from './utils/module-registry';
 import classFactory from './utils/class-factory';
@@ -401,7 +399,7 @@ var Resolver = DefaultResolver.extend({
   },
 
   _extractDefaultExport: function(normalizedModuleName) {
-    var module = require(normalizedModuleName, null, null, true /* force sync */);
+    var module = this._moduleRegistry.get(normalizedModuleName);
 
     if (module && module['default']) {
       module = module['default'];
