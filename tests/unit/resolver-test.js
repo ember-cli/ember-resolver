@@ -334,7 +334,7 @@ test("will raise error if both dasherized and underscored modules exist", functi
   try {
     resolver.resolve('big-band:steve-miller-band');
   } catch (e) {
-    assert.equal(e.message, 'Ambiguous module names: `appkit/big-bands/steve-miller-band` and `appkit/big_bands/steve_miller_band`', "error with a descriptive value is thrown");
+    assert.equal(e.message, `Ambiguous module names: 'appkit/big-bands/steve-miller-band' and 'appkit/big_bands/steve_miller_band'`, "error with a descriptive value is thrown");
   }
 });
 
