@@ -190,6 +190,22 @@ test("can lookup a view", function(assert) {
   assert.equal(view, expected, 'default export was returned');
 });
 
+test("can lookup a helper", function(assert) {
+  assert.expect(3);
+
+  let expected = { isHelperInstance: true };
+  define('appkit/helpers/reverse-list', [], function(){
+    assert.ok(true, "helper was invoked properly");
+
+    return { default: expected };
+  });
+
+  var helper = resolver.resolve('helper:reverse-list');
+
+  assert.ok(helper, 'helper was returned');
+  assert.equal(helper, expected, 'default export was returned');
+});
+
 test('can lookup an engine', function(assert) {
   assert.expect(3);
 
@@ -220,6 +236,24 @@ test('can lookup a route-map', function(assert) {
 
   assert.ok(routeMap, 'route-map was returned');
   assert.equal(routeMap, expected, 'default export was returned');
+});
+
+test('warns if looking up a camelCase helper that has a dasherized module present', function(assert){
+  assert.expect(3);
+
+  define('appkit/helpers/reverse-list', [], function(){
+    return { default: { isHelperInstance: true } };
+  });
+
+  Ember.warn = function(message, test, options) {
+    if (!test) {
+      assert.equal(message, 'Attempted to lookup "helper:reverseList" which was not found. In previous versions of ember-resolver, a bug would have caused the module at \"appkit/helpers/reverse-list\" to be returned for this camel case helper name. This has been fixed. Use the dasherized name to resolve the module that would have been returned in previous versions.');
+      assert.equal(options.id, 'ember-resolver.camelcase-helper-names', 'Warning has expected id');
+    }
+  };
+
+  var helper = resolver.resolve('helper:reverseList');
+  assert.ok(!helper, 'no helper was returned');
 });
 
 test('errors if lookup of a route-map does not specify isRouteMap', function(assert) {
@@ -401,6 +435,46 @@ test('if shouldWrapInClassFactory returns true a wrapped object is returned', fu
   var value = resolver.resolve('string:foo');
 
   assert.equal(value.create(), 'foo');
+});
+
+test('normalization', function(assert) {
+  assert.ok(resolver.normalize, 'resolver#normalize is present');
+
+  assert.equal(resolver.normalize('foo:bar'), 'foo:bar');
+
+  assert.equal(resolver.normalize('controller:posts'), 'controller:posts');
+  assert.equal(resolver.normalize('controller:posts_index'), 'controller:posts-index');
+  assert.equal(resolver.normalize('controller:posts.index'), 'controller:posts/index');
+  assert.equal(resolver.normalize('controller:posts-index'), 'controller:posts-index');
+  assert.equal(resolver.normalize('controller:posts.post.index'), 'controller:posts/post/index');
+  assert.equal(resolver.normalize('controller:posts_post.index'), 'controller:posts-post/index');
+  assert.equal(resolver.normalize('controller:posts.post_index'), 'controller:posts/post-index');
+  assert.equal(resolver.normalize('controller:posts.post-index'), 'controller:posts/post-index');
+  assert.equal(resolver.normalize('controller:postsIndex'), 'controller:posts-index');
+  assert.equal(resolver.normalize('controller:blogPosts.index'), 'controller:blog-posts/index');
+  assert.equal(resolver.normalize('controller:blog/posts.index'), 'controller:blog/posts/index');
+  assert.equal(resolver.normalize('controller:blog/posts-index'), 'controller:blog/posts-index');
+  assert.equal(resolver.normalize('controller:blog/posts.post.index'), 'controller:blog/posts/post/index');
+  assert.equal(resolver.normalize('controller:blog/posts_post.index'), 'controller:blog/posts-post/index');
+  assert.equal(resolver.normalize('controller:blog/posts_post-index'), 'controller:blog/posts-post-index');
+
+  assert.equal(resolver.normalize('template:blog/posts_index'), 'template:blog/posts-index');
+  assert.equal(resolver.normalize('service:userAuth'), 'service:user-auth');
+
+  // For helpers, we have special logic to avoid the situation of a template's
+  // `{{someName}}` being surprisingly shadowed by a `some-name` helper
+  assert.equal(resolver.normalize('helper:make-fabulous'), 'helper:make-fabulous');
+  assert.equal(resolver.normalize('helper:fabulize'), 'helper:fabulize');
+  assert.equal(resolver.normalize('helper:make_fabulous'), 'helper:make-fabulous');
+  assert.equal(resolver.normalize('helper:makeFabulous'), 'helper:makeFabulous');
+});
+
+test('normalization is idempotent', function(assert) {
+  let examples = ['controller:posts', 'controller:posts.post.index', 'controller:blog/posts.post_index', 'template:foo_bar'];
+
+  examples.forEach((example) => {
+    assert.equal(resolver.normalize(resolver.normalize(example)), resolver.normalize(example));
+  });
 });
 
 module("Logging", {

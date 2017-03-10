@@ -1,6 +1,6 @@
 {
   "name": "ember-resolver",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "The default modules based resolver for Ember CLI.",
   "directories": {
     "test": "tests"
@@ -15,14 +15,14 @@
     "url": "git+https://github.com/ember-cli/ember-resolver.git"
   },
   "engines": {
-    "node": ">= 0.10.0"
+    "node": ">= 0.12"
   },
   "author": "Robert Jackson <me@rwjblue.com>",
   "license": "MIT",
   "devDependencies": {
     "broccoli-asset-rev": "^2.4.2",
     "ember-cli": "2.9.1",
-    "ember-cli-app-version": "^1.0.0",
+    "ember-cli-app-version": "^2.0.1",
     "ember-cli-dependency-checker": "^1.2.0",
     "ember-cli-htmlbars": "^1.0.3",
     "ember-cli-htmlbars-inline-precompile": "^0.3.1",
