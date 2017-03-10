@@ -18,12 +18,12 @@ import makeDictionary from './utils/make-dictionary';
  */
 
 
-let {
+const {
   underscore,
   classify,
   dasherize
 } = Ember.String;
-let {
+const {
   get,
   DefaultResolver
 } = Ember;
@@ -33,22 +33,22 @@ function parseName(fullName) {
 
   if (fullName.parsedName === true) { return fullName; }
 
-  var prefix, type, name;
-  var fullNameParts = fullName.split('@');
+  let prefix, type, name;
+  let fullNameParts = fullName.split('@');
 
   // HTMLBars uses helper:@content-helper which collides
   // with ember-cli namespace detection.
   // This will be removed in a future release of HTMLBars.
   if (fullName !== 'helper:@content-helper' &&
       fullNameParts.length === 2) {
-    var prefixParts = fullNameParts[0].split(':');
+    let prefixParts = fullNameParts[0].split(':');
 
     if (prefixParts.length === 2) {
       prefix = prefixParts[1];
       type = prefixParts[0];
       name = fullNameParts[1];
     } else {
-      var nameParts = fullNameParts[1].split(':');
+      let nameParts = fullNameParts[1].split(':');
 
       prefix = fullNameParts[0];
       type = nameParts[0];
@@ -60,9 +60,9 @@ function parseName(fullName) {
     name = fullNameParts[1];
   }
 
-  var fullNameWithoutType = name;
-  var namespace = get(this, 'namespace');
-  var root = namespace;
+  let fullNameWithoutType = name;
+  let namespace = get(this, 'namespace');
+  let root = namespace;
 
   return {
     parsedName: true,
@@ -81,10 +81,10 @@ function resolveOther(parsedName) {
 
   Ember.assert('`modulePrefix` must be defined', this.namespace.modulePrefix);
 
-  var normalizedModuleName = this.findModuleName(parsedName);
+  let normalizedModuleName = this.findModuleName(parsedName);
 
   if (normalizedModuleName) {
-    var defaultExport = this._extractDefaultExport(normalizedModuleName, parsedName);
+    let defaultExport = this._extractDefaultExport(normalizedModuleName, parsedName);
 
     if (defaultExport === undefined) {
       throw new Error(" Expected to find: '" + parsedName.fullName + "' within '" + normalizedModuleName + "' but got 'undefined'. Did you forget to `export default` within '" + normalizedModuleName + "'?");
@@ -102,22 +102,22 @@ function resolveOther(parsedName) {
 
 // Ember.DefaultResolver docs:
 //   https://github.com/emberjs/ember.js/blob/master/packages/ember-application/lib/system/resolver.js
-var Resolver = DefaultResolver.extend({
+const Resolver = DefaultResolver.extend({
   resolveOther,
   parseName,
   resolveTemplate: resolveOther,
   pluralizedTypes: null,
   moduleRegistry: null,
 
-  makeToString: function(factory, fullName) {
+  makeToString(factory, fullName) {
     return '' + this.namespace.modulePrefix + '@' + fullName + ':';
   },
 
-  shouldWrapInClassFactory: function(/* module, parsedName */){
+  shouldWrapInClassFactory(/* module, parsedName */){
     return false;
   },
 
-  init: function() {
+  init() {
     this._super();
     this.moduleBasedResolver = true;
 
@@ -135,11 +135,11 @@ var Resolver = DefaultResolver.extend({
     this._deprecatedPodModulePrefix = false;
   },
 
-  normalize: function(fullName) {
+  normalize(fullName) {
     return this._normalizeCache[fullName] || (this._normalizeCache[fullName] = this._normalize(fullName));
   },
 
-  _normalize: function(fullName) {
+  _normalize(fullName) {
     // A) Convert underscores to dashes
     // B) Convert camelCase to dash-case, except for helpers where we want to avoid shadowing camelCase expressions
     // C) replace `.` with `/` in order to make nested controllers work in the following cases
@@ -147,7 +147,7 @@ var Resolver = DefaultResolver.extend({
     //      2. `{{render "posts/post"}}`
     //      3. `this.render('posts/post')` from Route
 
-    var split = fullName.split(':');
+    let split = fullName.split(':');
     if (split.length > 1) {
       if (split[0] === 'helper') {
         return split[0] + ':' + split[1].replace(/_/g, '-');
@@ -159,12 +159,12 @@ var Resolver = DefaultResolver.extend({
     }
   },
 
-  pluralize: function(type) {
+  pluralize(type) {
     return this.pluralizedTypes[type] || (this.pluralizedTypes[type] = type + 's');
   },
 
-  podBasedLookupWithPrefix: function(podPrefix, parsedName) {
-    var fullNameWithoutType = parsedName.fullNameWithoutType;
+  podBasedLookupWithPrefix(podPrefix, parsedName) {
+    let fullNameWithoutType = parsedName.fullNameWithoutType;
 
     if (parsedName.type === 'template') {
       fullNameWithoutType = fullNameWithoutType.replace(/^components\//, '');
@@ -173,14 +173,14 @@ var Resolver = DefaultResolver.extend({
     return podPrefix + '/' + fullNameWithoutType + '/' + parsedName.type;
   },
 
-  podBasedModuleName: function(parsedName) {
-    var podPrefix = this.namespace.podModulePrefix || this.namespace.modulePrefix;
+  podBasedModuleName(parsedName) {
+    let podPrefix = this.namespace.podModulePrefix || this.namespace.modulePrefix;
 
     return this.podBasedLookupWithPrefix(podPrefix, parsedName);
   },
 
-  podBasedComponentsInSubdir: function(parsedName) {
-    var podPrefix = this.namespace.podModulePrefix || this.namespace.modulePrefix;
+  podBasedComponentsInSubdir(parsedName) {
+    let podPrefix = this.namespace.podModulePrefix || this.namespace.modulePrefix;
     podPrefix = podPrefix + '/components';
 
     if (parsedName.type === 'component' || parsedName.fullNameWithoutType.match(/^components/)) {
@@ -210,21 +210,21 @@ var Resolver = DefaultResolver.extend({
     }
   },
 
-  mainModuleName: function(parsedName) {
+  mainModuleName(parsedName) {
     // if router:main or adapter:main look for a module with just the type first
-    var tmpModuleName = parsedName.prefix + '/' + parsedName.type;
+    let tmpModuleName = parsedName.prefix + '/' + parsedName.type;
 
     if (parsedName.fullNameWithoutType === 'main') {
       return tmpModuleName;
     }
   },
 
-  defaultModuleName: function(parsedName) {
+  defaultModuleName(parsedName) {
     return parsedName.prefix + '/' +  this.pluralize(parsedName.type) + '/' + parsedName.fullNameWithoutType;
   },
 
-  prefix: function(parsedName) {
-    var tmpPrefix = this.namespace.modulePrefix;
+  prefix(parsedName) {
+    let tmpPrefix = this.namespace.modulePrefix;
 
     if (this.namespace[parsedName.type + 'Prefix']) {
       tmpPrefix = this.namespace[parsedName.type + 'Prefix'];
@@ -251,14 +251,14 @@ var Resolver = DefaultResolver.extend({
     ];
   }),
 
-  findModuleName: function(parsedName, loggingDisabled){
-    var moduleNameLookupPatterns = this.get('moduleNameLookupPatterns');
-    var moduleName;
+  findModuleName(parsedName, loggingDisabled){
+    let moduleNameLookupPatterns = this.get('moduleNameLookupPatterns');
+    let moduleName;
 
     for (let index = 0, length = moduleNameLookupPatterns.length; index < length; index++) {
       let item = moduleNameLookupPatterns[index];
 
-      var tmpModuleName = item.call(this, parsedName);
+      let tmpModuleName = item.call(this, parsedName);
 
       // allow treat all dashed and all underscored as the same thing
       // supports components with dashes and other stuff with underscores.
@@ -280,8 +280,8 @@ var Resolver = DefaultResolver.extend({
     }
   },
 
-  chooseModuleName: function(moduleName, parsedName) {
-    var underscoredModuleName = underscore(moduleName);
+  chooseModuleName(moduleName, parsedName) {
+    let underscoredModuleName = underscore(moduleName);
 
     if (moduleName !== underscoredModuleName && this._moduleRegistry.has(moduleName) && this._moduleRegistry.has(underscoredModuleName)) {
       throw new TypeError("Ambiguous module names: `" + moduleName + "` and `" + underscoredModuleName + "`");
@@ -294,7 +294,7 @@ var Resolver = DefaultResolver.extend({
     }
     // workaround for dasherized partials:
     // something/something/-something => something/something/_something
-    var partializedModuleName = moduleName.replace(/\/-([^\/]*)$/, '/_$1');
+    let partializedModuleName = moduleName.replace(/\/-([^\/]*)$/, '/_$1');
 
     if (this._moduleRegistry.has(partializedModuleName)) {
       Ember.deprecate('Modules should not contain underscores. ' +
@@ -306,10 +306,10 @@ var Resolver = DefaultResolver.extend({
       return partializedModuleName;
     }
     Ember.runInDebug(() => {
-      var isCamelCaseHelper = parsedName.type === 'helper' && !!moduleName.match(/[a-z]+[A-Z]+/);
+      let isCamelCaseHelper = parsedName.type === 'helper' && !!moduleName.match(/[a-z]+[A-Z]+/);
       if (isCamelCaseHelper) {
         this._camelCaseHelperWarnedNames = this._camelCaseHelperWarnedNames || [];
-        var alreadyWarned = this._camelCaseHelperWarnedNames.indexOf(parsedName.fullName) > -1;
+        let alreadyWarned = this._camelCaseHelperWarnedNames.indexOf(parsedName.fullName) > -1;
         if (!alreadyWarned && this._moduleRegistry.has(dasherize(moduleName))) {
           this._camelCaseHelperWarnedNames.push(parsedName.fullName);
           Ember.warn('Attempted to lookup "' + parsedName.fullName + '" which ' +
@@ -326,21 +326,21 @@ var Resolver = DefaultResolver.extend({
   },
 
   // used by Ember.DefaultResolver.prototype._logLookup
-  lookupDescription: function(fullName) {
-    var parsedName = this.parseName(fullName);
+  lookupDescription(fullName) {
+    let parsedName = this.parseName(fullName);
 
-    var moduleName = this.findModuleName(parsedName, true);
+    let moduleName = this.findModuleName(parsedName, true);
 
     return moduleName;
   },
 
   // only needed until 1.6.0-beta.2 can be required
-  _logLookup: function(found, parsedName, description) {
+  _logLookup(found, parsedName, description) {
     if (!Ember.ENV.LOG_MODULE_RESOLVER && !parsedName.root.LOG_RESOLVER) {
       return;
     }
 
-    var symbol, padding;
+    let symbol, padding;
 
     if (found) { symbol = '[✓]'; }
     else       { symbol = '[ ]'; }
@@ -358,13 +358,13 @@ var Resolver = DefaultResolver.extend({
     Ember.Logger.info(symbol, parsedName.fullName, padding, description);
   },
 
-  knownForType: function(type) {
-    var moduleKeys = this._moduleRegistry.moduleNames();
+  knownForType(type) {
+    let moduleKeys = this._moduleRegistry.moduleNames();
 
-    var items = makeDictionary();
-    for (var index = 0, length = moduleKeys.length; index < length; index++) {
-      var moduleName = moduleKeys[index];
-      var fullname = this.translateToContainerFullname(type, moduleName);
+    let items = makeDictionary();
+    for (let index = 0, length = moduleKeys.length; index < length; index++) {
+      let moduleName = moduleKeys[index];
+      let fullname = this.translateToContainerFullname(type, moduleName);
 
       if (fullname) {
         items[fullname] = true;
@@ -374,16 +374,16 @@ var Resolver = DefaultResolver.extend({
     return items;
   },
 
-  translateToContainerFullname: function(type, moduleName) {
-    var prefix = this.prefix({ type: type });
+  translateToContainerFullname(type, moduleName) {
+    let prefix = this.prefix({ type });
 
     // Note: using string manipulation here rather than regexes for better performance.
     // pod modules
     // '^' + prefix + '/(.+)/' + type + '$'
-    var podPrefix = prefix + '/';
-    var podSuffix = '/' + type;
-    var start = moduleName.indexOf(podPrefix);
-    var end = moduleName.indexOf(podSuffix);
+    let podPrefix = prefix + '/';
+    let podSuffix = '/' + type;
+    let start = moduleName.indexOf(podPrefix);
+    let end = moduleName.indexOf(podSuffix);
 
     if (start === 0 && end === (moduleName.length - podSuffix.length) &&
         moduleName.length > (podPrefix.length + podSuffix.length)) {
@@ -392,16 +392,16 @@ var Resolver = DefaultResolver.extend({
 
     // non-pod modules
     // '^' + prefix + '/' + pluralizedType + '/(.+)$'
-    var pluralizedType = this.pluralize(type);
-    var nonPodPrefix = prefix + '/' + pluralizedType + '/';
+    let pluralizedType = this.pluralize(type);
+    let nonPodPrefix = prefix + '/' + pluralizedType + '/';
 
     if (moduleName.indexOf(nonPodPrefix) === 0 && moduleName.length > nonPodPrefix.length) {
       return type + ':' + moduleName.slice(nonPodPrefix.length);
     }
   },
 
-  _extractDefaultExport: function(normalizedModuleName) {
-    var module = require(normalizedModuleName, null, null, true /* force sync */);
+  _extractDefaultExport(normalizedModuleName) {
+    let module = require(normalizedModuleName, null, null, true /* force sync */);
 
     if (module && module['default']) {
       module = module['default'];
