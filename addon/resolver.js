@@ -87,7 +87,7 @@ function resolveOther(parsedName) {
     let defaultExport = this._extractDefaultExport(normalizedModuleName, parsedName);
 
     if (defaultExport === undefined) {
-      throw new Error(" Expected to find: '" + parsedName.fullName + "' within '" + normalizedModuleName + "' but got 'undefined'. Did you forget to `export default` within '" + normalizedModuleName + "'?");
+      throw new Error(` Expected to find: '${parsedName.fullName}' within '${normalizedModuleName}' but got 'undefined'. Did you forget to 'export default' within '${normalizedModuleName}'?`);
     }
 
     if (this.shouldWrapInClassFactory(defaultExport, parsedName)) {
@@ -249,7 +249,7 @@ const Resolver = DefaultResolver.extend({
       this.mainModuleName,
       this.defaultModuleName
     ];
-  }),
+  }).readOnly(),
 
   findModuleName(parsedName, loggingDisabled){
     let moduleNameLookupPatterns = this.get('moduleNameLookupPatterns');
@@ -284,7 +284,7 @@ const Resolver = DefaultResolver.extend({
     let underscoredModuleName = underscore(moduleName);
 
     if (moduleName !== underscoredModuleName && this._moduleRegistry.has(moduleName) && this._moduleRegistry.has(underscoredModuleName)) {
-      throw new TypeError("Ambiguous module names: `" + moduleName + "` and `" + underscoredModuleName + "`");
+      throw new TypeError(`Ambiguous module names: '${ moduleName}' and '${underscoredModuleName }'`);
     }
 
     if (this._moduleRegistry.has(moduleName)) {
