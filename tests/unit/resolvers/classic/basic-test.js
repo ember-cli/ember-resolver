@@ -2,7 +2,7 @@
 
 import Ember from 'ember';
 import { module, test } from 'qunit';
-import Resolver from 'ember-resolver/resolver';
+import Resolver from 'ember-resolver/resolvers/classic';
 
 let originalRegistryEntries, originalEmberDeprecate, originalEmberLoggerInfo, logCalls, resolver;
 
@@ -19,7 +19,7 @@ function resetRegistry() {
   Ember.merge(requirejs.entries, originalRegistryEntries);
 }
 
-module('ember-resolver/resolver', {
+module('ember-resolver/resolvers/classic', {
   beforeEach() {
     originalRegistryEntries = Ember.merge({}, requirejs.entries);
     originalEmberDeprecate = Ember.deprecate;
