@@ -13,7 +13,7 @@ class ModuleRegistry {
     this._entries = entries || requirejs.entries;
   }
   moduleNames() {
-    return (Object.keys || Ember.keys)(this._entries);
+    return Object.keys(this._entries);
   }
   has(moduleName) {
     return moduleName in this._entries;
