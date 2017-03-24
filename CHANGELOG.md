@@ -1,11 +1,57 @@
 # Change Log
 
-## [Unreleased](https://github.com/ember-cli/ember-resolver/tree/HEAD)
-
-[Full Changelog](https://github.com/ember-cli/ember-resolver/compare/v2.0.3...HEAD)
+## [v3.0.1](https://github.com/ember-cli/ember-resolver/tree/v3.0.1) (2017-03-24)
+[Full Changelog](https://github.com/ember-cli/ember-resolver/compare/v3.0.0...v3.0.1)
 
 **Closed issues:**
 
+- 3 version break ember-inspector. [\#175](https://github.com/ember-cli/ember-resolver/issues/175)
+- ContainerDebugAdapter.catalogEntriesByType returns objects of wrong type [\#120](https://github.com/ember-cli/ember-resolver/issues/120)
+
+**Merged pull requests:**
+
+- \[Fixes \#175\] restore ability to resolve from modules [\#178](https://github.com/ember-cli/ember-resolver/pull/178) ([stefanpenner](https://github.com/stefanpenner))
+- No longer need Ember.keys [\#177](https://github.com/ember-cli/ember-resolver/pull/177) ([mixonic](https://github.com/mixonic))
+- Restructure on disk [\#176](https://github.com/ember-cli/ember-resolver/pull/176) ([mixonic](https://github.com/mixonic))
+
+## [v3.0.0](https://github.com/ember-cli/ember-resolver/tree/v3.0.0) (2017-03-11)
+[Full Changelog](https://github.com/ember-cli/ember-resolver/compare/v2.1.1...v3.0.0)
+
+**Closed issues:**
+
+- Remove old / dead code [\#131](https://github.com/ember-cli/ember-resolver/issues/131)
+- Re-register failing on `App.reset\(\)` [\#130](https://github.com/ember-cli/ember-resolver/issues/130)
+- confirm @ember as npm scope works [\#114](https://github.com/ember-cli/ember-resolver/issues/114)
+
+**Merged pull requests:**
+
+- more cleanup [\#174](https://github.com/ember-cli/ember-resolver/pull/174) ([stefanpenner](https://github.com/stefanpenner))
+- cleanup [\#173](https://github.com/ember-cli/ember-resolver/pull/173) ([stefanpenner](https://github.com/stefanpenner))
+- cleanup deps [\#172](https://github.com/ember-cli/ember-resolver/pull/172) ([stefanpenner](https://github.com/stefanpenner))
+- Allow for lazy people like me to easy navigate to update example. [\#169](https://github.com/ember-cli/ember-resolver/pull/169) ([daniellawrence](https://github.com/daniellawrence))
+- Update ember-cli-app-version to version 2.0.1 🚀 [\#165](https://github.com/ember-cli/ember-resolver/pull/165) ([greenkeeperio-bot](https://github.com/greenkeeperio-bot))
+- Update ember-cli to version 2.9.1 🚀 [\#164](https://github.com/ember-cli/ember-resolver/pull/164) ([greenkeeperio-bot](https://github.com/greenkeeperio-bot))
+
+## [v2.1.1](https://github.com/ember-cli/ember-resolver/tree/v2.1.1) (2016-12-30)
+[Full Changelog](https://github.com/ember-cli/ember-resolver/compare/v2.1.0...v2.1.1)
+
+**Merged pull requests:**
+
+- Don't resolve camelCase helper names to dasherized modules [\#167](https://github.com/ember-cli/ember-resolver/pull/167) ([lukemelia](https://github.com/lukemelia))
+- 👻😱 Node.js 0.10 is unmaintained 😱👻 [\#166](https://github.com/ember-cli/ember-resolver/pull/166) ([greenkeeperio-bot](https://github.com/greenkeeperio-bot))
+- Update `ember-cli` to `2.8.0`. Closes \#152. [\#156](https://github.com/ember-cli/ember-resolver/pull/156) ([btecu](https://github.com/btecu))
+
+## [v2.1.0](https://github.com/ember-cli/ember-resolver/tree/v2.1.0) (2016-09-03)
+[Full Changelog](https://github.com/ember-cli/ember-resolver/compare/v2.0.3...v2.1.0)
+
+**Fixed bugs:**
+
+- Pin "jquery" to v1.11.3 [\#145](https://github.com/ember-cli/ember-resolver/pull/145) ([Turbo87](https://github.com/Turbo87))
+
+**Closed issues:**
+
+- Use Ember Inflector for pluralization? [\#147](https://github.com/ember-cli/ember-resolver/issues/147)
+- Fix broken/hanging TravisCI builds [\#137](https://github.com/ember-cli/ember-resolver/issues/137)
 - ember-data and pod format [\#128](https://github.com/ember-cli/ember-resolver/issues/128)
 - Deprecation warning in Ember 2.2 [\#124](https://github.com/ember-cli/ember-resolver/issues/124)
 - How to transpile `index.js` with broccoli-babel-transpiler [\#121](https://github.com/ember-cli/ember-resolver/issues/121)
@@ -14,6 +60,8 @@
 
 **Merged pull requests:**
 
+- Implement resolveEngine and resolveRouteMap [\#151](https://github.com/ember-cli/ember-resolver/pull/151) ([trentmwillis](https://github.com/trentmwillis))
+- Update CHANGELOG file [\#146](https://github.com/ember-cli/ember-resolver/pull/146) ([Turbo87](https://github.com/Turbo87))
 - Add options to deprecation [\#133](https://github.com/ember-cli/ember-resolver/pull/133) ([wagenet](https://github.com/wagenet))
 - Updating semver comparison to handle pre-release versions. [\#126](https://github.com/ember-cli/ember-resolver/pull/126) ([gmurphey](https://github.com/gmurphey))
 - Update README URLs based on HTTP redirects [\#125](https://github.com/ember-cli/ember-resolver/pull/125) ([ReadmeCritic](https://github.com/ReadmeCritic))
