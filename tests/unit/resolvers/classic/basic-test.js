@@ -1,6 +1,7 @@
-/* globals requirejs, require */
+/* globals requirejs */
 
 import Ember from 'ember';
+import require from 'require';
 import { module, test } from 'qunit';
 import Resolver from 'ember-resolver/resolvers/classic';
 
