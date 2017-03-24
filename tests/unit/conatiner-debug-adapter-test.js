@@ -1,7 +1,7 @@
 import { module, test } from 'qunit';
 import Ember from 'ember';
 import Resolver from 'ember-resolver/resolver';
-import ContainerDebugAdapter from 'ember-resolver/container-debug-adapter';
+import ContainerDebugAdapter from 'ember-resolver/resolvers/classic/container-debug-adapter';
 import ContainerDebugAdapterInitializer from 'dummy/initializers/container-debug-adapter';
 
 let containerDebugAdapter, App;
@@ -60,7 +60,7 @@ module("Container Debug Adapter Tests", {
 
 test("can access Container Debug Adapter which can catalog typical entries by type", function(assert) {
   assert.equal(containerDebugAdapter.canCatalogEntriesByType('model'), true, "canCatalogEntriesByType should return false for model");
-  assert.equal(containerDebugAdapter.canCatalogEntriesByType('template'), true, "canCatalogEntriesByType should return false for template");
+  assert.equal(containerDebugAdapter.canCatalogEntriesByType('template'), false, "canCatalogEntriesByType should return false for template");
   assert.equal(containerDebugAdapter.canCatalogEntriesByType('controller'), true, "canCatalogEntriesByType should return true for controller");
   assert.equal(containerDebugAdapter.canCatalogEntriesByType('route'), true, "canCatalogEntriesByType should return true for route");
   assert.equal(containerDebugAdapter.canCatalogEntriesByType('view'), true, "canCatalogEntriesByType should return true for view");

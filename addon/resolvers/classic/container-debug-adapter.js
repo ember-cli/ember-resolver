@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import ModuleRegistry from './utils/module-registry';
+import { ModuleRegistry } from './index';
 
 const { ContainerDebugAdapter } = Ember;
 

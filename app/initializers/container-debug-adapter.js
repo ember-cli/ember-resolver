@@ -1,4 +1,4 @@
-import ContainerDebugAdapter from 'ember-resolver/container-debug-adapter';
+import ContainerDebugAdapter from 'ember-resolver/resolvers/classic/container-debug-adapter';
 
 export default {
   name: 'container-debug-adapter',
