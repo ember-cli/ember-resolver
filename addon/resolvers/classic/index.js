@@ -1,14 +1,14 @@
 /* globals requirejs, require */
 
 import Ember from 'ember';
-import classFactory from '../utils/class-factory';
-import makeDictionary from '../utils/make-dictionary';
+import classFactory from '../../utils/class-factory';
+import makeDictionary from '../../utils/make-dictionary';
 
 if (typeof requirejs.entries === 'undefined') {
   requirejs.entries = requirejs._eak_seen;
 }
 
-class ModuleRegistry {
+export class ModuleRegistry {
   constructor(entries) {
     this._entries = entries || requirejs.entries;
   }
