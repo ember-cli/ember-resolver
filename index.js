@@ -6,6 +6,38 @@ var VersionChecker = require('ember-cli-version-checker');
 module.exports = {
   name: 'ember-resolver',
 
+  init: function() {
+    this._super.init.apply(this, arguments);
+    this.options = this.options || {};
+
+    var config = this.project.config();
+    var resolverConfig = config['ember-resolver'] || {};
+
+    var resolverFeatureFlags = Object.assign({
+      /* Add default feature flags here */
+    }, resolverConfig.features);
+
+    this.options.babel = {
+      loose: true,
+      plugins: [
+        [require('babel-plugin-debug-macros').default, {
+          debugTools: {
+            source: '@ember/debug'
+          },
+          envFlags: {
+            source: 'ember-resolver-env-flags',
+            flags: { DEBUG: process.env.EMBER_ENV != 'production' }
+          },
+          features: {
+            name: 'ember-resolver',
+            source: 'ember-resolver/features',
+            flags: resolverFeatureFlags
+          }
+        }]
+      ]
+    };
+  },
+
   included: function() {
     this._super.included.apply(this, arguments);
 
