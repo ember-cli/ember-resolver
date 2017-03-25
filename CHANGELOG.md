@@ -1,5 +1,12 @@
 # Change Log
 
+## [v4.0.0](https://github.com/ember-cli/ember-resolver/tree/v4.0.0) (2017-03-25)
+[Full Changelog](https://github.com/ember-cli/ember-resolver/compare/v3.0.1...v4.0.0)
+
+**Merged pull requests:**
+
+- Update to Babel 6. [\#179](https://github.com/ember-cli/ember-resolver/pull/179) ([rwjblue](https://github.com/rwjblue))
+
 ## [v3.0.1](https://github.com/ember-cli/ember-resolver/tree/v3.0.1) (2017-03-24)
 [Full Changelog](https://github.com/ember-cli/ember-resolver/compare/v3.0.0...v3.0.1)
 
