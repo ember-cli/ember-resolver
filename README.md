@@ -1,7 +1,7 @@
 # Ember Resolver [![Build Status](https://travis-ci.org/ember-cli/ember-resolver.svg?branch=master)](https://travis-ci.org/ember-cli/ember-resolver)
 
 
-This project is tracking a new resolver based on ES6 semantics that has been extracted from (and used by) the following projects:
+This project provides the Ember resolver used by the following projects:
 
 * [ember-cli](https://github.com/ember-cli/ember-cli)
 * [ember-app-kit](https://github.com/stefanpenner/ember-app-kit)
@@ -9,17 +9,67 @@ This project is tracking a new resolver based on ES6 semantics that has been ext
 
 ## Installation
 
-Ember-resolver was previously a bower package, but since v1.0.1, it has become an ember-cli addon, and should be installed with `ember install`:
+`ember-resolver` is an ember-cli addon, and should be installed with `ember install`:
+
 ```
 ember install ember-resolver
 ```
 
-If you're currently using ember-resolver v0.1.x in your project, you should uninstall it:
+## Feature flags
+
+This resolver package supports feature flags for experimental changes. Feature
+flag settings change how `ember-resolver` compiles into an ember-cli's
+`vendor.js`, so you should think of them as an application build-time option.
+
+Feature flags are set in an application's `config/environment.js`:
+
+```js
+/* eslint-env node */
+
+module.exports = function(environment) {
+  var ENV = {
+    'ember-resolver': {
+      features: {
+        EMBER_RESOLVER_MODULE_UNIFICATION: true
+      }
+    },
+    /* ... */
+```
+
+Note that you must restart your ember-cli server for changes to the `flags` to
+register.
+
+In the `ember-resolver` codebase, you can import these flags:
+
+```js
+import { EMBER_RESOLVER_MODULE_UNIFICATION } from 'ember-resolver/features';
+```
+
+#### Current feature flags
+
+* None at this time.
+
+## Upgrading
+
+`ember-resolver` is normally bumped with ember-cli releases. To install a newer
+version use `yarn` or `npm`. For example:
+
+```
+yarn upgrade ember-resolver
+```
+
+#### Migrating from bower
+
+Before v1.0.1 `ember-resolver` was primarially consumed bia bower. To migrate
+install the addon version via `yarn` or `npm`. If you're currently using
+`ember-resolver` v0.1.x in your project, you should uninstall it:
+
 ```
 bower uninstall ember-resolver --save
 ```
 
-_You can continue to use ember-resolver v0.1.x as a bower package, but be careful not to update it to versions greater than v1.0._
+_You can continue to use ember-resolver v0.1.x as a bower package, but be
+careful not to update it to versions greater than v1.0._
 
 ## Addon Development
 
