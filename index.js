@@ -2,23 +2,30 @@
 'use strict';
 
 var VersionChecker = require('ember-cli-version-checker');
+var path = require('path');
 
 module.exports = {
   name: 'ember-resolver',
+
+  emberResolverFeatureFlags() {
+    var config = this.project.config();
+    var resolverConfig = config['ember-resolver'] || {};
+
+    return Object.assign({
+      /* Add default feature flags here */
+      EMBER_RESOLVER_MODULE_UNIFICATION: true
+    }, resolverConfig.features);
+  },
 
   init: function() {
     this._super.init.apply(this, arguments);
     this.options = this.options || {};
 
-    var config = this.project.config();
-    var resolverConfig = config['ember-resolver'] || {};
-
-    var resolverFeatureFlags = Object.assign({
-      /* Add default feature flags here */
-    }, resolverConfig.features);
+    this._emberResolverFeatureFlags = this.emberResolverFeatureFlags();
 
     this.options.babel = {
       loose: true,
+      blacklist: ['es6.modules'],
       plugins: [
         [require('babel-plugin-debug-macros').default, {
           debugTools: {
@@ -31,11 +38,42 @@ module.exports = {
           features: {
             name: 'ember-resolver',
             source: 'ember-resolver/features',
-            flags: resolverFeatureFlags
+            flags: this._emberResolverFeatureFlags
           }
         }]
       ]
     };
+  },
+
+  treeForAddon: function() {
+    var MergeTrees = require('broccoli-merge-trees');
+    let addonTrees = [].concat(
+      this._super.treeForAddon.apply(this, arguments),
+      this._emberResolverFeatureFlags.EMBER_RESOLVER_MODULE_UNIFICATION && this._moduleUnificationTrees()
+    ).filter(Boolean);
+
+    return new MergeTrees(addonTrees);
+  },
+
+  _moduleUnificationTrees() {
+    var Funnel = require('broccoli-funnel');
+
+    var glimmerResolverSrc = require.resolve('@glimmer/resolver/package');
+    var glimmerResolverTree = new Funnel(path.dirname(glimmerResolverSrc), {
+      srcDir: 'dist/modules/es2017',
+      destDir: '@glimmer/resolver'
+    });
+
+    var glimmerDISrc = require.resolve('@glimmer/di/package');
+    var glimmerDITree = new Funnel(path.dirname(glimmerDISrc), {
+      srcDir: 'dist/modules/es2017',
+      destDir: '@glimmer/di'
+    });
+
+    return [
+      this.preprocessJs(glimmerResolverTree, { registry: this.registry }),
+      this.preprocessJs(glimmerDITree, { registry: this.registry }),
+    ];
   },
 
   included: function() {
