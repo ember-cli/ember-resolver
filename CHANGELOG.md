@@ -1,5 +1,13 @@
 # Change Log
 
+## [v4.1.0](https://github.com/ember-cli/ember-resolver/tree/v4.1.0) (2017-03-28)
+[Full Changelog](https://github.com/ember-cli/ember-resolver/compare/v4.0.0...v4.1.0)
+
+**Merged pull requests:**
+
+- Initial implementation of the module unification feature flag [\#182](https://github.com/ember-cli/ember-resolver/pull/182) ([mixonic](https://github.com/mixonic))
+- Feature flags [\#180](https://github.com/ember-cli/ember-resolver/pull/180) ([mixonic](https://github.com/mixonic))
+
 ## [v4.0.0](https://github.com/ember-cli/ember-resolver/tree/v4.0.0) (2017-03-25)
 [Full Changelog](https://github.com/ember-cli/ember-resolver/compare/v3.0.1...v4.0.0)
 
