@@ -55,6 +55,7 @@ module.exports = {
   },
 
   _moduleUnificationTrees() {
+    var resolve = require('resolve');
     var Funnel = require('broccoli-funnel');
 
     let featureTreePath = path.join(this.root, 'mu-trees/addon');
@@ -63,13 +64,14 @@ module.exports = {
     });
 
     var glimmerResolverSrc = require.resolve('@glimmer/resolver/package');
-    var glimmerResolverTree = new Funnel(path.dirname(glimmerResolverSrc), {
+    var glimmerResolverPath = path.dirname(glimmerResolverSrc);
+    var glimmerResolverTree = new Funnel(glimmerResolverPath, {
       srcDir: 'dist/modules/es2017',
       destDir: '@glimmer/resolver'
     });
 
-    var glimmerDISrc = require.resolve('@glimmer/di/package');
-    var glimmerDITree = new Funnel(path.dirname(glimmerDISrc), {
+    var glimmerDISrc = resolve.sync('@glimmer/di', { basedir: glimmerResolverPath });
+    var glimmerDITree = new Funnel(path.join(glimmerDISrc, '../../../..'), {
       srcDir: 'dist/modules/es2017',
       destDir: '@glimmer/di'
     });
