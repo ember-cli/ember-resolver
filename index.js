@@ -13,7 +13,7 @@ module.exports = {
 
     return Object.assign({
       /* Add default feature flags here */
-      EMBER_RESOLVER_MODULE_UNIFICATION: true
+      EMBER_RESOLVER_MODULE_UNIFICATION: false
     }, resolverConfig.features);
   },
 
@@ -25,7 +25,6 @@ module.exports = {
 
     this.options.babel = {
       loose: true,
-      blacklist: ['es6.modules'],
       plugins: [
         [require('babel-plugin-debug-macros').default, {
           debugTools: {
@@ -58,6 +57,11 @@ module.exports = {
   _moduleUnificationTrees() {
     var Funnel = require('broccoli-funnel');
 
+    let featureTreePath = path.join(this.root, 'mu-trees/addon');
+    var featureTree = new Funnel(featureTreePath, {
+      destDir: 'ember-resolver'
+    });
+
     var glimmerResolverSrc = require.resolve('@glimmer/resolver/package');
     var glimmerResolverTree = new Funnel(path.dirname(glimmerResolverSrc), {
       srcDir: 'dist/modules/es2017',
@@ -71,6 +75,7 @@ module.exports = {
     });
 
     return [
+      this.preprocessJs(featureTree, { registry: this.registry }),
       this.preprocessJs(glimmerResolverTree, { registry: this.registry }),
       this.preprocessJs(glimmerDITree, { registry: this.registry }),
     ];
