@@ -2,6 +2,10 @@
 module.exports = {
   scenarios: [
     {
+      name: 'module-unification',
+      command: 'EMBER_RESOLVER_MODULE_UNIFICATION=true ember test'
+    },
+    {
       name: 'default',
       bower: {
         dependencies: { }

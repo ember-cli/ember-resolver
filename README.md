@@ -45,9 +45,32 @@ In the `ember-resolver` codebase, you can import these flags:
 import { EMBER_RESOLVER_MODULE_UNIFICATION } from 'ember-resolver/features';
 ```
 
-#### Current feature flags
+### Current feature flags
 
-* None at this time.
+#### `EMBER_RESOLVER_MODULE_UNIFICATION`
+
+Ember [RFC #154](https://github.com/emberjs/rfcs/blob/master/text/0143-module-unification.md)
+describes an improved resolution strategy and filename-on-disk
+layout for Ember applications. To experiment with this feature
+it must be enabled as described above, then use the `src/`
+directory on disk. You can generate a new app that uses
+this layout by using the following commands:
+
+```
+# Install Ember-CLI canary globally:
+npm install -g ember-cli/ember-cli
+# Create a new app with the module unification blueprint
+ember new my-app -b ember-module-unification-blueprint
+```
+
+This will create an app running a module unification layout from
+the
+[ember-module-unification-blueprint](https://github.com/emberjs/ember-module-unification-blueprint)
+package. By default, this app will be correctly configured.
+
+  * It uses the `glimmer-wrapper` resolver.
+  * It builds an glimmer resolver config and passes it to the resolver.
+  * It starts with a `src/` based layout on disk.
 
 ## Upgrading
 
@@ -58,7 +81,7 @@ version use `yarn` or `npm`. For example:
 yarn upgrade ember-resolver
 ```
 
-#### Migrating from bower
+### Migrating from bower
 
 Before v1.0.1 `ember-resolver` was primarially consumed bia bower. To migrate
 install the addon version via `yarn` or `npm`. If you're currently using

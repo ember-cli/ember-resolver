@@ -1,9 +1,27 @@
+'use strict';
 /*jshint node:true*/
 /* global require, module */
 var EmberAddon = require('ember-cli/lib/broccoli/ember-addon');
+var MergeTrees = require('broccoli-merge-trees');
+var Funnel = require('broccoli-funnel');
 
 module.exports = function(defaults) {
+  let testTrees = [new Funnel('tests', {
+    exclude: [/^dummy/],
+  })];
+
+  let config = defaults.project.config();
+  let resolverConfig = config['ember-resolver'] || {};
+
+  if (resolverConfig.features.EMBER_RESOLVER_MODULE_UNIFICATION) {
+    testTrees.push('mu-trees/tests');
+  }
+
   var app = new EmberAddon(defaults, {
+    trees: {
+      tests: new MergeTrees(testTrees)
+    },
+
     // Add options here
     vendorFiles: {
       'ember-resolver.js': null
