@@ -325,3 +325,87 @@ test('Can resolve a top level template of a definitive type', function(assert) {
     'relative module specifier with source resolved'
   );
 });
+
+test('Can resolve a private component & template for a route using local lookup; nested under /-components', function(assert) {
+  let template = {};
+  let component = {};
+  let componentTemplate = {};
+  let resolver = this.resolverForEntries({
+    app: {
+      name: 'example-app'
+    },
+    types: {
+      component: { definitiveCollection: 'components' },
+      route: { definitiveCollection: 'routes' },
+      template: { definitiveCollection: 'components' }
+    },
+    collections: {
+      components: {
+        group: 'ui',
+        types: [ 'component', 'template' ]
+      },
+      routes: {
+        group: 'ui',
+        types: [ 'route', 'template' ]
+      }
+    }
+  }, {
+    'template:/app/routes/posts': template,
+    'template:/app/routes/posts/-components/my-input': componentTemplate,
+    'component:/app/routes/posts/-components/my-input': component
+  });
+
+  assert.equal(
+    resolver.resolve('component:my-input', 'template:/app/routes/posts/-components'),
+    component,
+    'relative component module specifier with source resolved'
+  );
+
+  assert.equal(
+    resolver.resolve('template:my-input', 'template:/app/routes/posts/-components'),
+    componentTemplate,
+    'relative template module specifier with source resolved'
+  );
+});
+
+test('Can resolve a private component & template belonging to another component using local lookup', function(assert) {
+  let template = {};
+  let component = {};
+  let componentTemplate = {};
+  let resolver = this.resolverForEntries({
+    app: {
+      name: 'example-app'
+    },
+    types: {
+      component: { definitiveCollection: 'components' },
+      route: { definitiveCollection: 'routes' },
+      template: { definitiveCollection: 'components' }
+    },
+    collections: {
+      components: {
+        group: 'ui',
+        types: [ 'component', 'template' ]
+      },
+      routes: {
+        group: 'ui',
+        types: [ 'route', 'template' ]
+      }
+    }
+  }, {
+    'template:/app/components/my-post': template,
+    'template:/app/components/my-post/my-input': componentTemplate,
+    'component:/app/components/my-post/my-input': component
+  });
+
+  assert.equal(
+    resolver.resolve('template:my-input', 'template:/app/components/my-post'),
+    componentTemplate,
+    'relative template module specifier with source resolved'
+  );
+
+  assert.equal(
+    resolver.resolve('component:my-input', 'template:/app/components/my-post'),
+    component,
+    'relative component module specifier with source resolved'
+  );
+});
