@@ -83,7 +83,7 @@ yarn upgrade ember-resolver
 
 ### Migrating from bower
 
-Before v1.0.1 `ember-resolver` was primarially consumed bia bower. To migrate
+Before v1.0.1 `ember-resolver` was primarially consumed via bower. To migrate
 install the addon version via `yarn` or `npm`. If you're currently using
 `ember-resolver` v0.1.x in your project, you should uninstall it:
 
