@@ -22,12 +22,12 @@ const Resolver = DefaultResolver.extend({
 
   normalize: null,
 
-  resolve(lookupString) {
-    return this._resolve(lookupString);
+  resolve(lookupString, referrer) {
+    return this._resolve(lookupString, referrer);
   },
 
-  _resolve(lookupString) {
-    return this._glimmerResolver.resolve(lookupString);
+  _resolve(lookupString, referrer) {
+    return this._glimmerResolver.resolve(lookupString, referrer);
   }
 });
 

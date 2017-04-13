@@ -8,6 +8,7 @@ export let config = {
   },
   types: {
     component: { definitiveCollection: 'components' },
+    location: { definitiveCollection: 'locations' },
     partial: { definiteCollection: 'partials' },
     service: { definitiveCollection: 'services' },
     route: { definitiveCollection: 'routes' },
@@ -44,28 +45,57 @@ export let config = {
 
 module('RequireJS Registry', {
   beforeEach() {
-
     this.config = config;
-    this.registry = new RequireJSRegistry(this.config, 'src');
   }
 });
 
 test('Normalize', function(assert) {
-  assert.expect(10);
+  assert.expect(11);
+  this.registry = new RequireJSRegistry(this.config, 'src');
+
+  [
+    [ 'router:/my-app/main/main', 'my-app/src/router', '' ],
+    [ 'route:/my-app/routes/application', 'my-app/src/ui/routes/application', 'route' ],
+    [ 'template:/my-app/routes/application', 'my-app/src/ui/routes/application/template', '' ],
+    [ 'component:/my-app/components/my-input', 'my-app/src/ui/components/my-input', 'component' ],
+    [ 'template:/my-app/routes/components/my-input', 'my-app/src/ui/components/my-input/template', '' ],
+    [ 'template:/my-app/components/my-input', 'my-app/src/ui/components/my-input/template', '' ],
+    [ 'component:/my-app/components/my-input/my-button', 'my-app/src/ui/components/my-input/my-button', 'component' ],
+    [ 'template:/my-app/components/my-input/my-button', 'my-app/src/ui/components/my-input/my-button/template', '' ],
+    [ 'template:/my-app/routes/-author', 'my-app/src/ui/partials/author', '' ],
+    [ 'service:/my-app/services/auth', 'my-app/src/services/auth', 'service' ],
+    [ 'location:/my-app/main/auth-dependent', 'my-app/src/locations/auth-dependent', 'location' ]
+  ]
+  .forEach(([ lookupString, path, type ]) => {
+    assert.deepEqual(this.registry.normalize(lookupString), { path, type }, `normalize ${lookupString} -> ${path}, ${type}`);
+  });
+});
+
+test('has', function(assert) {
+  assert.expect(16);
 
   [
     [ 'router:/my-app/main/main', 'my-app/src/router' ],
+    [ 'route:/my-app/routes/application', 'my-app/src/ui/routes/application' ],
     [ 'route:/my-app/routes/application', 'my-app/src/ui/routes/application/route' ],
     [ 'template:/my-app/routes/application', 'my-app/src/ui/routes/application/template' ],
+    [ 'component:/my-app/components/my-input', 'my-app/src/ui/components/my-input' ],
     [ 'component:/my-app/components/my-input', 'my-app/src/ui/components/my-input/component' ],
     [ 'template:/my-app/routes/components/my-input', 'my-app/src/ui/components/my-input/template' ],
     [ 'template:/my-app/components/my-input', 'my-app/src/ui/components/my-input/template' ],
+    [ 'component:/my-app/components/my-input/my-button', 'my-app/src/ui/components/my-input/my-button' ],
     [ 'component:/my-app/components/my-input/my-button', 'my-app/src/ui/components/my-input/my-button/component' ],
     [ 'template:/my-app/components/my-input/my-button', 'my-app/src/ui/components/my-input/my-button/template' ],
     [ 'template:/my-app/routes/-author', 'my-app/src/ui/partials/author' ],
-    [ 'service:/my-app/services/auth', 'my-app/src/services/auth/service' ]
+    [ 'service:/my-app/services/auth', 'my-app/src/services/auth' ],
+    [ 'service:/my-app/services/auth', 'my-app/src/services/auth/service' ],
+    [ 'location:/my-app/main/auth-dependent', 'my-app/src/locations/auth-dependent' ],
+    [ 'location:/my-app/main/auth-dependent', 'my-app/src/locations/auth-dependent/location' ]
   ]
-  .forEach(([ lookupString, expected ]) => {
-    assert.equal(this.registry.normalize(lookupString), expected, `normalize ${lookupString} -> ${expected}`);
+  .forEach(([ lookupString, expectedPath ]) => {
+    const mockEntries = [];
+    mockEntries[expectedPath] = true;
+    this.registry = new RequireJSRegistry(this.config, 'src', { entries: mockEntries });
+    assert.ok(this.registry.has(lookupString), `registry has ${lookupString} at ${expectedPath}`);
   });
 });

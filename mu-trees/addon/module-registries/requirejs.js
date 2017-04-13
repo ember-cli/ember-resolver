@@ -5,9 +5,11 @@ import {
 
 export default class RequireJSRegistry {
 
-  constructor(config, modulePrefix) {
+  constructor(config, modulePrefix, _requirejs = requirejs, _require = require) {
     this._config = config;
     this._modulePrefix = modulePrefix;
+    this.requirejs = _requirejs;
+    this.require = _require;
   }
 
   normalize(specifier) {
@@ -39,6 +41,14 @@ export default class RequireJSRegistry {
       s.collection === 'routes' &&
       s.namespace === 'components';
 
+    // Ember requests location as
+    // "location:/my-app/main/location-name"
+    // so deserializer incorrectly sets collection to
+    // 'main' instead of 'location'
+    if (s.type === 'location') {
+      s.collection = 'locations';
+    }
+
     if (s.collection !== 'main' && !ignoreCollection) {
       segments.push(s.collection);
     }
@@ -51,22 +61,50 @@ export default class RequireJSRegistry {
       segments.push(s.name);
     }
 
-    if (!isPartial) {
+    // Things like a service or route can exist at
+    // my-app/src/ui/routes/application or
+    // my-app/src/ui/routes/application/route
+    // Certain things like templates, things are exist as 'main',
+    // and partials, cannot.
+    // TODO MAKE CONFIGURABLE
+    const allowOptionalTypeSuffix = (s.collection !== 'main') &&
+          (s.type !== 'template') &&
+          (!isPartial);
+
+    const type = allowOptionalTypeSuffix ? s.type : '';
+
+    if (!allowOptionalTypeSuffix && !isPartial) {
       segments.push(s.type);
     }
 
     let path = segments.join('/');
 
-    return path;
+    return {
+      path,
+      type
+    };
+  }
+
+  _pathForSpecifier(specifier) {
+    const { path, type } = this.normalize(specifier);
+
+    if (path in this.requirejs.entries) {
+      return path;
+    }
+
+    if (!type) { return; }
+
+    let typedPath = `${path}/${type}`;
+
+    return typedPath in this.requirejs.entries && typedPath;
   }
 
   has(specifier) {
-    let path = this.normalize(specifier);
-    return path in requirejs.entries;
+    return !!this._pathForSpecifier(specifier);
   }
 
   get(specifier) {
-    let path = this.normalize(specifier);
-    return require(path).default;
+    const path = this._pathForSpecifier(specifier);
+    return this.require(path).default;
   }
 }
