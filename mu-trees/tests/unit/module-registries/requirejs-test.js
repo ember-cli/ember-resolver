@@ -42,11 +42,17 @@ export let config = {
   }
 };
 
+function buildMockRequire() {
+  let mockRequire = modulePath => mockRequire.entries[modulePath];
+  mockRequire.entries = {};
+  return mockRequire;
+}
+
 module('RequireJS Registry', {
   beforeEach() {
-
+    this.mockRequire = buildMockRequire();
     this.config = config;
-    this.registry = new RequireJSRegistry(this.config, 'src');
+    this.registry = new RequireJSRegistry(this.config, 'src', this.mockRequire);
   }
 });
 
@@ -66,6 +72,11 @@ test('Normalize', function(assert) {
     [ 'service:/my-app/services/auth', 'my-app/src/services/auth/service' ]
   ]
   .forEach(([ lookupString, expected ]) => {
-    assert.equal(this.registry.normalize(lookupString), expected, `normalize ${lookupString} -> ${expected}`);
+    let expectedModule = {};
+    this.mockRequire.entries = {
+      [expected]: {default: expectedModule}
+    };
+    let actualModule = this.registry.get(lookupString);
+    assert.equal(actualModule, expectedModule, `normalize ${lookupString} -> ${expected}`);
   });
 });

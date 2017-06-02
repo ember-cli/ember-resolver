@@ -5,12 +5,13 @@ import {
 
 export default class RequireJSRegistry {
 
-  constructor(config, modulePrefix) {
+  constructor(config, modulePrefix, require=self.requirejs) {
     this._config = config;
     this._modulePrefix = modulePrefix;
+    this._require = require;
   }
 
-  normalize(specifier) {
+  _normalize(specifier) {
     let s = deserializeSpecifier(specifier);
 
     // This is hacky solution to get around the fact that Ember
@@ -31,10 +32,10 @@ export default class RequireJSRegistry {
       segments.push(group);
     }
 
-    // Special case to handle definiteCollection for templates
+    // Special case to handle definitiveCollection for templates
     // eventually want to find a better way to address.
     // Dgeb wants to find a better way to handle these
-    // in config without needing definiteCollections.
+    // in config without needing definitiveCollection.
     let ignoreCollection = s.type === 'template' &&
       s.collection === 'routes' &&
       s.namespace === 'components';
@@ -61,12 +62,15 @@ export default class RequireJSRegistry {
   }
 
   has(specifier) {
-    let path = this.normalize(specifier);
-    return path in requirejs.entries;
+    let path = this._normalize(specifier);
+    // Worth noting this does not confirm there is a default export,
+    // as would be expected with this simple implementation of the module
+    // registry.
+    return path in this._require.entries;
   }
 
   get(specifier) {
-    let path = this.normalize(specifier);
-    return require(path).default;
+    let path = this._normalize(specifier);
+    return this._require(path).default;
   }
 }
