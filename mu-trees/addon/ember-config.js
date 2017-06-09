@@ -36,7 +36,6 @@ export default function generateConfig(name) {
         }
       },
       transform: { definitiveCollection: 'transforms' },
-      util: { definitiveCollection: 'utils' },
       view: { definitiveCollection: 'views' },
       '-view-registry': { definitiveCollection: 'main' },
       '-bucket-cache': { definitiveCollection: 'main' }
@@ -47,40 +46,55 @@ export default function generateConfig(name) {
       },
       components: {
         group: 'ui',
+        privateCollections: ['utils'],
         types: ['component', 'helper', 'template']
       },
       initializers: {
         group: 'init',
+        defaultType: 'initializer',
+        privateCollections: ['utils'],
         types: ['initializer']
       },
       'instance-initializers': {
         group: 'init',
+        defaultType: 'instance-initializer',
+        privateCollections: ['utils'],
         types: ['instance-initializers']
       },
       models: {
         group: 'data',
+        defaultType: 'model',
+        privateCollections: ['utils'],
         types: ['model', 'adapter', 'serializer']
       },
       partials: {
         group: 'ui',
+        defaultType: 'partial',
+        privateCollections: ['utils'],
         types: ['partial']
       },
       routes: {
         group: 'ui',
-        privateCollections: ['components'],
+        privateCollections: ['components', 'utils'],
         types: ['route', 'controller', 'template']
       },
       services: {
+        defaultType: 'service',
+        privateCollections: ['utils'],
         types: ['service']
       },
       utils: {
         unresolvable: true
       },
       views: {
+        defaultType: 'view',
+        privateCollections: ['utils'],
         types: ['view']
       },
       transforms: {
         group: 'data',
+        defaultType: 'transform',
+        privateCollections: ['utils'],
         types: ['transform']
       }
     }
