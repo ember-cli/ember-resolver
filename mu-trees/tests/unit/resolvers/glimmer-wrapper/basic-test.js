@@ -325,3 +325,30 @@ test('Can resolve a top level template of a definitive type', function(assert) {
     'relative module specifier with source resolved'
   );
 });
+
+test('Can resolve a partial', function(assert) {
+  let template = {};
+  let resolver = this.resolverForEntries({
+    app: {
+      name: 'example-app'
+    },
+    types: {
+      partial: { definitiveCollection: 'partials' }
+    },
+    collections: {
+      partials: {
+        group: 'ui',
+        defaultType: 'partial',
+        types: ['partial']
+      }
+    }
+  }, {
+    'partial:/app/partials/author': template
+  });
+
+  assert.equal(
+    resolver.resolve('template:_author', ''),
+    template,
+    'partial resolved'
+  );
+});

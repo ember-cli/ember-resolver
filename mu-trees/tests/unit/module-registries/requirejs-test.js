@@ -32,11 +32,13 @@ export let config = {
       types: [ 'template' ]
     },
     routes: {
+      defaultType: 'route',
       group: 'ui',
       privateCollections: ['components'],
       types: ['route', 'controller', 'template']
     },
     services: {
+      defaultType: 'service',
       types: ['service']
     }
   }
@@ -51,15 +53,25 @@ function buildMockRequire() {
 module('RequireJS Registry', {
   beforeEach() {
     this.mockRequire = buildMockRequire();
+    this.mockRequire.entries = {};
     this.config = config;
     this.registry = new RequireJSRegistry(this.config, 'src', this.mockRequire);
+  },
+
+  addModule(name, module) {
+    this.mockRequire.entries[name] = module;
   }
+
 });
 
-test('Normalize', function(assert) {
-  assert.expect(10);
+test('basic get', function(assert) {
+  assert.expect(8);
 
   [
+    /*
+     * Over time lets move these general cases into specific tests that
+     * describe their aim.
+     */
     [ 'router:/my-app/main/main', 'my-app/src/router' ],
     [ 'route:/my-app/routes/application', 'my-app/src/ui/routes/application/route' ],
     [ 'template:/my-app/routes/application', 'my-app/src/ui/routes/application/template' ],
@@ -67,9 +79,7 @@ test('Normalize', function(assert) {
     [ 'template:/my-app/routes/components/my-input', 'my-app/src/ui/components/my-input/template' ],
     [ 'template:/my-app/components/my-input', 'my-app/src/ui/components/my-input/template' ],
     [ 'component:/my-app/components/my-input/my-button', 'my-app/src/ui/components/my-input/my-button/component' ],
-    [ 'template:/my-app/components/my-input/my-button', 'my-app/src/ui/components/my-input/my-button/template' ],
-    [ 'template:/my-app/routes/-author', 'my-app/src/ui/partials/author' ],
-    [ 'service:/my-app/services/auth', 'my-app/src/services/auth/service' ]
+    [ 'template:/my-app/components/my-input/my-button', 'my-app/src/ui/components/my-input/my-button/template' ]
   ]
   .forEach(([ lookupString, expected ]) => {
     let expectedModule = {};
@@ -77,6 +87,39 @@ test('Normalize', function(assert) {
       [expected]: {default: expectedModule}
     };
     let actualModule = this.registry.get(lookupString);
-    assert.equal(actualModule, expectedModule, `normalize ${lookupString} -> ${expected}`);
+    assert.equal(actualModule, expectedModule, `get ${lookupString} -> ${expected}`);
   });
+});
+
+test('typed module name with default export', function(assert) {
+  let expectedModule = {};
+  this.addModule(`my-app/src/ui/routes/index/route`, {default: expectedModule});
+
+  let actualModule = this.registry.get(`route:/my-app/routes/index`);
+  assert.equal(
+    actualModule, expectedModule,
+    `resolved the module`
+  );
+});
+
+test('un-typed module name with default export when resolved type is the defaultType', function(assert) {
+  let expectedModule = {};
+  this.addModule(`my-app/src/ui/routes/index`, {default: expectedModule});
+
+  let actualModule = this.registry.get(`route:/my-app/routes/index`);
+  assert.equal(
+    actualModule, expectedModule,
+    `resolved the module`
+  );
+});
+
+test('un-typed module name with default export when resolved type is not the defaultType', function(assert) {
+  let expectedModule = {};
+  this.addModule(`my-app/src/ui/routes/index`, {default: expectedModule});
+
+  let actualModule = this.registry.get(`template:/my-app/routes/index`);
+  assert.notOk(
+    actualModule,
+    `did not resolve the module`
+  );
 });

@@ -11,19 +11,7 @@ export default class RequireJSRegistry {
     this._require = require;
   }
 
-  _normalize(specifier) {
-    let s = deserializeSpecifier(specifier);
-
-    // This is hacky solution to get around the fact that Ember
-    // doesn't know it is requesting a partial. It requests something like
-    // 'template:/my-app/routes/-author'
-    // Would be better to request 'template:my-app/partials/author'
-    let isPartial = s.type === 'template' && s.name[0] === '-';
-    if (isPartial) {
-      s.name = s.name.slice(1);
-      s.collection = 'partials';
-    }
-
+  _baseSegments(s) {
     let collectionDefinition = this._config.collections[s.collection];
     let group = collectionDefinition && collectionDefinition.group;
     let segments = [ s.rootName, this._modulePrefix ];
@@ -52,25 +40,54 @@ export default class RequireJSRegistry {
       segments.push(s.name);
     }
 
-    if (!isPartial) {
-      segments.push(s.type);
+    return segments;
+  }
+
+  _detectModule(specifierString, lookupMethod) {
+    let specifier = deserializeSpecifier(specifierString);
+
+    let segments = this._baseSegments(specifier);
+    let basePath = `${segments.join('/')}`;
+    let typedPath = `${basePath}/${specifier.type}`;
+
+    let lookupResult = lookupMethod(typedPath);
+
+    if (
+      !lookupResult &&
+      this._config.collections[specifier.collection].defaultType === specifier.type
+    ) {
+      lookupResult = lookupMethod(basePath);
     }
 
-    let path = segments.join('/');
-
-    return path;
+    return lookupResult;
   }
 
-  has(specifier) {
-    let path = this._normalize(specifier);
-    // Worth noting this does not confirm there is a default export,
-    // as would be expected with this simple implementation of the module
-    // registry.
-    return path in this._require.entries;
+  has(specifierString) {
+    return this._detectModule(specifierString, path => {
+      /*
+       * Worth noting this does not confirm there is a default export,
+       * as would be expected with this simple implementation of the module
+       * registry.
+       *
+       * To preserve sanity, the `get` method throws when a `default`
+       * export is not found.
+       */
+      return path in this._require.entries;
+    });
   }
 
-  get(specifier) {
-    let path = this._normalize(specifier);
-    return this._require(path).default;
+  get(specifierString) {
+    let module = this._detectModule(specifierString, path => {
+      return (path in this._require.entries) && this._require(path);
+    });
+
+    if (!module) {
+      return module;
+    }
+
+    if (!module.default) {
+      throw new Error('RequireJSRegistry expects all resolved modules to have a default export.');
+    }
+    return module.default;
   }
 }
