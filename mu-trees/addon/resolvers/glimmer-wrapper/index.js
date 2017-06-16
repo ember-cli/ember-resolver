@@ -24,9 +24,9 @@ const Resolver = DefaultResolver.extend({
 
   normalize: null,
 
-  resolve(lookupString) {
+  resolve(lookupString, referrer) {
     /*
-     * Ember paritals are looked up as templates. Here we replace the template
+     * Ember partials are looked up as templates. Here we replace the template
      * resolution with a partial resolute when appropriate. Try to keep this
      * code as "pay-go" as possible.
      */
@@ -34,11 +34,25 @@ const Resolver = DefaultResolver.extend({
     if (lookupString.indexOf('template:') === 0) {
       lookupString = this._templateToPartial(lookupString);
     }
-    return this._resolve(lookupString);
+    return this._resolve(lookupString, referrer);
   },
 
-  _resolve(lookupString) {
-    return this._glimmerResolver.resolve(lookupString);
+  _resolve(lookupString, referrer) {
+    if (referrer) {
+      // make absolute
+      let appName = this.config.app.name;
+      let parts = referrer.split(':src/ui/');
+      referrer = `${parts[0]}:/${appName}/${parts[1]}`;
+      referrer = referrer.split('/template.hbs')[0];
+
+      // glimmer resolver will throw and error if specifier has as collection
+      let match = lookupString.match(/^template:components\/(.*)/);
+      if (match) {
+        lookupString = `template:${match[1]}`;
+      }
+    }
+
+    return this._glimmerResolver.resolve(lookupString, referrer);
   },
 
   /*
