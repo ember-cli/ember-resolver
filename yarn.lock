@@ -6,9 +6,9 @@
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/@glimmer/di/-/di-0.2.0.tgz#73bfd4a6ee4148a80bf092e8a5d29bcac9d4ce7e"
 
-"@glimmer/resolver@^0.3.0":
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/@glimmer/resolver/-/resolver-0.3.0.tgz#65451a2195259ce26518715631c38dd7c144e821"
+"@glimmer/resolver@0.4.0":
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/@glimmer/resolver/-/resolver-0.4.0.tgz#7fe8709342064f144c14c06088d6dc4070ad7d1d"
   dependencies:
     "@glimmer/di" "^0.2.0"
 

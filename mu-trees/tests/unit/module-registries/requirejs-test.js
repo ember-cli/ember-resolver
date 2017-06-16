@@ -12,12 +12,7 @@ export let config = {
     service: { definitiveCollection: 'services' },
     route: { definitiveCollection: 'routes' },
     router: { definitiveCollection: 'main' },
-    template: {
-      definitiveCollection: 'routes',
-      fallbackCollectionPrefixes: {
-        'components': 'components'
-      }
-    }
+    template: { definitiveCollection: 'components' }
   },
   collections: {
     'main': {
