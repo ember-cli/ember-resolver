@@ -15,10 +15,16 @@ export default function generateConfig(name) {
       adapter: { definitiveCollection: 'models' },
       application: { definitiveCollection: 'main' },
       controller: { definitiveCollection: 'routes' },
-      component: { definitiveCollection: 'components' },
+      component: {
+        definitiveCollection: 'components',
+        privateCollection: 'components'
+      },
       'component-lookup': { definitiveCollection: 'main' },
       event_dispatcher: { definitiveCollection: 'main' },
-      helper: { definitiveCollection: 'components' },
+      helper: {
+        definitiveCollection: 'components',
+        privateCollection: 'components'
+      },
       initializer: { definitiveCollection: 'initializers' },
       'instance-initializers': { definitiveCollection: 'instance-initializer' },
       location: { definitiveCollection: 'main' },
@@ -31,6 +37,7 @@ export default function generateConfig(name) {
       service: { definitiveCollection: 'services' },
       template: {
         definitiveCollection: 'routes',
+        privateCollection: 'components',
         fallbackCollectionPrefixes: {
           'components': 'components'
         }
