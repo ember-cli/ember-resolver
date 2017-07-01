@@ -201,7 +201,7 @@ const Resolver = DefaultResolver.extend({
     let podPrefix = this.namespace.podModulePrefix || this.namespace.modulePrefix;
     podPrefix = podPrefix + '/components';
 
-    if (parsedName.type === 'component' || parsedName.fullNameWithoutType.match(/^components/)) {
+    if (parsedName.type === 'component' || /^components/.test(parsedName.fullNameWithoutType)) {
       return this.podBasedLookupWithPrefix(podPrefix, parsedName);
     }
   },
@@ -323,8 +323,9 @@ const Resolver = DefaultResolver.extend({
 
       return partializedModuleName;
     }
+
     Ember.runInDebug(() => {
-      let isCamelCaseHelper = parsedName.type === 'helper' && !!moduleName.match(/[a-z]+[A-Z]+/);
+      let isCamelCaseHelper = parsedName.type === 'helper' && /[a-z]+[A-Z]+/.test(moduleName);
       if (isCamelCaseHelper) {
         this._camelCaseHelperWarnedNames = this._camelCaseHelperWarnedNames || [];
         let alreadyWarned = this._camelCaseHelperWarnedNames.indexOf(parsedName.fullName) > -1;
@@ -358,10 +359,8 @@ const Resolver = DefaultResolver.extend({
       return;
     }
 
-    let symbol, padding;
-
-    if (found) { symbol = '[✓]'; }
-    else       { symbol = '[ ]'; }
+    let padding;
+    let symbol = found ? '[✓]' : '[ ]';
 
     if (parsedName.fullName.length > 60) {
       padding = '.';
