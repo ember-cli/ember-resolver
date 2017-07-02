@@ -1,4 +1,4 @@
-/* globals requirejs */
+/* globals requirejs, define */
 
 import Ember from 'ember';
 import require from 'require';
