@@ -27,19 +27,18 @@ const Resolver = DefaultResolver.extend({
   normalize: null,
 
   resolve(lookupString, referrer) {
+    /*
+     * Ember components require their lookupString to be massaged. Make this
+     * as "pay-go" as possible.
+     */
+    if (referrer) {
+      // make absolute
+      let parts = referrer.split(':src/ui/');
+      referrer = `${parts[0]}:/${this._configRootName}/${parts[1]}`;
+      referrer = referrer.split('/template.hbs')[0];
+    }
 
     if (lookupString.indexOf('template:components/') === 0) {
-      /*
-       * Ember components require their lookupString to be massaged. Make this
-       * as "pay-go" as possible.
-       */
-      if (referrer) {
-        // make absolute
-        let parts = referrer.split(':src/ui/');
-        referrer = `${parts[0]}:/${this._configRootName}/${parts[1]}`;
-        referrer = referrer.split('/template.hbs')[0];
-      }
-
       lookupString = lookupString.replace('components/', '');
     } else if (lookupString.indexOf('template:') === 0) {
       /*
