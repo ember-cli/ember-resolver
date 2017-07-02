@@ -502,3 +502,113 @@ test('Does not fall back when resolving route', function(assert) {
     'relative module found in routes'
   );
 });
+
+test('Can resolve a local component for a route', function(assert) {
+  let component = {};
+  let resolver = this.resolverForEntries({
+    app: {
+      name: 'example-app'
+    },
+    types: {
+      component: { definitiveCollection: 'components' },
+      route: { definitiveCollection: 'routes' },
+      template: { definitiveCollection: 'components' }
+    },
+    collections: {
+      components: {
+        group: 'ui',
+        types: [ 'component', 'template' ]
+      },
+      routes: {
+        group: 'ui',
+        types: [ 'route', 'template' ]
+      }
+    }
+  }, {
+    'component:/app/routes/posts/-components/my-input': component
+  });
+
+  assert.equal(
+    resolver.resolve('component:my-input', 'template:src/ui/routes/posts'),
+    component,
+    'component resolved'
+  );
+  assert.equal(
+    resolver.resolve('component:my-input'),
+    undefined,
+    'component not resolved at global level'
+  );
+});
+
+test('Can resolve a local component for another component', function(assert) {
+  let component = {};
+  let resolver = this.resolverForEntries({
+    app: {
+      name: 'example-app'
+    },
+    types: {
+      component: { definitiveCollection: 'components' },
+      route: { definitiveCollection: 'routes' },
+      template: { definitiveCollection: 'components' }
+    },
+    collections: {
+      components: {
+        group: 'ui',
+        types: [ 'component', 'template' ]
+      },
+      routes: {
+        group: 'ui',
+        types: [ 'route', 'template' ]
+      }
+    }
+  }, {
+    'component:/app/components/my-parent/my-input': component
+  });
+
+  assert.equal(
+    resolver.resolve('component:my-input', 'template:src/ui/components/my-parent'),
+    component,
+    'component resolved'
+  );
+  assert.equal(
+    resolver.resolve('component:my-input'),
+    undefined,
+    'component not resolved at global levelt'
+  );
+});
+
+test('Can resolve a local helper for another component', function(assert) {
+  let helper = {};
+  let resolver = this.resolverForEntries({
+    app: {
+      name: 'example-app'
+    },
+    types: {
+      component: { definitiveCollection: 'components' },
+      helper: { definitiveCollection: 'components' }
+    },
+    collections: {
+      components: {
+        group: 'ui',
+        types: [ 'component', 'template' ]
+      },
+      routes: {
+        group: 'ui',
+        types: [ 'route', 'template' ]
+      }
+    }
+  }, {
+    'helper:/app/components/my-parent/my-input': helper
+  });
+
+  assert.equal(
+    resolver.resolve('helper:my-input', 'template:src/ui/components/my-parent'),
+    helper,
+    'helper resolved'
+  );
+  assert.equal(
+    resolver.resolve('helper:my-input'),
+    undefined,
+    'helper not resolved at global levelt'
+  );
+});
