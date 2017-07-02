@@ -1,6 +1,7 @@
-'use strict';
-/*jshint node:true*/
+/* eslint-env node */
 /* global require, module */
+'use strict';
+
 var EmberAddon = require('ember-cli/lib/broccoli/ember-addon');
 var MergeTrees = require('broccoli-merge-trees');
 var Funnel = require('broccoli-funnel');
