@@ -288,9 +288,14 @@ test('Can not resolve a top level template of a non-definitive type', function(a
   });
 
   assert.equal(
-    resolver.resolve('template:my-input', 'template:/app/routes/posts'),
+    resolver.resolve('template:components/my-input', 'template:/app/routes/posts'),
     undefined,
-    'relative module specifier with source resolved'
+    'route collection module not resolved'
+  );
+  assert.equal(
+    resolver.resolve('template:components/my-input', 'template:src/ui/routes/posts'),
+    undefined,
+    'route collection module not resolved'
   );
 });
 
@@ -320,7 +325,42 @@ test('Can resolve a top level template of a definitive type', function(assert) {
   });
 
   assert.equal(
-    resolver.resolve('template:my-input', 'template:/app/routes/posts'),
+    resolver.resolve('template:components/my-input', 'template:/app/routes/posts'),
+    template,
+    'relative module specifier with source resolved'
+  );
+  assert.equal(
+    resolver.resolve('template:components/my-input', 'template:src/ui/routes/posts'),
+    template,
+    'relative module specifier with source resolved'
+  );
+});
+
+test('Can resolve component template', function(assert) {
+  let template = {};
+  let resolver = this.resolverForEntries({
+    app: {
+      name: 'example-app'
+    },
+    types: {
+      template: { definitiveCollection: 'components' }
+    },
+    collections: {
+      components: {
+        group: 'ui',
+        types: [ 'template' ]
+      },
+      routes: {
+        group: 'ui',
+        types: [ 'template' ]
+      }
+    }
+  }, {
+    'template:/app/components/my-input': template
+  });
+
+  assert.equal(
+    resolver.resolve('template:components/my-input'),
     template,
     'relative module specifier with source resolved'
   );
@@ -350,5 +390,115 @@ test('Can resolve a partial', function(assert) {
     resolver.resolve('template:_author', ''),
     template,
     'partial resolved'
+  );
+});
+
+test('Can resolve private component template', function(assert) {
+  let template = {};
+  let notTemplate = {};
+  let resolver = this.resolverForEntries({
+    app: {
+      name: 'example-app'
+    },
+    types: {
+      template: { definitiveCollection: 'components' }
+    },
+    collections: {
+      components: {
+        group: 'ui',
+        types: [ 'template' ]
+      },
+      routes: {
+        group: 'ui',
+        types: [ 'template' ],
+        privateCollections: ['components']
+      }
+    }
+  }, {
+    'template:/app/routes/my-page/my-input': notTemplate,
+    'template:/app/routes/my-page/-components/my-input': template
+  });
+
+
+  assert.equal(
+    resolver.resolve('template:components/my-input', 'template:src/ui/routes/my-page'),
+    template,
+    'relative module specifier with source resolved w/ normalization'
+  );
+});
+
+test('Can resolve template in a route correctly', function(assert) {
+  let routeTemplate = {};
+  let componentTemplate = {};
+  let resolver = this.resolverForEntries({
+    app: {
+      name: 'example-app'
+    },
+    types: {
+      route: { definitiveCollection: 'routes' },
+      template: { definitiveCollection: 'components' }
+    },
+    collections: {
+      components: {
+        group: 'ui',
+        types: [ 'template' ]
+      },
+      routes: {
+        group: 'ui',
+        types: [ 'template' ],
+        privateCollections: ['components']
+      }
+    }
+  }, {
+    'template:/app/routes/my-page': routeTemplate,
+    'template:/app/components/my-page': componentTemplate
+  });
+
+  assert.equal(
+    resolver.resolve('template:my-page'),
+    routeTemplate,
+    'relative module found in routes'
+  );
+  assert.equal(
+    resolver.resolve('template:components/my-page'),
+    componentTemplate,
+    'relative module found in routes'
+  );
+});
+
+test('Does not fall back when resolving route', function(assert) {
+  let componentTemplate = {};
+  let resolver = this.resolverForEntries({
+    app: {
+      name: 'example-app'
+    },
+    types: {
+      route: { definitiveCollection: 'routes' },
+      template: { definitiveCollection: 'components' }
+    },
+    collections: {
+      components: {
+        group: 'ui',
+        types: [ 'template' ]
+      },
+      routes: {
+        group: 'ui',
+        types: [ 'template' ],
+        privateCollections: ['components']
+      }
+    }
+  }, {
+    'template:/app/components/my-page': componentTemplate
+  });
+
+  assert.equal(
+    resolver.resolve('template:my-page'),
+    undefined,
+    'relative module found in routes'
+  );
+  assert.equal(
+    resolver.resolve('template:components/my-page'),
+    componentTemplate,
+    'relative module found in routes'
   );
 });

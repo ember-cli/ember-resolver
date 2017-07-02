@@ -29,12 +29,7 @@ export default function generateConfig(name) {
       router: { definitiveCollection: 'main' },
       serializer: { definitiveCollection: 'models' },
       service: { definitiveCollection: 'services' },
-      template: {
-        definitiveCollection: 'routes',
-        fallbackCollectionPrefixes: {
-          'components': 'components'
-        }
-      },
+      template: { definitiveCollection: 'components' },
       transform: { definitiveCollection: 'transforms' },
       view: { definitiveCollection: 'views' },
       '-view-registry': { definitiveCollection: 'main' },
