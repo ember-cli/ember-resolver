@@ -5,7 +5,7 @@ const { ContainerDebugAdapter } = Ember;
 
 function getPod(type, key, prefix) {
   let match = key.match(new RegExp('^/?' + prefix + '/(.+)/' + type + '$'));
-  if (match) {
+  if (match !== null) {
     return match[1];
   }
 }
