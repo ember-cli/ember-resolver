@@ -57,8 +57,6 @@ directory on disk. You can generate a new app that uses
 this layout by using the following commands:
 
 ```
-# Install Ember-CLI canary globally:
-npm install -g ember-cli/ember-cli
 # Create a new app with the module unification blueprint
 ember new my-app -b ember-module-unification-blueprint
 ```
