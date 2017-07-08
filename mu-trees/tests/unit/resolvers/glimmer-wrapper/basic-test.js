@@ -105,6 +105,56 @@ test('Services with camelCare are normalized', function(assert) {
   );
 });
 
+test('Routes with dots are normalized', function(assert) {
+  let expectedModule = {};
+  let resolver = this.resolverForEntries({
+    app: {
+      name: 'example-app'
+    },
+    types: {
+      route: { definitiveCollection: 'routes' }
+    },
+    collections: {
+      routes: {
+        types: [ 'route' ]
+      }
+    }
+  }, {
+    'route:/app/routes/parent/child': expectedModule
+  });
+
+  assert.equal(
+    resolver.resolve('route:parent.child'),
+    expectedModule,
+    'route names with dots are slasherized'
+  );
+});
+
+test('Controllers with dots are normalized', function(assert) {
+  let expectedModule = {};
+  let resolver = this.resolverForEntries({
+    app: {
+      name: 'example-app'
+    },
+    types: {
+      controller: { definitiveCollection: 'controllers' }
+    },
+    collections: {
+      controllers: {
+        types: [ 'controller' ]
+      }
+    }
+  }, {
+    'controller:/app/controllers/parent/child': expectedModule
+  });
+
+  assert.equal(
+    resolver.resolve('controller:parent.child'),
+    expectedModule,
+    'controller names with dots are slasherized'
+  );
+});
+
 /*
  * "Rule 2" of the unification RFC.
  *
@@ -414,6 +464,43 @@ test('Can resolve a partial', function(assert) {
     resolver.resolve('template:_author', ''),
     template,
     'partial resolved'
+  );
+});
+
+test('Can normalize and resolve a template for route', function(assert) {
+  let template = {};
+  let resolver = this.resolverForEntries({
+    app: {
+      name: 'example-app'
+    },
+    types: {
+      route: { definitiveCollection: 'routes' },
+      template: { definitiveCollection: 'components' }
+    },
+    collections: {
+      routes: {
+        group: 'ui',
+        defaultType: 'route',
+        types: ['route', 'template']
+      },
+      components: {
+        group: 'ui',
+        types: ['template']
+      }
+    }
+  }, {
+    'template:/app/routes/parent/child': template
+  });
+
+  assert.equal(
+    resolver.resolve('template:parent/child', ''),
+    template,
+    'template resolved'
+  );
+  assert.equal(
+    resolver.resolve('template:parent.child', ''),
+    template,
+    'template normalized and resolved'
   );
 });
 
