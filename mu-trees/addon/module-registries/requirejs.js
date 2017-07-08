@@ -43,51 +43,55 @@ export default class RequireJSRegistry {
     return segments;
   }
 
-  _detectModule(specifierString, lookupMethod) {
-    let specifier = deserializeSpecifier(specifierString);
-
+  _detectModule(specifier, lookupDefault, lookupNamed) {
     let segments = this._baseSegments(specifier);
     let basePath = `${segments.join('/')}`;
     let typedPath = `${basePath}/${specifier.type}`;
 
-    let lookupResult = lookupMethod(typedPath);
+    let lookupResult = lookupDefault(typedPath);
 
-    if (
-      !lookupResult &&
-      this._config.collections[specifier.collection].defaultType === specifier.type
-    ) {
-      lookupResult = lookupMethod(basePath);
+    if (!lookupResult) {
+      if (this._checkDefaultType(specifier)) {
+        lookupResult = lookupDefault(basePath);
+      } else {
+        lookupResult = lookupNamed(basePath);
+      }
     }
 
     return lookupResult;
   }
 
+  _checkDefaultType(specifier) {
+    let {defaultType} = this._config.collections[specifier.collection];
+    return defaultType && defaultType === specifier.type;
+  }
+
   has(specifierString) {
-    return this._detectModule(specifierString, path => {
-      /*
-       * Worth noting this does not confirm there is a default export,
-       * as would be expected with this simple implementation of the module
-       * registry.
-       *
-       * To preserve sanity, the `get` method throws when a `default`
-       * export is not found.
-       */
-      return path in this._require.entries;
+    let specifier = deserializeSpecifier(specifierString);
+
+    /* return a boolean */
+    return this._detectModule(specifier, path => {
+      return (path in this._require.entries);
+    }, path => {
+      if (path in this._require.entries) {
+        let result = this._require(path);
+        return (specifier.type in result);
+      }
     });
   }
 
   get(specifierString) {
-    let module = this._detectModule(specifierString, path => {
-      return (path in this._require.entries) && this._require(path);
+    let specifier = deserializeSpecifier(specifierString);
+
+    let useDefaultType = this._checkDefaultType(specifier);
+
+    /* return an export */
+    let moduleExport = this._detectModule(specifier, path => {
+      return (path in this._require.entries) && this._require(path).default;
+    }, path => {
+      return (path in this._require.entries) && this._require(path)[specifier.type];
     });
 
-    if (!module) {
-      return module;
-    }
-
-    if (!module.default) {
-      throw new Error('RequireJSRegistry expects all resolved modules to have a default export.');
-    }
-    return module.default;
+    return moduleExport;
   }
 }

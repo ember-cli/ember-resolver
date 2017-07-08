@@ -118,3 +118,14 @@ test('un-typed module name with default export when resolved type is not the def
     `did not resolve the module`
   );
 });
+
+test('un-typed module name with named export of resolved type', function(assert) {
+  let expectedModule = {};
+  this.addModule(`my-app/src/ui/routes/index`, {template: expectedModule});
+
+  let actualModule = this.registry.get(`template:/my-app/routes/index`);
+  assert.equal(
+    actualModule, expectedModule,
+    `did not resolve the module`
+  );
+});
