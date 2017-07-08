@@ -38,7 +38,10 @@ const Resolver = DefaultResolver.extend({
       referrer = referrer.split('/template.hbs')[0];
     }
 
-    if (lookupString.indexOf('template:components/') === 0) {
+    if (lookupString.indexOf('service:') === 0) {
+      let parts = lookupString.split(':');
+      lookupString = `${parts[0]}:${Ember.String.dasherize(parts[1])}`;
+    } else if (lookupString.indexOf('template:components/') === 0) {
       lookupString = lookupString.replace('components/', '');
     } else if (lookupString.indexOf('template:') === 0) {
       /*
