@@ -80,6 +80,30 @@ test('Resolving when a module is not defined', function(assert) {
   );
 });
 
+test('Services with camelCare are normalized', function(assert) {
+  let expectedModule = {};
+  let resolver = this.resolverForEntries({
+    app: {
+      name: 'example-app'
+    },
+    types: {
+      service: { definitiveCollection: 'services' }
+    },
+    collections: {
+      services: {
+        types: [ 'service' ]
+      }
+    }
+  }, {
+    'service:/app/services/camel-case': expectedModule
+  });
+
+  assert.equal(
+    resolver.resolve('service:camelCase'),
+    expectedModule,
+    'camelCase services are dasherized'
+  );
+});
 
 /*
  * "Rule 2" of the unification RFC.
