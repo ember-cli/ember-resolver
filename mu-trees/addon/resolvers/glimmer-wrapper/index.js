@@ -2,7 +2,11 @@ import Ember from 'ember';
 import GlimmerResolver from '@glimmer/resolver/resolver';
 import RequireJSRegistry from '../../module-registries/requirejs';
 
-const { DefaultResolver } = Ember;
+const { DefaultResolver, String: { dasherize } } = Ember;
+
+function slasherize(dotted) {
+  return dotted.replace(/\./g, '/');
+}
 
 const TEMPLATE_TO_PARTIAL = /^template:(.*\/)?_([\w-]+)/;
 
@@ -38,30 +42,44 @@ const Resolver = DefaultResolver.extend({
       referrer = referrer.split('/template.hbs')[0];
     }
 
-    if (lookupString.indexOf('service:') === 0) {
-      let parts = lookupString.split(':');
-      lookupString = `${parts[0]}:${Ember.String.dasherize(parts[1])}`;
-    } else if (lookupString.indexOf('template:components/') === 0) {
-      lookupString = lookupString.replace('components/', '');
-    } else if (lookupString.indexOf('template:') === 0) {
-      /*
-       * Ember partials are looked up as templates. Here we replace the template
-       * resolution with a partial resolute when appropriate. Try to keep this
-       * code as "pay-go" as possible.
-       */
-      let match = TEMPLATE_TO_PARTIAL.exec(lookupString);
-      if (match) {
-        let namespace = match[1] || '';
-        let name = match[2];
+    let [type, name] = lookupString.split(':');
+    if (name) {
+      if (type === 'service') {
+        /* Services may be camelCased */
+        lookupString = `service:${dasherize(name)}`;
+      } else if (type === 'route') {
+        /* Routes may have.dot.paths */
+        lookupString = `route:${slasherize(name)}`;
+      } else if (type === 'controller') {
+        /* Controllers may have.dot.paths */
+        lookupString = `controller:${slasherize(name)}`;
+      } else if (type === 'template') {
+        if (name.indexOf('components/') === 0) {
+          lookupString = `template:${name.slice(11)}`;
+        } else {
+          /*
+           * Ember partials are looked up as templates. Here we replace the template
+           * resolution with a partial resolute when appropriate. Try to keep this
+           * code as "pay-go" as possible.
+           */
+          let match = TEMPLATE_TO_PARTIAL.exec(lookupString);
+          if (match) {
+            let namespace = match[1] || '';
+            let name = match[2];
 
-        lookupString = `partial:${namespace}${name}`;
-      } else {
-        if (referrer) {
-          throw new Error(`Cannot look up a route template ${lookupString} with a referrer`);
+            lookupString = `partial:${namespace}${name}`;
+          } else {
+            if (referrer) {
+              throw new Error(`Cannot look up a route template ${lookupString} with a referrer`);
+            }
+            /*
+             * Templates for routes must be looked up with a referrer. They may
+             * have dots.in.paths
+             */
+            lookupString = `template`;
+            referrer = `route:/${this._configRootName}/routes/${slasherize(name)}`;
+          }
         }
-        let parts = lookupString.split(':');
-        lookupString = `template`;
-        referrer = `route:/${this._configRootName}/routes/${parts[1]}`;
       }
     }
 

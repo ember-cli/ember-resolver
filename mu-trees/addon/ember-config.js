@@ -70,6 +70,7 @@ export default function generateConfig(name) {
       },
       routes: {
         group: 'ui',
+        defaultType: 'route',
         privateCollections: ['components', 'utils'],
         types: ['route', 'controller', 'template']
       },
