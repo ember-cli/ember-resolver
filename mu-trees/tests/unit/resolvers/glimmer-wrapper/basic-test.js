@@ -612,3 +612,38 @@ test('Can resolve a local helper for another component', function(assert) {
     'helper not resolved at global levelt'
   );
 });
+
+test('Can resolve nested routes with dots in the path', function(assert) {
+  let route = {};
+  let template = {};
+  let resolver = this.resolverForEntries({
+    app: {
+      name: 'example-app'
+    },
+    types: {
+      template: { definitiveCollection: 'components' },
+      route: { definitiveCollection: 'routes' }
+    },
+    collections: {
+      routes: {
+        group: 'ui',
+        types: [ 'route', 'template' ]
+      }
+    }
+  }, {
+    'route:/app/routes/posts/author/bio': route,
+    'template:/app/routes/posts/author/bio': template
+  });
+
+  assert.equal(
+    resolver.resolve('route:posts.author.bio'),
+    route,
+    'route resolved'
+  );
+
+  assert.equal(
+    resolver.resolve('template:posts.author.bio'),
+    template,
+    'template resolved'
+  );
+});

@@ -38,6 +38,7 @@ const Resolver = DefaultResolver.extend({
       referrer = referrer.split('/template.hbs')[0];
     }
 
+    lookupString = lookupString.replace(/\./g, '/');
     if (lookupString.indexOf('template:components/') === 0) {
       lookupString = lookupString.replace('components/', '');
     } else if (lookupString.indexOf('template:') === 0) {
