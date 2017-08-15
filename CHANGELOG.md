@@ -1,5 +1,83 @@
 # Change Log
 
+## [v4.3.1](https://github.com/ember-cli/ember-resolver/tree/v4.3.1) (2017-08-15)
+[Full Changelog](https://github.com/ember-cli/ember-resolver/compare/v4.3.0...v4.3.1)
+
+**Closed issues:**
+
+- Adding files to the resolver [\#209](https://github.com/ember-cli/ember-resolver/issues/209)
+
+**Merged pull requests:**
+
+- Update ember-cli-version-checker [\#212](https://github.com/ember-cli/ember-resolver/pull/212) ([ef4](https://github.com/ef4))
+
+## [v4.3.0](https://github.com/ember-cli/ember-resolver/tree/v4.3.0) (2017-07-11)
+[Full Changelog](https://github.com/ember-cli/ember-resolver/compare/v4.2.4...v4.3.0)
+
+**Closed issues:**
+
+- MU: camelCased lookups [\#195](https://github.com/ember-cli/ember-resolver/issues/195)
+
+**Merged pull requests:**
+
+- Fallback Resolver [\#208](https://github.com/ember-cli/ember-resolver/pull/208) ([iezer](https://github.com/iezer))
+
+## [v4.2.4](https://github.com/ember-cli/ember-resolver/tree/v4.2.4) (2017-07-08)
+[Full Changelog](https://github.com/ember-cli/ember-resolver/compare/v4.2.3...v4.2.4)
+
+**Merged pull requests:**
+
+- Normalize dots to slashes where appropriate [\#207](https://github.com/ember-cli/ember-resolver/pull/207) ([mixonic](https://github.com/mixonic))
+
+## [v4.2.3](https://github.com/ember-cli/ember-resolver/tree/v4.2.3) (2017-07-08)
+[Full Changelog](https://github.com/ember-cli/ember-resolver/compare/v4.2.2...v4.2.3)
+
+**Merged pull requests:**
+
+- Normalize services [\#206](https://github.com/ember-cli/ember-resolver/pull/206) ([mixonic](https://github.com/mixonic))
+
+## [v4.2.2](https://github.com/ember-cli/ember-resolver/tree/v4.2.2) (2017-07-08)
+[Full Changelog](https://github.com/ember-cli/ember-resolver/compare/v4.2.1...v4.2.2)
+
+**Closed issues:**
+
+- Component helper usage should warn [\#203](https://github.com/ember-cli/ember-resolver/issues/203)
+
+**Merged pull requests:**
+
+- Bump @glimmer/resolver [\#205](https://github.com/ember-cli/ember-resolver/pull/205) ([mixonic](https://github.com/mixonic))
+- Support named exports [\#204](https://github.com/ember-cli/ember-resolver/pull/204) ([mixonic](https://github.com/mixonic))
+
+## [v4.2.1](https://github.com/ember-cli/ember-resolver/tree/v4.2.1) (2017-07-02)
+[Full Changelog](https://github.com/ember-cli/ember-resolver/compare/v4.2.0...v4.2.1)
+
+**Merged pull requests:**
+
+- make referrer absolute for all lookups [\#201](https://github.com/ember-cli/ember-resolver/pull/201) ([iezer](https://github.com/iezer))
+- use `test` instead of `match` [\#197](https://github.com/ember-cli/ember-resolver/pull/197) ([bekzod](https://github.com/bekzod))
+
+## [v4.2.0](https://github.com/ember-cli/ember-resolver/tree/v4.2.0) (2017-07-02)
+[Full Changelog](https://github.com/ember-cli/ember-resolver/compare/v4.1.0...v4.2.0)
+
+**Implemented enhancements:**
+
+- Port on top of @glimmer/di [\#171](https://github.com/ember-cli/ember-resolver/issues/171)
+
+**Closed issues:**
+
+- Local lookup [\#191](https://github.com/ember-cli/ember-resolver/issues/191)
+- GlimmerWrapper: Resolve modules without a default export [\#189](https://github.com/ember-cli/ember-resolver/issues/189)
+- 4.1.0 produces html-formatted "...@glimmer/resolver was not found..."-error on `npm install` on jenkins [\#187](https://github.com/ember-cli/ember-resolver/issues/187)
+
+**Merged pull requests:**
+
+- Dependency upgrades [\#199](https://github.com/ember-cli/ember-resolver/pull/199) ([mixonic](https://github.com/mixonic))
+- Normalize referrer and lookupString, add config flag [\#198](https://github.com/ember-cli/ember-resolver/pull/198) ([mixonic](https://github.com/mixonic))
+- defaultType support, mv partials code to resolver [\#192](https://github.com/ember-cli/ember-resolver/pull/192) ([mixonic](https://github.com/mixonic))
+- Assert against get, not normalize [\#190](https://github.com/ember-cli/ember-resolver/pull/190) ([mixonic](https://github.com/mixonic))
+- fix file name typo [\#186](https://github.com/ember-cli/ember-resolver/pull/186) ([kellyselden](https://github.com/kellyselden))
+- Fixes a small typo [\#184](https://github.com/ember-cli/ember-resolver/pull/184) ([acorncom](https://github.com/acorncom))
+
 ## [v4.1.0](https://github.com/ember-cli/ember-resolver/tree/v4.1.0) (2017-03-28)
 [Full Changelog](https://github.com/ember-cli/ember-resolver/compare/v4.0.0...v4.1.0)
 
