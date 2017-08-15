@@ -1,10 +1,9 @@
 /* eslint-env node */
-/* global require, module */
 'use strict';
 
-var EmberAddon = require('ember-cli/lib/broccoli/ember-addon');
-var MergeTrees = require('broccoli-merge-trees');
-var Funnel = require('broccoli-funnel');
+const EmberAddon = require('ember-cli/lib/broccoli/ember-addon');
+const MergeTrees = require('broccoli-merge-trees');
+const Funnel = require('broccoli-funnel');
 
 module.exports = function(defaults) {
   let testTrees = [new Funnel('tests', {
@@ -18,7 +17,7 @@ module.exports = function(defaults) {
     testTrees.push('mu-trees/tests');
   }
 
-  var app = new EmberAddon(defaults, {
+  let app = new EmberAddon(defaults, {
     trees: {
       tests: new MergeTrees(testTrees)
     },
