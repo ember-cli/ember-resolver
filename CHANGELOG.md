@@ -1,5 +1,12 @@
 # Change Log
 
+## [v4.4.0](https://github.com/ember-cli/ember-resolver/tree/v4.4.0) (2017-08-16)
+[Full Changelog](https://github.com/ember-cli/ember-resolver/compare/v4.3.1...v4.4.0)
+
+**Merged pull requests:**
+
+- Dependency Cleanup [\#211](https://github.com/ember-cli/ember-resolver/pull/211) ([mixonic](https://github.com/mixonic))
+
 ## [v4.3.1](https://github.com/ember-cli/ember-resolver/tree/v4.3.1) (2017-08-15)
 [Full Changelog](https://github.com/ember-cli/ember-resolver/compare/v4.3.0...v4.3.1)
 
