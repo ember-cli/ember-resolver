@@ -175,6 +175,21 @@ test("can lookup a view in another namespace with different syntax", function(as
   assert.equal(view, expected, 'default export was returned');
 });
 
+test("can lookup a component template in another namespace with different syntax", function(assert) {
+  assert.expect(2);
+
+  let expected = { isTemplate: true };
+  define('other/templates/components/foo-bar', [], function(){
+    assert.ok(true, "template was looked up properly");
+
+    return { default: expected };
+  });
+
+  var template = resolver.resolve('template:components/other@foo-bar');
+
+  assert.equal(template, expected, 'default export was returned');
+});
+
 test("can lookup a view", function(assert) {
   assert.expect(3);
 
