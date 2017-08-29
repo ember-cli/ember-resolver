@@ -1,5 +1,12 @@
 # Change Log
 
+## [v4.5.0](https://github.com/ember-cli/ember-resolver/tree/v4.5.0) (2017-08-29)
+[Full Changelog](https://github.com/ember-cli/ember-resolver/compare/v4.4.0...v4.5.0)
+
+**Merged pull requests:**
+
+- Ensure internal `layoutFor` lookups for namespaced templates works. [\#213](https://github.com/ember-cli/ember-resolver/pull/213) ([rwjblue](https://github.com/rwjblue))
+
 ## [v4.4.0](https://github.com/ember-cli/ember-resolver/tree/v4.4.0) (2017-08-16)
 [Full Changelog](https://github.com/ember-cli/ember-resolver/compare/v4.3.1...v4.4.0)
 
@@ -331,7 +338,7 @@
 - Allow namespace resolving [\#65](https://github.com/ember-cli/ember-resolver/pull/65) ([bcardarella](https://github.com/bcardarella))
 
 ## [v0.1.8](https://github.com/ember-cli/ember-resolver/tree/v0.1.8) (2014-10-09)
-[Full Changelog](https://github.com/ember-cli/ember-resolver/compare/v0.1.7...v0.1.8)
+[Full Changelog](https://github.com/ember-cli/ember-resolver/compare/v0.1.6...v0.1.8)
 
 **Closed issues:**
 
@@ -351,11 +358,11 @@
 - Updated the bower.json name attr to be ember-resolver [\#64](https://github.com/ember-cli/ember-resolver/pull/64) ([toranb](https://github.com/toranb))
 - Resolves IE8 bug [\#63](https://github.com/ember-cli/ember-resolver/pull/63) ([jdjkelly](https://github.com/jdjkelly))
 
-## [v0.1.7](https://github.com/ember-cli/ember-resolver/tree/v0.1.7) (2014-07-24)
-[Full Changelog](https://github.com/ember-cli/ember-resolver/compare/v0.1.6...v0.1.7)
-
 ## [v0.1.6](https://github.com/ember-cli/ember-resolver/tree/v0.1.6) (2014-07-24)
-[Full Changelog](https://github.com/ember-cli/ember-resolver/compare/v0.1.5...v0.1.6)
+[Full Changelog](https://github.com/ember-cli/ember-resolver/compare/v0.1.7...v0.1.6)
+
+## [v0.1.7](https://github.com/ember-cli/ember-resolver/tree/v0.1.7) (2014-07-24)
+[Full Changelog](https://github.com/ember-cli/ember-resolver/compare/v0.1.5...v0.1.7)
 
 **Closed issues:**
 
