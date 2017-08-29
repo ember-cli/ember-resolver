@@ -72,6 +72,11 @@ function parseName(fullName) {
       type = nameParts[0];
       name = nameParts[1];
     }
+
+    if (type === 'template' && prefix.lastIndexOf('components/', 0) === 0) {
+      name = `components/${name}`;
+      prefix = prefix.slice(11);
+    }
   } else {
     fullNameParts = fullName.split(':');
     type = fullNameParts[0];
