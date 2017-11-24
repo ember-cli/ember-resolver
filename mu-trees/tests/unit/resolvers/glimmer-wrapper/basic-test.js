@@ -723,3 +723,56 @@ test('Can resolve a local helper for another component', function(assert) {
     'helper not resolved at global levelt'
   );
 });
+
+// Namespaces
+
+test('Can resolve a namespaced service lookup', function(assert) {
+  let service = {};
+  let resolver = this.resolverForEntries({
+    app: {
+      name: 'example-app'
+    },
+    types: {
+      service: { definitiveCollection: 'services' }
+    },
+    collections: {
+      services: {
+        types: [ 'service' ]
+      }
+    }
+  }, {
+    'service:/other-namespace/services/i18n': service
+  });
+
+  assert.equal(
+    resolver.resolve('service', null, 'other-namespace::i18n'),
+    service,
+    'namespaced resolution resolved'
+  );
+});
+
+test('Can resolve a namespaced component template', function(assert) {
+  let template = {};
+  let resolver = this.resolverForEntries({
+    app: {
+      name: 'example-app'
+    },
+    types: {
+      template: { definitiveCollection: 'components' }
+    },
+    collections: {
+      components: {
+        group: 'ui',
+        types: [ 'template' ]
+      }
+    }
+  }, {
+    'template:/other-namespace/components/my-component': template
+  });
+
+  assert.equal(
+    resolver.resolve('template:components/', null, 'other-namespace::my-component'),
+    template,
+    'namespaced resolution resolved'
+  );
+});

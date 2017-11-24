@@ -30,7 +30,22 @@ const Resolver = DefaultResolver.extend({
 
   normalize: null,
 
-  resolve(lookupString, referrer) {
+  resolve(lookupString, referrer, rawString) {
+    /*
+     * Ember namespaces are part of the raw invocation passed as a third
+     * argument, for example other-addon::some-service
+     */
+    let rootName = this._configRootName;
+    let rawStringName = null;
+    if (rawString) {
+      let [namespace, name] = rawString.split('::');
+      rootName = namespace;
+      rawStringName = name;
+    }
+
+    let [type, lookupStringName] = lookupString.split(':');
+    let name = lookupStringName;
+
     /*
      * Ember components require their lookupString to be massaged. Make this
      * as "pay-go" as possible.
@@ -38,11 +53,18 @@ const Resolver = DefaultResolver.extend({
     if (referrer) {
       // make absolute
       let parts = referrer.split(':src/ui/');
-      referrer = `${parts[0]}:/${this._configRootName}/${parts[1]}`;
+      referrer = `${parts[0]}:/${rootName}/${parts[1]}`;
       referrer = referrer.split('/template.hbs')[0];
+    } else if (rawString) {
+      // This is only required because:
+      // https://github.com/glimmerjs/glimmer-di/issues/45
+      referrer = `${type}:/${rootName}/`;
     }
 
-    let [type, name] = lookupString.split(':');
+    /* If there is no name, fallback to the name passed in the rawString */
+    if (!name) {
+      name = rawStringName;
+    }
     if (name) {
       if (type === 'service') {
         /* Services may be camelCased */
@@ -54,8 +76,9 @@ const Resolver = DefaultResolver.extend({
         /* Controllers may have.dot.paths */
         lookupString = `controller:${slasherize(name)}`;
       } else if (type === 'template') {
-        if (name.indexOf('components/') === 0) {
-          lookupString = `template:${name.slice(11)}`;
+        if (lookupStringName && lookupStringName.indexOf('components/') === 0) {
+          let sliced = lookupStringName.slice(11);
+          lookupString = `template:${sliced.length ? sliced : rawStringName}`;
         } else {
           /*
            * Ember partials are looked up as templates. Here we replace the template
@@ -77,7 +100,7 @@ const Resolver = DefaultResolver.extend({
              * have dots.in.paths
              */
             lookupString = `template`;
-            referrer = `route:/${this._configRootName}/routes/${slasherize(name)}`;
+            referrer = `route:/${rootName}/routes/${slasherize(name)}`;
           }
         }
       }
