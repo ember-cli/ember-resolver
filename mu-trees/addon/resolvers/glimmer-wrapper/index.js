@@ -10,6 +10,8 @@ function slasherize(dotted) {
 
 const TEMPLATE_TO_PARTIAL = /^template:(.*\/)?_([\w-]+)/;
 
+const LOOKUP_REGEX = /^([^:]+):(components\/)?([^:]+::)?([^:]+)$/;
+
 /*
  * Wrap the @glimmer/resolver in Ember's resolver API. Although
  * this code extends from the DefaultResolver, it should never
@@ -31,6 +33,18 @@ const Resolver = DefaultResolver.extend({
   normalize: null,
 
   resolve(lookupString, referrer) {
+    let type, name, rootName, fullMatch, componentPrefix;
+
+    let lookupMatch = LOOKUP_REGEX.exec(lookupString);
+    if (lookupMatch) {
+      [ fullMatch, type, componentPrefix, rootName, name ] = lookupMatch;
+      rootName = (rootName && rootName.replace(/::/, '')) || this._configRootName;
+
+      if (componentPrefix) {
+        name = `${componentPrefix}${name}`;
+      }
+    }
+
     /*
      * Ember components require their lookupString to be massaged. Make this
      * as "pay-go" as possible.
@@ -38,11 +52,14 @@ const Resolver = DefaultResolver.extend({
     if (referrer) {
       // make absolute
       let parts = referrer.split(':src/ui/');
-      referrer = `${parts[0]}:/${this._configRootName}/${parts[1]}`;
+      referrer = `${parts[0]}:/${rootName}/${parts[1]}`;
       referrer = referrer.split('/template.hbs')[0];
+    } else if (rootName !== this._configRootName) {
+      // This is only required because:
+      // https://github.com/glimmerjs/glimmer-di/issues/45
+      referrer = `${type}:/${rootName}/`;
     }
 
-    let [type, name] = lookupString.split(':');
     if (name) {
       if (type === 'service') {
         /* Services may be camelCased */
@@ -77,9 +94,11 @@ const Resolver = DefaultResolver.extend({
              * have dots.in.paths
              */
             lookupString = `template`;
-            referrer = `route:/${this._configRootName}/routes/${slasherize(name)}`;
+            referrer = `route:/${rootName}/routes/${slasherize(name)}`;
           }
         }
+      } else {
+        lookupString = `${type}:${name}`;
       }
     }
 
