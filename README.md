@@ -24,8 +24,6 @@ flag settings change how `ember-resolver` compiles into an ember-cli's
 Feature flags are set in an application's `config/environment.js`:
 
 ```js
-/* eslint-env node */
-
 module.exports = function(environment) {
   var ENV = {
     'ember-resolver': {

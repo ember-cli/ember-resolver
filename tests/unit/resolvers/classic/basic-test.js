@@ -263,7 +263,7 @@ test('warns if looking up a camelCase helper that has a dasherized module presen
 
   Ember.warn = function(message, test, options) {
     if (!test) {
-      assert.equal(message, 'Attempted to lookup "helper:reverseList" which was not found. In previous versions of ember-resolver, a bug would have caused the module at \"appkit/helpers/reverse-list\" to be returned for this camel case helper name. This has been fixed. Use the dasherized name to resolve the module that would have been returned in previous versions.');
+      assert.equal(message, 'Attempted to lookup "helper:reverseList" which was not found. In previous versions of ember-resolver, a bug would have caused the module at "appkit/helpers/reverse-list" to be returned for this camel case helper name. This has been fixed. Use the dasherized name to resolve the module that would have been returned in previous versions.');
       assert.equal(options.id, 'ember-resolver.camelcase-helper-names', 'Warning has expected id');
     }
   };
