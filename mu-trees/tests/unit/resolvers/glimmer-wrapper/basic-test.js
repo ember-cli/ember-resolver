@@ -1,4 +1,3 @@
-/* jshint loopfunc:true */
 import { module, test } from 'qunit';
 import Resolver from 'ember-resolver/resolvers/glimmer-wrapper';
 import BasicRegistry from '@glimmer/resolver/module-registries/basic-registry';

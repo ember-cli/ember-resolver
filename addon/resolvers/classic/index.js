@@ -47,8 +47,6 @@ const {
 } = Ember;
 
 function parseName(fullName) {
-  /*jshint validthis:true */
-
   if (fullName.parsedName === true) { return fullName; }
 
   let prefix, type, name;
@@ -100,8 +98,6 @@ function parseName(fullName) {
 }
 
 function resolveOther(parsedName) {
-  /*jshint validthis:true */
-
   Ember.assert('`modulePrefix` must be defined', this.namespace.modulePrefix);
 
   let normalizedModuleName = this.findModuleName(parsedName);
@@ -317,7 +313,7 @@ const Resolver = DefaultResolver.extend({
     }
     // workaround for dasherized partials:
     // something/something/-something => something/something/_something
-    let partializedModuleName = moduleName.replace(/\/-([^\/]*)$/, '/_$1');
+    let partializedModuleName = moduleName.replace(/\/-([^/]*)$/, '/_$1');
 
     if (this._moduleRegistry.has(partializedModuleName)) {
       Ember.deprecate('Modules should not contain underscores. ' +
