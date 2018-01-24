@@ -30,21 +30,10 @@ const Resolver = DefaultResolver.extend({
 
   normalize: null,
 
-  resolve(lookupString, referrer, rawString) {
-    /*
-     * Ember namespaces are part of the raw invocation passed as a third
-     * argument, for example other-addon::some-service
-     */
-    let rootName = this._configRootName;
-    let rawStringName = null;
-    if (rawString) {
-      let [namespace, name] = rawString.split('::');
-      rootName = namespace;
-      rawStringName = name;
-    }
+  resolve(lookupString, referrer, targetNamespace) {
+    let rootName = targetNamespace ||this._configRootName;
 
-    let [type, lookupStringName] = lookupString.split(':');
-    let name = lookupStringName;
+    let [type, name] = lookupString.split(':');
 
     /*
      * Ember components require their lookupString to be massaged. Make this
@@ -55,18 +44,14 @@ const Resolver = DefaultResolver.extend({
       let parts = referrer.split(':src/ui/');
       referrer = `${parts[0]}:/${rootName}/${parts[1]}`;
       referrer = referrer.split('/template.hbs')[0];
-    } else if (rawString) {
+    } else if (targetNamespace) {
       // This is only required because:
       // https://github.com/glimmerjs/glimmer-di/issues/45
       referrer = `${type}:/${rootName}/`;
     }
 
-    /* If there is no name, fallback to the name passed in the rawString */
-    if (!name) {
-      name = rawStringName;
-    }
     if (name) {
-      if (type === 'component' && rawString && name) {
+      if (type === 'component' && name) {
         lookupString = `${type}:${name}`;
       } else if (type === 'service') {
         /* Services may be camelCased */
@@ -78,9 +63,9 @@ const Resolver = DefaultResolver.extend({
         /* Controllers may have.dot.paths */
         lookupString = `controller:${slasherize(name)}`;
       } else if (type === 'template') {
-        if (lookupStringName && lookupStringName.indexOf('components/') === 0) {
-          let sliced = lookupStringName.slice(11);
-          lookupString = `template:${sliced.length ? sliced : rawStringName}`;
+        if (name && name.indexOf('components/') === 0) {
+          let sliced = name.slice(11);
+          lookupString = `template:${sliced}`;
         } else {
           /*
            * Ember partials are looked up as templates. Here we replace the template
