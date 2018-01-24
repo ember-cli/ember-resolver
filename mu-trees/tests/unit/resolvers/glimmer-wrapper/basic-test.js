@@ -801,3 +801,82 @@ test('Can resolve a namespaced component object', function(assert) {
     'namespaced resolution resolved'
   );
 });
+
+// Main addon component and service
+
+test('Can resolve a namespaced main service lookup', function(assert) {
+  let service = {};
+  let resolver = this.resolverForEntries({
+    app: {
+      name: 'example-app'
+    },
+    types: {
+      service: { definitiveCollection: 'services' }
+    },
+    collections: {
+      services: {
+        types: [ 'service' ]
+      }
+    }
+  }, {
+    'service:/other-namespace/services/main': service
+  });
+
+  assert.equal(
+    resolver.resolve('service:other-namespace', null),
+    service,
+    'namespaced resolution resolved'
+  );
+});
+
+test('Can resolve a namespaced main component template', function(assert) {
+  let template = {};
+  let resolver = this.resolverForEntries({
+    app: {
+      name: 'example-app'
+    },
+    types: {
+      template: { definitiveCollection: 'components' }
+    },
+    collections: {
+      components: {
+        group: 'ui',
+        types: [ 'template' ]
+      }
+    }
+  }, {
+    'template:/other-namespace/components/main': template
+  });
+
+  assert.equal(
+    resolver.resolve('template:components/other-namespace', null),
+    template,
+    'namespaced resolution resolved'
+  );
+});
+
+test('Can resolve a namespaced component object', function(assert) {
+  let component = {};
+  let resolver = this.resolverForEntries({
+    app: {
+      name: 'example-app'
+    },
+    types: {
+      component: { definitiveCollection: 'components' }
+    },
+    collections: {
+      components: {
+        group: 'ui',
+        types: [ 'component' ]
+      }
+    }
+  }, {
+    'component:/other-namespace/components/main': component
+  });
+
+  assert.equal(
+    resolver.resolve('component:other-namespace', null),
+    component,
+    'namespaced resolution resolved'
+  );
+});
