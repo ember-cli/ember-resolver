@@ -744,7 +744,7 @@ test('Can resolve a namespaced service lookup', function(assert) {
   });
 
   assert.equal(
-    resolver.resolve('service', null, 'other-namespace::i18n'),
+    resolver.resolve('service:i18n', null, 'other-namespace'),
     service,
     'namespaced resolution resolved'
   );
@@ -770,7 +770,7 @@ test('Can resolve a namespaced component template', function(assert) {
   });
 
   assert.equal(
-    resolver.resolve('template:components/', null, 'other-namespace::my-component'),
+    resolver.resolve('template:components/my-component', null, 'other-namespace'),
     template,
     'namespaced resolution resolved'
   );
@@ -796,7 +796,7 @@ test('Can resolve a namespaced component object', function(assert) {
   });
 
   assert.equal(
-    resolver.resolve('component', null, 'other-namespace::my-component'),
+    resolver.resolve('component:my-component', null, 'other-namespace'),
     component,
     'namespaced resolution resolved'
   );
