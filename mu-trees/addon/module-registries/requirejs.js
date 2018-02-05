@@ -36,7 +36,7 @@ export default class RequireJSRegistry {
       segments.push(s.namespace);
     }
 
-    if (s.name !== 'main') {
+    if (s.name !== 'main' || s.collection !== 'main') {
       segments.push(s.name);
     }
 

@@ -60,7 +60,7 @@ module('RequireJS Registry', {
 });
 
 test('basic get', function(assert) {
-  assert.expect(8);
+  assert.expect(11);
 
   [
     /*
@@ -74,7 +74,11 @@ test('basic get', function(assert) {
     [ 'template:/my-app/routes/components/my-input', 'my-app/src/ui/components/my-input/template' ],
     [ 'template:/my-app/components/my-input', 'my-app/src/ui/components/my-input/template' ],
     [ 'component:/my-app/components/my-input/my-button', 'my-app/src/ui/components/my-input/my-button/component' ],
-    [ 'template:/my-app/components/my-input/my-button', 'my-app/src/ui/components/my-input/my-button/template' ]
+    [ 'template:/my-app/components/my-input/my-button', 'my-app/src/ui/components/my-input/my-button/template' ],
+    [ 'service:/my-app/services/main', 'my-app/src/services/main' ],
+    [ 'component:/my-app/components/main', 'my-app/src/ui/components/main/component' ],
+    [ 'template:/my-app/components/main', 'my-app/src/ui/components/main/template' ],
+
   ]
   .forEach(([ lookupString, expected ]) => {
     let expectedModule = {};
