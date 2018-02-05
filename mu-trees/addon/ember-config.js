@@ -30,6 +30,7 @@ export default function generateConfig(name) {
       serializer: { definitiveCollection: 'models' },
       service: { definitiveCollection: 'services' },
       template: { definitiveCollection: 'components' },
+      'template-options': { definitiveCollection: 'main' },
       transform: { definitiveCollection: 'transforms' },
       view: { definitiveCollection: 'views' },
       '-view-registry': { definitiveCollection: 'main' },
