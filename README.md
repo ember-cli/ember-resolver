@@ -68,6 +68,22 @@ package. By default, this app will be correctly configured.
   * It builds an glimmer resolver config and passes it to the resolver.
   * It starts with a `src/` based layout on disk.
 
+## Configuration
+
+To customize pluralization provide a `pluralizedTypes` object to your extended version of the Resolver in consuming app:
+
+```js
+# app/resolver.js
+import Resolver from 'ember-resolver';
+
+export default Resolver.extend({
+  pluralizedTypes: {
+    'sheep': 'sheep',
+    'strategy': 'strategies'
+  }
+})
+```
+
 ## Upgrading
 
 `ember-resolver` is normally bumped with ember-cli releases. To install a newer
