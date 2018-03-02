@@ -44,6 +44,14 @@ test('resolves from classic resolver', function(assert) {
   assert.equal(this.resolver.resolve('router:/app/main/classic', 'referrer'), this.classic, 'returns classic resolver result');
 });
 
+test('resolves normalized specifiers classic resolver', function(assert) {
+  this.resolver._fallback.resolve = (specifier) => {
+    return specifier === 'router:classic-router' ? this.classic : null;
+  };
+
+  assert.equal(this.resolver.resolve('router:classicRouter'), this.classic, 'returns classic resolver result');
+});
+
 test('returns null if neither resolver resolves', function(assert) {
   let specifier = 'router:/app/main/nowhere';
   let referrer = 'router:/app/main/referrer';
