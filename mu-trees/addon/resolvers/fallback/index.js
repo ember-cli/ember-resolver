@@ -9,8 +9,8 @@ export default Resolver.extend({
       namespace: { modulePrefix: this.config.app.name }
     }, options));
   },
-  resolve(name, referrer, targetNamespace) {
-    let result = this._super(name, referrer, targetNamespace);
+  resolve(name) {
+    let result = this._super(name);
     return result || this._fallback.resolve(this._fallback.normalize(name));
   }
 });

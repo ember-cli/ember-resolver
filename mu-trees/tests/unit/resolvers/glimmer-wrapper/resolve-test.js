@@ -2,7 +2,7 @@ import { module, test } from 'qunit';
 import Resolver from 'ember-resolver/resolvers/glimmer-wrapper';
 import BasicRegistry from '@glimmer/resolver/module-registries/basic-registry';
 
-module('ember-resolver/resolvers/glimmer-wrapper', {
+module('ember-resolver/resolvers/glimmer-wrapper#resolve', {
   beforeEach() {
     this.resolverForEntries = (config, entries) => {
       let glimmerModuleRegistry = new BasicRegistry(entries);
@@ -492,48 +492,14 @@ test('Can normalize and resolve a template for route', function(assert) {
   });
 
   assert.equal(
-    resolver.resolve('template:parent/child', ''),
+    resolver.resolve('template:parent/child'),
     template,
     'template resolved'
   );
   assert.equal(
-    resolver.resolve('template:parent.child', ''),
+    resolver.resolve('template:parent.child'),
     template,
     'template normalized and resolved'
-  );
-});
-
-test('Can resolve private component template', function(assert) {
-  let template = {};
-  let notTemplate = {};
-  let resolver = this.resolverForEntries({
-    app: {
-      name: 'example-app'
-    },
-    types: {
-      template: { definitiveCollection: 'components' }
-    },
-    collections: {
-      components: {
-        group: 'ui',
-        types: [ 'template' ]
-      },
-      routes: {
-        group: 'ui',
-        types: [ 'template' ],
-        privateCollections: ['components']
-      }
-    }
-  }, {
-    'template:/app/routes/my-page/my-input': notTemplate,
-    'template:/app/routes/my-page/-components/my-input': template
-  });
-
-
-  assert.equal(
-    resolver.resolve('template:components/my-input', 'template:src/ui/routes/my-page'),
-    template,
-    'relative module specifier with source resolved w/ normalization'
   );
 });
 
@@ -613,7 +579,7 @@ test('Does not fall back when resolving route', function(assert) {
   );
 });
 
-test('Can resolve a local component for a route', function(assert) {
+test('Can not resolve a local component for a route without source', function(assert) {
   let component = {};
   let resolver = this.resolverForEntries({
     app: {
@@ -639,18 +605,13 @@ test('Can resolve a local component for a route', function(assert) {
   });
 
   assert.equal(
-    resolver.resolve('component:my-input', 'template:src/ui/routes/posts'),
-    component,
-    'component resolved'
-  );
-  assert.equal(
     resolver.resolve('component:my-input'),
     undefined,
     'component not resolved at global level'
   );
 });
 
-test('Can resolve a local component for another component', function(assert) {
+test('Can not resolve a local component for another component without source', function(assert) {
   let component = {};
   let resolver = this.resolverForEntries({
     app: {
@@ -676,18 +637,13 @@ test('Can resolve a local component for another component', function(assert) {
   });
 
   assert.equal(
-    resolver.resolve('component:my-input', 'template:src/ui/components/my-parent'),
-    component,
-    'component resolved'
-  );
-  assert.equal(
     resolver.resolve('component:my-input'),
     undefined,
     'component not resolved at global levelt'
   );
 });
 
-test('Can resolve a local helper for another component', function(assert) {
+test('Can not resolve a local helper for another component without source', function(assert) {
   let helper = {};
   let resolver = this.resolverForEntries({
     app: {
@@ -712,93 +668,9 @@ test('Can resolve a local helper for another component', function(assert) {
   });
 
   assert.equal(
-    resolver.resolve('helper:my-input', 'template:src/ui/components/my-parent'),
-    helper,
-    'helper resolved'
-  );
-  assert.equal(
     resolver.resolve('helper:my-input'),
     undefined,
     'helper not resolved at global levelt'
-  );
-});
-
-// Namespaces
-
-test('Can resolve a namespaced service lookup', function(assert) {
-  let service = {};
-  let resolver = this.resolverForEntries({
-    app: {
-      name: 'example-app'
-    },
-    types: {
-      service: { definitiveCollection: 'services' }
-    },
-    collections: {
-      services: {
-        types: [ 'service' ]
-      }
-    }
-  }, {
-    'service:/other-namespace/services/i18n': service
-  });
-
-  assert.equal(
-    resolver.resolve('service:i18n', null, 'other-namespace'),
-    service,
-    'namespaced resolution resolved'
-  );
-});
-
-test('Can resolve a namespaced component template', function(assert) {
-  let template = {};
-  let resolver = this.resolverForEntries({
-    app: {
-      name: 'example-app'
-    },
-    types: {
-      template: { definitiveCollection: 'components' }
-    },
-    collections: {
-      components: {
-        group: 'ui',
-        types: [ 'template' ]
-      }
-    }
-  }, {
-    'template:/other-namespace/components/my-component': template
-  });
-
-  assert.equal(
-    resolver.resolve('template:components/my-component', null, 'other-namespace'),
-    template,
-    'namespaced resolution resolved'
-  );
-});
-
-test('Can resolve a namespaced component object', function(assert) {
-  let component = {};
-  let resolver = this.resolverForEntries({
-    app: {
-      name: 'example-app'
-    },
-    types: {
-      component: { definitiveCollection: 'components' }
-    },
-    collections: {
-      components: {
-        group: 'ui',
-        types: [ 'component' ]
-      }
-    }
-  }, {
-    'component:/other-namespace/components/my-component': component
-  });
-
-  assert.equal(
-    resolver.resolve('component:my-component', null, 'other-namespace'),
-    component,
-    'namespaced resolution resolved'
   );
 });
 
@@ -823,7 +695,7 @@ test('Can resolve a namespaced main service lookup', function(assert) {
   });
 
   assert.equal(
-    resolver.resolve('service:other-namespace', null),
+    resolver.resolve('service:other-namespace'),
     service,
     'namespaced resolution resolved'
   );
@@ -849,7 +721,7 @@ test('Can resolve a namespaced main component template', function(assert) {
   });
 
   assert.equal(
-    resolver.resolve('template:components/other-namespace', null),
+    resolver.resolve('template:components/other-namespace'),
     template,
     'namespaced resolution resolved'
   );
@@ -875,7 +747,7 @@ test('Can resolve a namespaced component object', function(assert) {
   });
 
   assert.equal(
-    resolver.resolve('component:other-namespace', null),
+    resolver.resolve('component:other-namespace'),
     component,
     'namespaced resolution resolved'
   );

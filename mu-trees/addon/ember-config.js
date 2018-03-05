@@ -34,11 +34,13 @@ export default function generateConfig(name) {
       transform: { definitiveCollection: 'transforms' },
       view: { definitiveCollection: 'views' },
       '-view-registry': { definitiveCollection: 'main' },
-      '-bucket-cache': { definitiveCollection: 'main' }
+      '-bucket-cache': { definitiveCollection: 'main' },
+      '-environment': { definitiveCollection: 'main' },
+      '-application-instance': { definitiveCollection: 'main' }
     },
     collections: {
       'main': {
-        types: ['router', '-bucket-cache', 'component-lookup', '-view-registry', 'event_dispatcher', 'application', 'location', 'renderer']
+        types: ['router', '-bucket-cache', 'component-lookup', '-view-registry', 'event_dispatcher', 'application', 'location', 'renderer', '-environment', '-application-instance']
       },
       components: {
         group: 'ui',
