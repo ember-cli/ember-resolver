@@ -11,6 +11,6 @@ export default Resolver.extend({
   },
   resolve(name, referrer, targetNamespace) {
     let result = this._super(name, referrer, targetNamespace);
-    return result || this._fallback.resolve(name);
+    return result || this._fallback.resolve(this._fallback.normalize(name));
   }
 });
