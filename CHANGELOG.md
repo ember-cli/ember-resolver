@@ -1,5 +1,38 @@
 # Change Log
 
+## [v4.5.3](https://github.com/ember-cli/ember-resolver/tree/v4.5.3) (2018-03-09)
+[Full Changelog](https://github.com/ember-cli/ember-resolver/compare/v4.5.2...v4.5.3)
+
+**Closed issues:**
+
+- Namespaces [\#214](https://github.com/ember-cli/ember-resolver/issues/214)
+
+**Merged pull requests:**
+
+- Update MU trees: template-options is now template-compiler [\#226](https://github.com/ember-cli/ember-resolver/pull/226) ([cibernox](https://github.com/cibernox))
+
+## [v4.5.2](https://github.com/ember-cli/ember-resolver/tree/v4.5.2) (2018-03-05)
+[Full Changelog](https://github.com/ember-cli/ember-resolver/compare/v4.5.1...v4.5.2)
+
+## [v4.5.1](https://github.com/ember-cli/ember-resolver/tree/v4.5.1) (2018-03-05)
+[Full Changelog](https://github.com/ember-cli/ember-resolver/compare/v4.5.0...v4.5.1)
+
+**Closed issues:**
+
+- Use shorthands & recursive lookup for component paths called from template [\#217](https://github.com/ember-cli/ember-resolver/issues/217)
+- Implement a fallback resolver [\#188](https://github.com/ember-cli/ember-resolver/issues/188)
+- default podModulePrefix value [\#74](https://github.com/ember-cli/ember-resolver/issues/74)
+
+**Merged pull requests:**
+
+- Source and Namespace via Local Lookup [\#225](https://github.com/ember-cli/ember-resolver/pull/225) ([mixonic](https://github.com/mixonic))
+- Normalize specifiers before passing to fallback [\#224](https://github.com/ember-cli/ember-resolver/pull/224) ([iezer](https://github.com/iezer))
+- \[DOCS\] Adds example about pluralizedTypes usage [\#222](https://github.com/ember-cli/ember-resolver/pull/222) ([SergeAstapov](https://github.com/SergeAstapov))
+- Fix Main Service Lookup [\#221](https://github.com/ember-cli/ember-resolver/pull/221) ([iezer](https://github.com/iezer))
+- Glimmer Resolver gets target namespace as third argument [\#220](https://github.com/ember-cli/ember-resolver/pull/220) ([iezer](https://github.com/iezer))
+- Upgrade to Ember CLI 2.18, Re-enable beta testing [\#219](https://github.com/ember-cli/ember-resolver/pull/219) ([mixonic](https://github.com/mixonic))
+- Add support to glimmer-wrapper for MU namespaces [\#218](https://github.com/ember-cli/ember-resolver/pull/218) ([iezer](https://github.com/iezer))
+
 ## [v4.5.0](https://github.com/ember-cli/ember-resolver/tree/v4.5.0) (2017-08-29)
 [Full Changelog](https://github.com/ember-cli/ember-resolver/compare/v4.4.0...v4.5.0)
 
@@ -140,12 +173,18 @@
 - Update ember-cli to version 2.9.1 🚀 [\#164](https://github.com/ember-cli/ember-resolver/pull/164) ([greenkeeperio-bot](https://github.com/greenkeeperio-bot))
 
 ## [v2.1.1](https://github.com/ember-cli/ember-resolver/tree/v2.1.1) (2016-12-30)
-[Full Changelog](https://github.com/ember-cli/ember-resolver/compare/v2.1.0...v2.1.1)
+[Full Changelog](https://github.com/ember-cli/ember-resolver/compare/v2.1.2...v2.1.1)
 
 **Merged pull requests:**
 
 - Don't resolve camelCase helper names to dasherized modules [\#167](https://github.com/ember-cli/ember-resolver/pull/167) ([lukemelia](https://github.com/lukemelia))
 - 👻😱 Node.js 0.10 is unmaintained 😱👻 [\#166](https://github.com/ember-cli/ember-resolver/pull/166) ([greenkeeperio-bot](https://github.com/greenkeeperio-bot))
+
+## [v2.1.2](https://github.com/ember-cli/ember-resolver/tree/v2.1.2) (2016-10-17)
+[Full Changelog](https://github.com/ember-cli/ember-resolver/compare/v2.1.0...v2.1.2)
+
+**Merged pull requests:**
+
 - Update `ember-cli` to `2.8.0`. Closes \#152. [\#156](https://github.com/ember-cli/ember-resolver/pull/156) ([btecu](https://github.com/btecu))
 
 ## [v2.1.0](https://github.com/ember-cli/ember-resolver/tree/v2.1.0) (2016-09-03)
@@ -338,7 +377,7 @@
 - Allow namespace resolving [\#65](https://github.com/ember-cli/ember-resolver/pull/65) ([bcardarella](https://github.com/bcardarella))
 
 ## [v0.1.8](https://github.com/ember-cli/ember-resolver/tree/v0.1.8) (2014-10-09)
-[Full Changelog](https://github.com/ember-cli/ember-resolver/compare/v0.1.6...v0.1.8)
+[Full Changelog](https://github.com/ember-cli/ember-resolver/compare/v0.1.7...v0.1.8)
 
 **Closed issues:**
 
@@ -358,11 +397,11 @@
 - Updated the bower.json name attr to be ember-resolver [\#64](https://github.com/ember-cli/ember-resolver/pull/64) ([toranb](https://github.com/toranb))
 - Resolves IE8 bug [\#63](https://github.com/ember-cli/ember-resolver/pull/63) ([jdjkelly](https://github.com/jdjkelly))
 
-## [v0.1.6](https://github.com/ember-cli/ember-resolver/tree/v0.1.6) (2014-07-24)
-[Full Changelog](https://github.com/ember-cli/ember-resolver/compare/v0.1.7...v0.1.6)
-
 ## [v0.1.7](https://github.com/ember-cli/ember-resolver/tree/v0.1.7) (2014-07-24)
-[Full Changelog](https://github.com/ember-cli/ember-resolver/compare/v0.1.5...v0.1.7)
+[Full Changelog](https://github.com/ember-cli/ember-resolver/compare/v0.1.6...v0.1.7)
+
+## [v0.1.6](https://github.com/ember-cli/ember-resolver/tree/v0.1.6) (2014-07-24)
+[Full Changelog](https://github.com/ember-cli/ember-resolver/compare/v0.1.5...v0.1.6)
 
 **Closed issues:**
 
