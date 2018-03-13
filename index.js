@@ -2,6 +2,7 @@
 
 var VersionChecker = require('ember-cli-version-checker');
 var path = require('path');
+var isModuleUnification;
 
 module.exports = {
   name: 'ember-resolver',
@@ -11,16 +12,20 @@ module.exports = {
     var resolverConfig = config['ember-resolver'] || {};
 
     return Object.assign({
-      /* Add default feature flags here */
-      EMBER_RESOLVER_MODULE_UNIFICATION: false
+      /* Add default feature flags here, for now there is none */
     }, resolverConfig.features);
   },
 
   init: function() {
     this._super.init.apply(this, arguments);
     this.options = this.options || {};
-
+    if (process.env.EMBER_RESOLVER_MODULE_UNIFICATION) {
+      this.project.isModuleUnification = function () {
+        return true;
+      }
+    }
     this._emberResolverFeatureFlags = this.emberResolverFeatureFlags();
+    isModuleUnification = !!this.project.isModuleUnification && this.project.isModuleUnification();
 
     this.options.babel = {
       loose: true,
@@ -47,7 +52,7 @@ module.exports = {
     var MergeTrees = require('broccoli-merge-trees');
     let addonTrees = [].concat(
       this._super.treeForAddon.apply(this, arguments),
-      this._emberResolverFeatureFlags.EMBER_RESOLVER_MODULE_UNIFICATION && this._moduleUnificationTrees()
+      isModuleUnification && this._moduleUnificationTrees()
     ).filter(Boolean);
 
     return new MergeTrees(addonTrees);
