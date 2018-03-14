@@ -10,10 +10,7 @@ module.exports = {
     var config = this.project.config();
     var resolverConfig = config['ember-resolver'] || {};
 
-    return Object.assign({
-      /* Add default feature flags here */
-      EMBER_RESOLVER_MODULE_UNIFICATION: false
-    }, resolverConfig.features);
+    return resolverConfig.features || {};
   },
 
   init: function() {
@@ -47,7 +44,7 @@ module.exports = {
     var MergeTrees = require('broccoli-merge-trees');
     let addonTrees = [].concat(
       this._super.treeForAddon.apply(this, arguments),
-      this._emberResolverFeatureFlags.EMBER_RESOLVER_MODULE_UNIFICATION && this._moduleUnificationTrees()
+      this.project.isModuleUnification && this.project.isModuleUnification() && this._moduleUnificationTrees()
     ).filter(Boolean);
 
     return new MergeTrees(addonTrees);

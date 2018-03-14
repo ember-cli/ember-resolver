@@ -12,7 +12,7 @@ module.exports = function(defaults) {
   let config = defaults.project.config();
   let resolverConfig = config['ember-resolver'] || {};
 
-  if (resolverConfig.features.EMBER_RESOLVER_MODULE_UNIFICATION) {
+  if (defaults.project.isModuleUnification && defaults.project.isModuleUnification()) {
     testTrees.push('mu-trees/tests');
   }
 
