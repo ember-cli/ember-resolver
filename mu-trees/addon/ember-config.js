@@ -2,7 +2,7 @@
  * This config describes canonical Ember, as described in the
  * module unification spec:
  *
- *   https://github.com/dgeb/rfcs/blob/module-unification/text/0000-module-unification.md
+ *   https://github.com/emberjs/rfcs/blob/master/text/0143-module-unification.md
  *
  */
 export default function generateConfig(name) {
