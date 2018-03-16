@@ -9,10 +9,10 @@ module.exports = function(defaults) {
     exclude: [/^dummy/],
   })];
 
-  let config = defaults.project.config();
-  let resolverConfig = config['ember-resolver'] || {};
+  let isModuleUnification = !!defaults.project.isModuleUnification &&
+    defaults.project.isModuleUnification();
 
-  if (resolverConfig.features.EMBER_RESOLVER_MODULE_UNIFICATION) {
+  if (isModuleUnification) {
     testTrees.push('mu-trees/tests');
   }
 
