@@ -373,7 +373,10 @@ const Resolver = DefaultResolver.extend({
       description = this.lookupDescription(parsedName);
     }
 
-    Ember.Logger.info(symbol, parsedName.fullName, padding, description);
+    if (console && console.info) {
+    // eslint-disable-next-line no-console
+    console.info(symbol, parsedName.fullName, padding, description);
+    }
   },
 
   knownForType(type) {
