@@ -5,7 +5,7 @@ import require from 'require';
 import { module, test } from 'qunit';
 import Resolver from 'ember-resolver/resolvers/classic';
 
-let originalRegistryEntries, originalEmberDeprecate, originalEmberLoggerInfo, logCalls, resolver;
+let originalRegistryEntries, originalEmberDeprecate, originalConsoleInfo, logCalls, resolver;
 
 function setupResolver(options) {
   if (!options) {
@@ -24,7 +24,7 @@ module('ember-resolver/resolvers/classic', {
   beforeEach() {
     originalRegistryEntries = Ember.merge({}, requirejs.entries);
     originalEmberDeprecate = Ember.deprecate;
-    originalEmberLoggerInfo = Ember.Logger.info;
+    originalConsoleInfo = console ? console.info : null;
 
     setupResolver();
   },
@@ -32,7 +32,9 @@ module('ember-resolver/resolvers/classic', {
   afterEach() {
     resetRegistry();
     Ember.deprecate = originalEmberDeprecate;
-    Ember.Logger.info = originalEmberLoggerInfo;
+    if (originalConsoleInfo) {
+      console.info = originalConsoleInfo;
+    }
   }
 });
 
@@ -495,16 +497,23 @@ test('normalization is idempotent', function(assert) {
 
 module("Logging", {
   beforeEach: function() {
-    originalEmberLoggerInfo = Ember.Logger.info;
+    originalConsoleInfo = console ? console.info : null;
     logCalls = [];
-    Ember.Logger.info = function(arg) {
+    if (!console) {
+      console = {info: null};
+    }
+    console.info = function(arg) {
       logCalls.push(arg);
     };
     setupResolver();
   },
 
   afterEach: function() {
-    Ember.Logger.info = originalEmberLoggerInfo;
+    if (originalConsoleInfo) {
+      console.info = originalConsoleInfo;
+    } else {
+      console = undefined;
+    }
   }
 });
 
