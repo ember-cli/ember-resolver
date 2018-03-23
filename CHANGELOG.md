@@ -1,5 +1,22 @@
 # Change Log
 
+## [v4.5.5](https://github.com/ember-cli/ember-resolver/tree/v4.5.5) (2018-03-23)
+[Full Changelog](https://github.com/ember-cli/ember-resolver/compare/v4.5.4...v4.5.5)
+
+**Closed issues:**
+
+- \[4.5.3\] Build error [\#227](https://github.com/ember-cli/ember-resolver/issues/227)
+- Support for RFC 297 - Deprecation of Ember.Logger [\#223](https://github.com/ember-cli/ember-resolver/issues/223)
+
+**Merged pull requests:**
+
+- \[RFC 297\] Updated to conditionally use console rather than using Ember.Logger [\#232](https://github.com/ember-cli/ember-resolver/pull/232) ([lupestro](https://github.com/lupestro))
+- Update module unification spec link [\#230](https://github.com/ember-cli/ember-resolver/pull/230) ([josemarluedke](https://github.com/josemarluedke))
+- Use build-time `project.isModuleUnification\(\)` instead of feature flag. [\#228](https://github.com/ember-cli/ember-resolver/pull/228) ([cibernox](https://github.com/cibernox))
+
+## [v4.5.4](https://github.com/ember-cli/ember-resolver/tree/v4.5.4) (2018-03-09)
+[Full Changelog](https://github.com/ember-cli/ember-resolver/compare/v4.5.3...v4.5.4)
+
 ## [v4.5.3](https://github.com/ember-cli/ember-resolver/tree/v4.5.3) (2018-03-09)
 [Full Changelog](https://github.com/ember-cli/ember-resolver/compare/v4.5.2...v4.5.3)
 
