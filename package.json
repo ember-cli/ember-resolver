@@ -17,6 +17,7 @@
   },
   "scripts": {
     "build": "ember build",
+    "lint:js": "eslint .",
     "start": "ember serve",
     "test": "ember test",
     "test:all": "ember try:each"
@@ -48,6 +49,7 @@
     "ember-source": "~3.1.0",
     "ember-source-channel-url": "^1.0.1",
     "ember-try": "^0.2.23",
+    "eslint": "^4.19.1",
     "eslint-plugin-node": "^6.0.1",
     "loader.js": "^4.2.3"
   },

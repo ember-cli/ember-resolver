@@ -1,4 +1,3 @@
-/* global require, requirejs */
 import {
   deserializeSpecifier
 } from '@glimmer/di';
@@ -82,8 +81,6 @@ export default class RequireJSRegistry {
 
   get(specifierString) {
     let specifier = deserializeSpecifier(specifierString);
-
-    let useDefaultType = this._checkDefaultType(specifier);
 
     /* return an export */
     let moduleExport = this._detectModule(specifier, path => {

@@ -92,7 +92,7 @@ const Resolver = DefaultResolver.extend({
     if (source || namespace) {
       let rootName = namespace || this._configRootName;
 
-      let [type, name] = specifier.split(':');
+      let [type] = specifier.split(':');
 
       /*
        * Ember components require their lookupString to be massaged. Make this
