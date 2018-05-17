@@ -111,7 +111,7 @@ module.exports = function() {
           }
         },
         {
-          name: 'ember-beta',
+          name: 'ember-canary',
           npm: {
             devDependencies: {
               'ember-source': urls[2]
