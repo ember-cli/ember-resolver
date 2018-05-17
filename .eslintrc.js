@@ -27,7 +27,8 @@ module.exports = {
         'addon/**',
         'addon-test-support/**',
         'app/**',
-        'tests/dummy/app/**'
+        'tests/dummy/app/**',
+        'mu-trees/**',
       ],
       parserOptions: {
         sourceType: 'script',

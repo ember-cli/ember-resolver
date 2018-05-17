@@ -1,5 +1,7 @@
 /* globals requirejs, define */
 
+/* eslint-disable no-console */
+
 import Ember from 'ember';
 import require from 'require';
 import { module, test } from 'qunit';
@@ -499,9 +501,6 @@ module("Logging", {
   beforeEach: function() {
     originalConsoleInfo = console ? console.info : null;
     logCalls = [];
-    if (!console) {
-      console = {info: null};
-    }
     console.info = function(arg) {
       logCalls.push(arg);
     };
@@ -511,8 +510,6 @@ module("Logging", {
   afterEach: function() {
     if (originalConsoleInfo) {
       console.info = originalConsoleInfo;
-    } else {
-      console = undefined;
     }
   }
 });
