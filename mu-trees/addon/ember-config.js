@@ -14,6 +14,7 @@ export default function generateConfig(name) {
     types: {
       adapter: { definitiveCollection: 'models' },
       application: { definitiveCollection: 'main' },
+      config: { definitiveCollection: 'config' },
       controller: { definitiveCollection: 'routes' },
       component: { definitiveCollection: 'components' },
       'component-lookup': { definitiveCollection: 'main' },
@@ -46,6 +47,9 @@ export default function generateConfig(name) {
         group: 'ui',
         privateCollections: ['utils'],
         types: ['component', 'helper', 'template']
+      },
+      config: {
+        unresolvable: true
       },
       initializers: {
         group: 'init',
