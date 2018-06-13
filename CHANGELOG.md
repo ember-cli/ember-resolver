@@ -1,5 +1,23 @@
 # Change Log
 
+## [v4.5.6](https://github.com/ember-cli/ember-resolver/tree/v4.5.6) (2018-06-13)
+[Full Changelog](https://github.com/ember-cli/ember-resolver/compare/v4.5.5...v4.5.6)
+
+**Closed issues:**
+
+- An error occurred in the constructor for ember-resolver [\#234](https://github.com/ember-cli/ember-resolver/issues/234)
+- emberResolverFeatureFlags\(\) calls project.config\(\) without an environment name [\#233](https://github.com/ember-cli/ember-resolver/issues/233)
+- ember-cli-react/resolver not found [\#231](https://github.com/ember-cli/ember-resolver/issues/231)
+- Add ember-cli-eslint [\#200](https://github.com/ember-cli/ember-resolver/issues/200)
+
+**Merged pull requests:**
+
+- cleanup yo [\#240](https://github.com/ember-cli/ember-resolver/pull/240) ([stefanpenner](https://github.com/stefanpenner))
+- Added config type to module unification config [\#239](https://github.com/ember-cli/ember-resolver/pull/239) ([chrism](https://github.com/chrism))
+- use flag EMBER\_CLI\_MODULE\_UNIFICATION [\#238](https://github.com/ember-cli/ember-resolver/pull/238) ([givanse](https://github.com/givanse))
+- Fixup linting issues. [\#236](https://github.com/ember-cli/ember-resolver/pull/236) ([rwjblue](https://github.com/rwjblue))
+- Update to ember-cli@3.1.4 blueprint. [\#235](https://github.com/ember-cli/ember-resolver/pull/235) ([rwjblue](https://github.com/rwjblue))
+
 ## [v4.5.5](https://github.com/ember-cli/ember-resolver/tree/v4.5.5) (2018-03-23)
 [Full Changelog](https://github.com/ember-cli/ember-resolver/compare/v4.5.4...v4.5.5)
 
