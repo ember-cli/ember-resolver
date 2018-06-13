@@ -1,6 +1,8 @@
 /* globals requirejs, require */
 
 import Ember from 'ember';
+// import { assert } from '@ember/debug';
+import { DEBUG } from '@glimmer/env';
 import classFactory from '../../utils/class-factory';
 import makeDictionary from '../../utils/make-dictionary';
 
@@ -323,7 +325,7 @@ const Resolver = DefaultResolver.extend({
       return partializedModuleName;
     }
 
-    Ember.runInDebug(() => {
+    if (DEBUG) {
       let isCamelCaseHelper = parsedName.type === 'helper' && /[a-z]+[A-Z]+/.test(moduleName);
       if (isCamelCaseHelper) {
         this._camelCaseHelperWarnedNames = this._camelCaseHelperWarnedNames || [];
@@ -340,7 +342,7 @@ const Resolver = DefaultResolver.extend({
           { id: 'ember-resolver.camelcase-helper-names', until: '3.0.0' });
         }
       }
-    });
+    }
   },
 
   // used by Ember.DefaultResolver.prototype._logLookup
