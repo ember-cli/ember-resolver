@@ -1,7 +1,13 @@
 /* globals requirejs, require */
 
+import { deprecate } from '@ember/application/deprecations';
+
+import { get, computed } from '@ember/object';
+import DefaultResolver from '@ember/application/globals-resolver';
+import { dasherize, classify, underscore } from '@ember/string';
+
 import Ember from 'ember';
-import { assert } from '@ember/debug';
+import { assert, warn } from '@ember/debug';
 import { DEBUG } from '@glimmer/env';
 import classFactory from '../../utils/class-factory';
 import makeDictionary from '../../utils/make-dictionary';
@@ -24,29 +30,6 @@ export class ModuleRegistry {
     return require(moduleName);
   }
 }
-
-/*
- * This module defines a subclass of Ember.DefaultResolver that adds two
- * important features:
- *
- *  1) The resolver makes the container aware of es6 modules via the AMD
- *     output. The loader's _moduleEntries is consulted so that classes can be
- *     resolved directly via the module loader, without needing a manual
- *     `import`.
- *  2) is able to provide injections to classes that implement `extend`
- *     (as is typical with Ember).
- */
-
-
-const {
-  underscore,
-  classify,
-  dasherize
-} = Ember.String;
-const {
-  get,
-  DefaultResolver
-} = Ember;
 
 function parseName(fullName) {
   if (fullName.parsedName === true) { return fullName; }
@@ -261,7 +244,7 @@ const Resolver = DefaultResolver.extend({
    @property moduleNameLookupPatterns
    @returns {Ember.Array}
    */
-  moduleNameLookupPatterns: Ember.computed(function(){
+  moduleNameLookupPatterns: computed(function(){
     return [
       this.podBasedModuleName,
       this.podBasedComponentsInSubdir,
@@ -316,7 +299,7 @@ const Resolver = DefaultResolver.extend({
     let partializedModuleName = moduleName.replace(/\/-([^/]*)$/, '/_$1');
 
     if (this._moduleRegistry.has(partializedModuleName)) {
-      Ember.deprecate('Modules should not contain underscores. ' +
+      deprecate('Modules should not contain underscores. ' +
       'Attempted to lookup "'+moduleName+'" which ' +
       'was not found. Please rename "'+partializedModuleName+'" '+
       'to "'+moduleName+'" instead.', false,
@@ -332,7 +315,7 @@ const Resolver = DefaultResolver.extend({
         let alreadyWarned = this._camelCaseHelperWarnedNames.indexOf(parsedName.fullName) > -1;
         if (!alreadyWarned && this._moduleRegistry.has(dasherize(moduleName))) {
           this._camelCaseHelperWarnedNames.push(parsedName.fullName);
-          Ember.warn('Attempted to lookup "' + parsedName.fullName + '" which ' +
+          warn('Attempted to lookup "' + parsedName.fullName + '" which ' +
           'was not found. In previous versions of ember-resolver, a bug would have ' +
           'caused the module at "' + dasherize(moduleName) + '" to be ' +
           'returned for this camel case helper name. This has been fixed. ' +

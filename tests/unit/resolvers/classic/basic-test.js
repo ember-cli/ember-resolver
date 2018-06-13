@@ -3,9 +3,12 @@
 /* eslint-disable no-console */
 
 import Ember from 'ember';
+import { deprecate } from '@ember/application/deprecations';
+import { merge } from '@ember/polyfills';
 import require from 'require';
 import { module, test } from 'qunit';
 import Resolver from 'ember-resolver/resolvers/classic';
+import sinon from 'sinon';
 
 let originalRegistryEntries, originalEmberDeprecate, originalConsoleInfo, logCalls, resolver;
 
@@ -19,13 +22,17 @@ function setupResolver(options) {
 
 function resetRegistry() {
   requirejs.clear();
-  Ember.merge(requirejs.entries, originalRegistryEntries);
+  merge(requirejs.entries, originalRegistryEntries);
 }
 
 module('ember-resolver/resolvers/classic', {
+  before() {
+    this.sandbox = sinon.sandbox.create();
+  },
+
   beforeEach() {
-    originalRegistryEntries = Ember.merge({}, requirejs.entries);
-    originalEmberDeprecate = Ember.deprecate;
+    originalRegistryEntries = merge({}, requirejs.entries);
+    originalEmberDeprecate = deprecate;
     originalConsoleInfo = console ? console.info : null;
 
     setupResolver();
@@ -33,17 +40,19 @@ module('ember-resolver/resolvers/classic', {
 
   afterEach() {
     resetRegistry();
-    Ember.deprecate = originalEmberDeprecate;
+    deprecate = originalEmberDeprecate;
     if (originalConsoleInfo) {
       console.info = originalConsoleInfo;
     }
+
+    this.sandbox.restore();
   }
 });
 
 test("can access at deprecated 'resolver' module name", function(assert){
   assert.expect(2);
 
-  Ember.deprecate = function(message, test) {
+  deprecate = function(message, test) {
     if (!test) {
       assert.equal(message, 'Usage of `resolver` module is deprecated, please update to `ember-resolver`.');
     }
@@ -61,7 +70,7 @@ test("can access at deprecated 'resolver' module name", function(assert){
 test("can access at deprecated 'ember/resolver' module name", function(assert){
   assert.expect(2);
 
-  Ember.deprecate = function(message, test) {
+  deprecate = function(message, test) {
     if (!test) {
       assert.equal(message, 'Usage of `ember/resolver` module is deprecated, please update to `ember-resolver`.');
     }
@@ -265,12 +274,12 @@ test('warns if looking up a camelCase helper that has a dasherized module presen
     return { default: { isHelperInstance: true } };
   });
 
-  Ember.warn = function(message, test, options) {
+  this.sandbox.stub(Ember, 'warn').callsFake((message, test, options) => {
     if (!test) {
       assert.equal(message, 'Attempted to lookup "helper:reverseList" which was not found. In previous versions of ember-resolver, a bug would have caused the module at "appkit/helpers/reverse-list" to be returned for this camel case helper name. This has been fixed. Use the dasherized name to resolve the module that would have been returned in previous versions.');
       assert.equal(options.id, 'ember-resolver.camelcase-helper-names', 'Warning has expected id');
     }
-  };
+  });
 
   var helper = resolver.resolve('helper:reverseList');
   assert.ok(!helper, 'no helper was returned');
@@ -372,7 +381,7 @@ test("will lookup an underscored version of the module name when the dasherized 
 test("can lookup templates with mixed naming moduleName", function(assert) {
   assert.expect(2);
 
-  Ember.deprecate = function(message, test) {
+  deprecate = function(message, test) {
     if (!test) {
       assert.equal(message, 'Modules should not contain underscores. Attempted to lookup "appkit/bands/-steve-miller-band" which was not found. Please rename "appkit/bands/_steve-miller-band" to "appkit/bands/-steve-miller-band" instead.');
     }
