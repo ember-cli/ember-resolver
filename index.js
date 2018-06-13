@@ -8,7 +8,7 @@ module.exports = {
   name: 'ember-resolver',
 
   emberResolverFeatureFlags() {
-    var resolverConfig = {}; //TODO: load from ember-cli-build.js 
+    var resolverConfig = {}; //TODO: load from ember-cli-build.js
 
     return Object.assign({
       /* Add default feature flags here, for now there is none */
@@ -31,7 +31,7 @@ module.exports = {
       plugins: [
         [require('babel-plugin-debug-macros').default, {
           debugTools: {
-            source: '@ember/debug'
+            source: 'this-is-dumb-it-should-not-be-required-i-blame-rwjblue'
           },
           envFlags: {
             source: 'ember-resolver-env-flags',
