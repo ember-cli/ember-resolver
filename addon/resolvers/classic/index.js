@@ -230,11 +230,9 @@ const Resolver = DefaultResolver.extend({
   },
 
   mainModuleName(parsedName) {
-    // if router:main or adapter:main look for a module with just the type first
-    let tmpModuleName = parsedName.prefix + '/' + parsedName.type;
-
     if (parsedName.fullNameWithoutType === 'main') {
-      return tmpModuleName;
+      // if router:main or adapter:main look for a module with just the type first
+      return parsedName.prefix + '/' + parsedName.type;
     }
   },
 
