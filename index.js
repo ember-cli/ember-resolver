@@ -8,8 +8,7 @@ module.exports = {
   name: 'ember-resolver',
 
   emberResolverFeatureFlags() {
-    var config = this.project.config();
-    var resolverConfig = config['ember-resolver'] || {};
+    var resolverConfig = {}; //TODO: load from ember-cli-build.js 
 
     return Object.assign({
       /* Add default feature flags here, for now there is none */
@@ -19,7 +18,7 @@ module.exports = {
   init: function() {
     this._super.init.apply(this, arguments);
     this.options = this.options || {};
-    if (process.env.EMBER_RESOLVER_MODULE_UNIFICATION) {
+    if (process.env.EMBER_CLI_MODULE_UNIFICATION) {
       this.project.isModuleUnification = function () {
         return true;
       }

@@ -14,7 +14,7 @@ module.exports = function() {
       scenarios: [
         {
           name: 'module-unification',
-          command: 'EMBER_RESOLVER_MODULE_UNIFICATION=true ember test'
+          command: 'EMBER_CLI_MODULE_UNIFICATION=true ember test'
         },
         {
           name: 'ember-default',
