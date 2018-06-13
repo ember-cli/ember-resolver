@@ -1,7 +1,7 @@
 /* globals requirejs, require */
 
 import Ember from 'ember';
-// import { assert } from '@ember/debug';
+import { assert } from '@ember/debug';
 import { DEBUG } from '@glimmer/env';
 import classFactory from '../../utils/class-factory';
 import makeDictionary from '../../utils/make-dictionary';
@@ -100,7 +100,7 @@ function parseName(fullName) {
 }
 
 function resolveOther(parsedName) {
-  Ember.assert('`modulePrefix` must be defined', this.namespace.modulePrefix);
+  assert('`modulePrefix` must be defined', this.namespace.modulePrefix);
 
   let normalizedModuleName = this.findModuleName(parsedName);
 
@@ -225,7 +225,7 @@ const Resolver = DefaultResolver.extend({
     if (this._moduleRegistry.has(engineRoutesModule)) {
       let routeMap = this._extractDefaultExport(engineRoutesModule);
 
-      Ember.assert(`The route map for ${engineName} should be wrapped by 'buildRoutes' before exporting.` , routeMap.isRouteMap);
+      assert(`The route map for ${engineName} should be wrapped by 'buildRoutes' before exporting.` , routeMap.isRouteMap);
 
       return routeMap;
     }
