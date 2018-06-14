@@ -34,6 +34,7 @@ module.exports = function() {
           },
           npm: {
             devDependencies: {
+              "ember-debug-handlers-polyfill": "^1.1.1",
               'ember-source': null
             }
           }
