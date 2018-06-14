@@ -1,7 +1,6 @@
-import Ember from 'ember';
+import { A } from '@ember/array';
+import ContainerDebugAdapter from '@ember/debug/container-debug-adapter';
 import { ModuleRegistry } from './index';
-
-const { ContainerDebugAdapter } = Ember;
 
 function getPod(type, key, prefix) {
   let match = key.match(new RegExp('^/?' + prefix + '/(.+)/' + type + '$'));
@@ -66,7 +65,7 @@ export default ContainerDebugAdapter.extend({
       */
   catalogEntriesByType(type) {
     let moduleNames = this._moduleRegistry.moduleNames();
-    let types = Ember.A();
+    let types = A();
 
     let prefix = this.namespace.modulePrefix;
 

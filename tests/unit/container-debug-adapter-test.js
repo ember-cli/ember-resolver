@@ -1,5 +1,6 @@
+import { run } from '@ember/runloop';
+import Application from '@ember/application';
 import { module, test } from 'qunit';
-import Ember from 'ember';
 import Resolver from 'ember-resolver/resolver';
 import ContainerDebugAdapter from 'ember-resolver/resolvers/classic/container-debug-adapter';
 import ContainerDebugAdapterInitializer from 'dummy/initializers/container-debug-adapter';
@@ -22,7 +23,7 @@ function undef(_module) {
 
 module("Container Debug Adapter Tests", {
   beforeEach:function() {
-    let BaseApplication = Ember.Application.extend({
+    let BaseApplication = Application.extend({
       Resolver,
       ContainerDebugAdapter,
       modulePrefix: 'appkit',
@@ -39,17 +40,17 @@ module("Container Debug Adapter Tests", {
 
     BaseApplication.initializer(ContainerDebugAdapterInitializer);
 
-    Ember.run(function() {
+    run(function() {
       App = BaseApplication.create();
     });
 
-    Ember.run(function() {
+    run(function() {
       containerDebugAdapter = App.__container__.lookup('container-debug-adapter:main');
       containerDebugAdapter._moduleRegistry._entries = modules;
     });
   },
   afterEach: function() {
-    Ember.run(function() {
+    run(function() {
       containerDebugAdapter.destroy();
       App.destroy();
       App = null;

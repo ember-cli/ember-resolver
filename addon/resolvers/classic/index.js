@@ -1,6 +1,11 @@
 /* globals requirejs, require */
 
 import Ember from 'ember';
+import DefaultResolver from '@ember/application/globals-resolver';
+import { assert, deprecate, warn } from '@ember/debug';
+import { get, computed } from '@ember/object';
+import { dasherize, classify, underscore } from '@ember/string';
+import { DEBUG } from '@glimmer/env';
 import classFactory from '../../utils/class-factory';
 import makeDictionary from '../../utils/make-dictionary';
 
@@ -23,7 +28,7 @@ export class ModuleRegistry {
   }
 }
 
-/*
+/**
  * This module defines a subclass of Ember.DefaultResolver that adds two
  * important features:
  *
@@ -34,17 +39,6 @@ export class ModuleRegistry {
  *  2) is able to provide injections to classes that implement `extend`
  *     (as is typical with Ember).
  */
-
-
-const {
-  underscore,
-  classify,
-  dasherize
-} = Ember.String;
-const {
-  get,
-  DefaultResolver
-} = Ember;
 
 function parseName(fullName) {
   if (fullName.parsedName === true) { return fullName; }
@@ -98,7 +92,7 @@ function parseName(fullName) {
 }
 
 function resolveOther(parsedName) {
-  Ember.assert('`modulePrefix` must be defined', this.namespace.modulePrefix);
+  assert('`modulePrefix` must be defined', this.namespace.modulePrefix);
 
   let normalizedModuleName = this.findModuleName(parsedName);
 
@@ -223,7 +217,7 @@ const Resolver = DefaultResolver.extend({
     if (this._moduleRegistry.has(engineRoutesModule)) {
       let routeMap = this._extractDefaultExport(engineRoutesModule);
 
-      Ember.assert(`The route map for ${engineName} should be wrapped by 'buildRoutes' before exporting.` , routeMap.isRouteMap);
+      assert(`The route map for ${engineName} should be wrapped by 'buildRoutes' before exporting.` , routeMap.isRouteMap);
 
       return routeMap;
     }
@@ -259,7 +253,7 @@ const Resolver = DefaultResolver.extend({
    @property moduleNameLookupPatterns
    @returns {Ember.Array}
    */
-  moduleNameLookupPatterns: Ember.computed(function(){
+  moduleNameLookupPatterns: computed(function(){
     return [
       this.podBasedModuleName,
       this.podBasedComponentsInSubdir,
@@ -314,7 +308,7 @@ const Resolver = DefaultResolver.extend({
     let partializedModuleName = moduleName.replace(/\/-([^/]*)$/, '/_$1');
 
     if (this._moduleRegistry.has(partializedModuleName)) {
-      Ember.deprecate('Modules should not contain underscores. ' +
+      deprecate('Modules should not contain underscores. ' +
       'Attempted to lookup "'+moduleName+'" which ' +
       'was not found. Please rename "'+partializedModuleName+'" '+
       'to "'+moduleName+'" instead.', false,
@@ -323,14 +317,14 @@ const Resolver = DefaultResolver.extend({
       return partializedModuleName;
     }
 
-    Ember.runInDebug(() => {
+    if (DEBUG) {
       let isCamelCaseHelper = parsedName.type === 'helper' && /[a-z]+[A-Z]+/.test(moduleName);
       if (isCamelCaseHelper) {
         this._camelCaseHelperWarnedNames = this._camelCaseHelperWarnedNames || [];
         let alreadyWarned = this._camelCaseHelperWarnedNames.indexOf(parsedName.fullName) > -1;
         if (!alreadyWarned && this._moduleRegistry.has(dasherize(moduleName))) {
           this._camelCaseHelperWarnedNames.push(parsedName.fullName);
-          Ember.warn('Attempted to lookup "' + parsedName.fullName + '" which ' +
+          warn('Attempted to lookup "' + parsedName.fullName + '" which ' +
           'was not found. In previous versions of ember-resolver, a bug would have ' +
           'caused the module at "' + dasherize(moduleName) + '" to be ' +
           'returned for this camel case helper name. This has been fixed. ' +
@@ -340,7 +334,7 @@ const Resolver = DefaultResolver.extend({
           { id: 'ember-resolver.camelcase-helper-names', until: '3.0.0' });
         }
       }
-    });
+    }
   },
 
   // used by Ember.DefaultResolver.prototype._logLookup
