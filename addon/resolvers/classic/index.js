@@ -1,13 +1,10 @@
 /* globals requirejs, require */
 
-import { deprecate } from '@ember/application/deprecations';
-
-import { get, computed } from '@ember/object';
-import DefaultResolver from '@ember/application/globals-resolver';
-import { dasherize, classify, underscore } from '@ember/string';
-
 import Ember from 'ember';
-import { assert, warn } from '@ember/debug';
+import DefaultResolver from '@ember/application/globals-resolver';
+import { assert, deprecate, warn } from '@ember/debug';
+import { get, computed } from '@ember/object';
+import { dasherize, classify, underscore } from '@ember/string';
 import { DEBUG } from '@glimmer/env';
 import classFactory from '../../utils/class-factory';
 import makeDictionary from '../../utils/make-dictionary';
@@ -30,6 +27,18 @@ export class ModuleRegistry {
     return require(moduleName);
   }
 }
+
+/**
+ * This module defines a subclass of Ember.DefaultResolver that adds two
+ * important features:
+ *
+ *  1) The resolver makes the container aware of es6 modules via the AMD
+ *     output. The loader's _moduleEntries is consulted so that classes can be
+ *     resolved directly via the module loader, without needing a manual
+ *     `import`.
+ *  2) is able to provide injections to classes that implement `extend`
+ *     (as is typical with Ember).
+ */
 
 function parseName(fullName) {
   if (fullName.parsedName === true) { return fullName; }
