@@ -29,7 +29,7 @@ module.exports = {
     this.options.babel = {
       loose: true,
       plugins: [
-        [require('babel-plugin-debug-macros').default, {
+        [require.resolve('babel-plugin-debug-macros'), {
           debugTools: {
             source: 'this-is-dumb-it-should-not-be-required-i-blame-rwjblue'
           },
