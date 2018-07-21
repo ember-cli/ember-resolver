@@ -28,6 +28,7 @@ module.exports = {
         'tests/dummy/config/**/*.js'
       ],
       excludedFiles: [
+        'mu-trees/**',
         'addon/**',
         'addon-test-support/**',
         'app/**',
