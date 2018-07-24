@@ -1,9 +1,8 @@
 /* globals requirejs, require */
 
 import Ember from 'ember';
-import DefaultResolver from '@ember/application/globals-resolver';
 import { assert, deprecate, warn } from '@ember/debug';
-import { get, computed } from '@ember/object';
+import EmberObject, { get, computed } from '@ember/object';
 import { dasherize, classify, underscore } from '@ember/string';
 import { DEBUG } from '@glimmer/env';
 import classFactory from '../../utils/class-factory';
@@ -108,17 +107,14 @@ function resolveOther(parsedName) {
     }
 
     return defaultExport;
-  } else {
-    return this._super(parsedName);
   }
 }
 
 // Ember.DefaultResolver docs:
 //   https://github.com/emberjs/ember.js/blob/master/packages/ember-application/lib/system/resolver.js
-const Resolver = DefaultResolver.extend({
+const Resolver = EmberObject.extend({
   resolveOther,
   parseName,
-  resolveTemplate: resolveOther,
   pluralizedTypes: null,
   moduleRegistry: null,
 
@@ -150,6 +146,22 @@ const Resolver = DefaultResolver.extend({
 
   normalize(fullName) {
     return this._normalizeCache[fullName] || (this._normalizeCache[fullName] = this._normalize(fullName));
+  },
+
+  resolve(fullName) {
+    let parsedName = this.parseName(fullName);
+    let resolveMethodName = parsedName.resolveMethodName;
+    let resolved;
+
+    if (typeof this[resolveMethodName] === 'function') {
+      resolved = this[resolveMethodName](parsedName);
+    }
+
+    if (resolved == null) {
+      resolved = this.resolveOther(parsedName);
+    }
+
+    return resolved;
   },
 
   _normalize(fullName) {
@@ -221,6 +233,14 @@ const Resolver = DefaultResolver.extend({
 
       return routeMap;
     }
+  },
+
+  resolveTemplate(parsedName) {
+    let resolved = this.resolveOther(parsedName);
+    if (resolved == null) {
+      resolved = Ember.TEMPLATES[parsedName.fullNameWithoutType];
+    }
+    return resolved;
   },
 
   mainModuleName(parsedName) {
