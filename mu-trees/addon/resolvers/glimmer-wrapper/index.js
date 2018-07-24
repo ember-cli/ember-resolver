@@ -1,8 +1,7 @@
-import Ember from 'ember';
 import GlimmerResolver from '@glimmer/resolver/resolver';
 import RequireJSRegistry from '../../module-registries/requirejs';
-
-const { DefaultResolver, String: { dasherize } } = Ember;
+import GlobalsResolver from '@ember/application/globals-resolver';
+import { dasherize } from '@ember/string';
 
 function slasherize(dotted) {
   return dotted.replace(/\./g, '/');
@@ -69,7 +68,7 @@ function cleanupEmberSpecifier(specifier, source, _namespace) {
  * this code extends from the DefaultResolver, it should never
  * call `_super` or call into that code.
  */
-const Resolver = DefaultResolver.extend({
+const Resolver = GlobalsResolver.extend({
   init() {
     this._super(...arguments);
 

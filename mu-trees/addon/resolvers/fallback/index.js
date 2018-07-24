@@ -1,11 +1,11 @@
 import ClassicResolver from 'ember-resolver';
 import Resolver from 'ember-resolver/resolvers/glimmer-wrapper';
-import Ember from 'ember';
+import { assign } from '@ember/polyfills';
 
 export default Resolver.extend({
   init(options) {
     this._super(options);
-    this._fallback = ClassicResolver.create(Ember.assign({
+    this._fallback = ClassicResolver.create(assign({
       namespace: { modulePrefix: this.config.app.name }
     }, options));
   },

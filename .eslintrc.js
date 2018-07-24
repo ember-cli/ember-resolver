@@ -4,8 +4,12 @@ module.exports = {
     ecmaVersion: 2017,
     sourceType: 'module'
   },
+  plugins: [
+    'ember'
+  ],
   extends: [
-    'eslint:recommended'
+    'eslint:recommended',
+    'plugin:ember/recommended'
   ],
   env: {
     browser: true
@@ -24,11 +28,11 @@ module.exports = {
         'tests/dummy/config/**/*.js'
       ],
       excludedFiles: [
+        'mu-trees/**',
         'addon/**',
         'addon-test-support/**',
         'app/**',
-        'tests/dummy/app/**',
-        'mu-trees/**',
+        'tests/dummy/app/**'
       ],
       parserOptions: {
         sourceType: 'script',
