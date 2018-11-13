@@ -27,6 +27,18 @@ export class ModuleRegistry {
   }
 }
 
+// type:file/name
+// type:@scope/file/name
+const SIMPLE = /^([^@:]+):(@?[^@:]+)$/;
+
+// namespace@type:file/name
+// namespace@type:@scope/file/name
+const PREFIX = /^([^@:]+)@([^@:]+):(@?[^@:]+)$/;
+
+// type:namespace@file/name
+// type:namespace@@scope/file/name
+const SUFFIX = /^([^@:]+):([^@:]+)@(@?[^@:]+)$/;
+
 /**
  * This module defines a subclass of Ember.DefaultResolver that adds two
  * important features:
@@ -42,36 +54,26 @@ export class ModuleRegistry {
 function parseName(fullName) {
   if (fullName.parsedName === true) { return fullName; }
 
-  let prefix, type, name;
-  let fullNameParts = fullName.split('@');
+  let match, prefix, type, name;
 
-  // HTMLBars uses helper:@content-helper which collides
-  // with ember-cli namespace detection.
-  // This will be removed in a future release of HTMLBars.
-  if (fullName !== 'helper:@content-helper' &&
-      fullNameParts.length === 2) {
-    let prefixParts = fullNameParts[0].split(':');
+  /* eslint-disable no-cond-assign */
+  if (match = SIMPLE.exec(fullName)) {
+    type = match[1];
+    name = match[2];
+  } else if (match = PREFIX.exec(fullName)) {
+    prefix = match[1];
+    type = match[2];
+    name = match[3];
+  } else if (match = SUFFIX.exec(fullName)) {
+    type = match[1];
+    prefix = match[2];
+    name = match[3];
+  }
+  /* eslint-enable no-cond-assign */
 
-    if (prefixParts.length === 2) {
-      prefix = prefixParts[1];
-      type = prefixParts[0];
-      name = fullNameParts[1];
-    } else {
-      let nameParts = fullNameParts[1].split(':');
-
-      prefix = fullNameParts[0];
-      type = nameParts[0];
-      name = nameParts[1];
-    }
-
-    if (type === 'template' && prefix.lastIndexOf('components/', 0) === 0) {
-      name = `components/${name}`;
-      prefix = prefix.slice(11);
-    }
-  } else {
-    fullNameParts = fullName.split(':');
-    type = fullNameParts[0];
-    name = fullNameParts[1];
+  if (type === 'template' && prefix && prefix.lastIndexOf('components/', 0) === 0) {
+    name = `components/${name}`;
+    prefix = prefix.slice(11);
   }
 
   let fullNameWithoutType = name;
