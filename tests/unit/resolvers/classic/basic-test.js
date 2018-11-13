@@ -184,6 +184,22 @@ test("can lookup a component template in another namespace with different syntax
   assert.equal(template, expected, 'default export was returned');
 });
 
+test("can lookup something from a scoped package", function(assert) {
+  assert.expect(3);
+
+  let expected = {};
+  define('@some-scope/some-module/engine', [], function(){
+    assert.ok(true, "engine was invoked properly");
+
+    return { default: expected };
+  });
+
+  var engine = resolver.resolve('engine:@some-scope/some-module');
+
+  assert.ok(engine, 'engine was returned');
+  assert.equal(engine, expected, 'default export was returned');
+});
+
 test("can lookup a view", function(assert) {
   assert.expect(3);
 
