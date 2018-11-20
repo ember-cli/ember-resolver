@@ -133,3 +133,10 @@ test('un-typed module name with named export of resolved type', function(assert)
     `did not resolve the module`
   );
 });
+
+// Regression test for https://github.com/emberjs/ember.js/issues/17217#issuecomment-440353630
+test('does not crash for nested, auto-generated routes', function(assert) {
+  assert.notOk(
+    this.registry.has('route:/foo/bar/routes/index')
+  )
+});
