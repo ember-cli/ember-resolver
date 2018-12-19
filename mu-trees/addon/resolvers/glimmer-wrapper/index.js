@@ -10,6 +10,9 @@ function slasherize(dotted) {
 
 const TEMPLATE_TO_PARTIAL = /^template:(.*\/)?_([\w-]+)/;
 
+const APP_SPECIFIER = /^([^:]+):src\/ui\/(.+)(?:\/template\.hbs)$/;
+const ADDON_SPECIFIER = /^([^:]+):((?:@[^/]+\/)?[^/@]+)\/src\/ui\/(.+)(?:\/template\.hbs)$/;
+
 function isAbsoluteSpecifier(specifier) {
   return specifier.indexOf(':/') !== -1;
 }
@@ -115,9 +118,17 @@ const Resolver = GlobalsResolver.extend({
         source = `${type}:/${rootName}/`;
       } else if (source) {
         // make absolute
-        let parts = source.split(':src/ui/');
-        source = `${parts[0]}:/${rootName}/${parts[1]}`;
-        source = source.split('/template.hbs')[0];
+        let match;
+        // eslint-disable-next-line no-cond-assign
+        if (match = APP_SPECIFIER.exec(source)) {
+          // For apps: template:src/ui/components/foo/template.hbs
+          source = `${match[1]}:/${rootName}/${match[2]}`;
+          // eslint-disable-next-line no-cond-assign
+        } else if (match = ADDON_SPECIFIER.exec(source)) {
+          // For addons:        template:addon-name/src/ui/components/foo/template.hbs
+          // For scoped addons: template:@scope/addon-name/src/ui/components/foo/template.hbs
+          source = `${match[1]}:/${match[2]}/${match[3]}`;
+        }
       }
 
       let [_specifier, _source] = cleanupEmberSpecifier(specifier, source, rootName);
