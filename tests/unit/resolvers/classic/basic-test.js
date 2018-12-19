@@ -4,7 +4,6 @@
 
 import Ember from 'ember';
 import { merge } from '@ember/polyfills';
-import require from 'require';
 import { module, test } from 'qunit';
 import Resolver from 'ember-resolver/resolvers/classic';
 
@@ -39,31 +38,6 @@ module('ember-resolver/resolvers/classic', {
   }
 });
 
-test("can access at deprecated 'resolver' module name", function(assert){
-  assert.expect(2);
-
-  // require manually here, because our resetting of the `requirejs.entries` hash
-  // means that each test that is ran actually creates a new `Resolver` base class
-  // this allows us to match using ===
-  let Resolver = require('ember-resolver/resolver')['default'];
-  let ResolverAlias = require('resolver')['default'];
-
-  assert.expectDeprecation('Usage of `resolver` module is deprecated, please update to `ember-resolver`.');
-  assert.equal(Resolver, ResolverAlias, "both 'ember/resolver' and 'resolver' return the same Resolver");
-});
-
-test("can access at deprecated 'ember/resolver' module name", function(assert){
-  assert.expect(2);
-
-  // require manually here, because our resetting of the `requirejs.entries` hash
-  // means that each test that is ran actually creates a new `Resolver` base class
-  // this allows us to match using ===
-  let Resolver = require('ember-resolver/resolver')['default'];
-  let ResolverAlias = require('ember/resolver')['default'];
-
-  assert.expectDeprecation('Usage of `ember/resolver` module is deprecated, please update to `ember-resolver`.');
-  assert.equal(Resolver, ResolverAlias, "both 'ember/resolver' and 'resolver' return the same Resolver");
-});
 // ember @ 3.3 breaks this: https://github.com/emberjs/ember.js/commit/b8613c20289cc8a730e181c4c51ecfc4b6836052#r29790209
 // ember @ 3.4.0-beta.1 restores this: https://github.com/emberjs/ember.js/commit/ddd8d9b9d9f6d315185a34802618a666bb3aeaac
 // test('does not require `namespace` to exist at `init` time', function(assert) {
