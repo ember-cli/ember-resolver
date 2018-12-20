@@ -81,7 +81,15 @@ const Resolver = GlobalsResolver.extend({
     this._glimmerResolver = new GlimmerResolver(this.config, this.glimmerModuleRegistry);
   },
 
-  normalize: null,
+  normalize(specifier) {
+    // This method is called by `Registry#validateInjections` in dev mode.
+    // https://github.com/ember-cli/ember-resolver/issues/299
+    const [type, name] = specifier.split(':', 2);
+    if (name && (type === 'service' || type === 'controller')) {
+      return `${type}:${dasherize(name)}`;
+    }
+    return specifier;
+  },
 
   expandLocalLookup(specifier, source, namespace) {
     if (isAbsoluteSpecifier(specifier)) {
