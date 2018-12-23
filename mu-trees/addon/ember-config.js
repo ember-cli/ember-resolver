@@ -25,6 +25,7 @@ export default function generateConfig(name) {
       'instance-initializers': { definitiveCollection: 'instance-initializer' },
       location: { definitiveCollection: 'main' },
       model: { definitiveCollection: 'models' },
+      'modifier-manager': { definitiveCollection: 'main' },
       partial: { definitiveCollection: 'partials' },
       renderer: { definitiveCollection: 'main' },
       route: { definitiveCollection: 'routes' },
