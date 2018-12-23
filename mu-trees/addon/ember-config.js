@@ -18,6 +18,7 @@ export default function generateConfig(name) {
       controller: { definitiveCollection: 'routes' },
       component: { definitiveCollection: 'components' },
       'component-lookup': { definitiveCollection: 'main' },
+      'component-manager': { definitiveCollection: 'main' },
       event_dispatcher: { definitiveCollection: 'main' },
       helper: { definitiveCollection: 'components' },
       initializer: { definitiveCollection: 'initializers' },
