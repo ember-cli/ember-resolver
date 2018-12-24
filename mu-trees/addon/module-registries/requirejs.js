@@ -61,8 +61,8 @@ export default class RequireJSRegistry {
   }
 
   _checkDefaultType(specifier) {
-    let {defaultType} = this._config.collections[specifier.collection];
-    return defaultType && defaultType === specifier.type;
+    let collection = this._config.collections[specifier.collection];
+    return collection && collection.defaultType && collection.defaultType === specifier.type;
   }
 
   has(specifierString) {
