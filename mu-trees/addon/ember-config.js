@@ -18,14 +18,14 @@ export default function generateConfig(name) {
       controller: { definitiveCollection: 'routes' },
       component: { definitiveCollection: 'components' },
       'component-lookup': { definitiveCollection: 'main' },
-      'component-manager': { definitiveCollection: 'main' },
+      'component-manager': { definitiveCollection: 'component-managers' },
       event_dispatcher: { definitiveCollection: 'main' },
       helper: { definitiveCollection: 'components' },
       initializer: { definitiveCollection: 'initializers' },
       'instance-initializers': { definitiveCollection: 'instance-initializer' },
       location: { definitiveCollection: 'main' },
       model: { definitiveCollection: 'models' },
-      'modifier-manager': { definitiveCollection: 'main' },
+      'modifier-manager': { definitiveCollection: 'modifier-managers' },
       partial: { definitiveCollection: 'partials' },
       renderer: { definitiveCollection: 'main' },
       route: { definitiveCollection: 'routes' },
@@ -50,6 +50,9 @@ export default function generateConfig(name) {
         privateCollections: ['utils'],
         types: ['component', 'helper', 'template']
       },
+      'component-managers': {
+        types: ['component-manager']
+      },
       config: {
         unresolvable: true
       },
@@ -70,6 +73,9 @@ export default function generateConfig(name) {
         defaultType: 'model',
         privateCollections: ['utils'],
         types: ['model', 'adapter', 'serializer']
+      },
+      'modifier-managers': {
+        types: ['modifier-manager']
       },
       partials: {
         group: 'ui',
