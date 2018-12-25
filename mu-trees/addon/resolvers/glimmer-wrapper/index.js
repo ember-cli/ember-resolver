@@ -1,3 +1,4 @@
+import { DEBUG } from '@glimmer/env';
 import GlimmerResolver from '@glimmer/resolver/resolver';
 import RequireJSRegistry from '../../module-registries/requirejs';
 import GlobalsResolver from '@ember/application/globals-resolver';
@@ -138,5 +139,17 @@ const Resolver = GlobalsResolver.extend({
   }
 
 });
+
+if (DEBUG) {
+  Resolver.prototype.normalize = function(specifier) {
+    // This method is called by `Registry#validateInjections` in dev mode.
+    // https://github.com/ember-cli/ember-resolver/issues/299
+    const [type, name] = specifier.split(':', 2);
+    if (name && (type === 'service' || type === 'controller')) {
+      return `${type}:${dasherize(name)}`;
+    }
+    return specifier;
+  }
+}
 
 export default Resolver;
