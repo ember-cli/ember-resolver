@@ -2489,8 +2489,8 @@ ember-cli-broccoli-sane-watcher@^2.1.1:
     sane "^2.4.1"
 
 ember-cli-dependency-checker@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/ember-cli-dependency-checker/-/ember-cli-dependency-checker-3.0.0.tgz#61245f5f79f881dece043303111d5f41efb8621f"
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/ember-cli-dependency-checker/-/ember-cli-dependency-checker-3.1.0.tgz#b39c6b537a1457d77892edf5ddcfa025cd1401e2"
   dependencies:
     chalk "^2.3.0"
     find-yarn-workspace-root "^1.1.0"
