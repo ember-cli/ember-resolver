@@ -110,8 +110,6 @@ function resolveOther(parsedName) {
   }
 }
 
-// Ember.DefaultResolver docs:
-//   https://github.com/emberjs/ember.js/blob/master/packages/ember-application/lib/system/resolver.js
 const Resolver = EmberObject.extend({
   resolveOther,
   parseName,
