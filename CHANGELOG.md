@@ -1,5 +1,14 @@
 # Change Log
 
+## [v5.0.0](https://github.com/ember-cli/ember-resolver/tree/v5.0.0) (2018-07-23)
+
+[Full Changelog](https://github.com/ember-cli/ember-resolver/compare/v4.5.6...v5.0.0)
+
+**Breaking Changes**
+
+- Dropped support for Node v4
+- ember-resolver will no longer fall back to the globals resolver [\#243](https://github.com/ember-cli/ember-resolver/pull/243)
+
 ## [v4.5.6](https://github.com/ember-cli/ember-resolver/tree/v4.5.6) (2018-06-13)
 [Full Changelog](https://github.com/ember-cli/ember-resolver/compare/v4.5.5...v4.5.6)
 
