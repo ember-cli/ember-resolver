@@ -2703,9 +2703,9 @@ ember-source-channel-url@^1.0.1:
   dependencies:
     got "^8.0.1"
 
-ember-source@~3.7.1:
-  version "3.7.1"
-  resolved "https://registry.yarnpkg.com/ember-source/-/ember-source-3.7.1.tgz#c6e8fb26ff25d9754add3e87e3f292da2feeeb31"
+ember-source@~3.7.2:
+  version "3.7.2"
+  resolved "https://registry.yarnpkg.com/ember-source/-/ember-source-3.7.2.tgz#2167b667db1dc4b78cea881a5c739ce851109073"
   dependencies:
     broccoli-funnel "^2.0.1"
     broccoli-merge-trees "^3.0.2"
