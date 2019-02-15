@@ -64,6 +64,16 @@ function cleanupEmberSpecifier(specifier, source, _namespace) {
   return [specifier, source];
 }
 
+const normalize = !DEBUG ? null : function (specifier) {
+  // This method is called by `Registry#validateInjections` in dev mode.
+  // https://github.com/ember-cli/ember-resolver/issues/299
+  const [type, name] = specifier.split(':', 2);
+  if (name && (type === 'service' || type === 'controller')) {
+    return `${type}:${dasherize(name)}`;
+  }
+  return specifier;
+};
+
 /*
  * Wrap the @glimmer/resolver in Ember's resolver API. Although
  * this code extends from the DefaultResolver, it should never
@@ -82,15 +92,7 @@ const Resolver = GlobalsResolver.extend({
     this._glimmerResolver = new GlimmerResolver(this.config, this.glimmerModuleRegistry);
   },
 
-  normalize: !DEBUG ? null : function(specifier) {
-    // This method is called by `Registry#validateInjections` in dev mode.
-    // https://github.com/ember-cli/ember-resolver/issues/299
-    const [type, name] = specifier.split(':', 2);
-    if (name && (type === 'service' || type === 'controller')) {
-      return `${type}:${dasherize(name)}`;
-    }
-    return specifier;
-  },
+  normalize,
 
   expandLocalLookup(specifier, source, namespace) {
     if (isAbsoluteSpecifier(specifier)) {
