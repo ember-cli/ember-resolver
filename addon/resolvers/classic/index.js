@@ -45,17 +45,18 @@ function parseName(fullName) {
   let prefix, type, name;
   let fullNameParts = fullName.split('@');
 
-  // HTMLBars uses helper:@content-helper which collides
-  // with ember-cli namespace detection.
-  // This will be removed in a future release of HTMLBars.
-  if (fullName !== 'helper:@content-helper' &&
-      fullNameParts.length === 2) {
+  if (fullNameParts.length === 2) {
     let prefixParts = fullNameParts[0].split(':');
 
     if (prefixParts.length === 2) {
-      prefix = prefixParts[1];
-      type = prefixParts[0];
-      name = fullNameParts[1];
+      if (prefixParts[1].length === 0) {
+        type = prefixParts[0];
+        name = `@${fullNameParts[1]}`;
+      } else {
+        prefix = prefixParts[1];
+        type = prefixParts[0];
+        name = fullNameParts[1];
+      }
     } else {
       let nameParts = fullNameParts[1].split(':');
 
