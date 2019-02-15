@@ -1,5 +1,13 @@
 # Change Log
 
+## v5.1.1 (2019-02-15)
+
+#### :bug: Bug Fix
+* [#313](https://github.com/ember-cli/ember-resolver/pull/313) fix(glimmer-wrapper): move debug `normalize` in `.extend()` block ([@buschtoens](https://github.com/buschtoens))
+
+#### Committers: 1
+- Jan Buschtöns ([@buschtoens](https://github.com/buschtoens))
+
 ## v5.1.0 (2019-02-15)
 
 #### :rocket: Enhancement
