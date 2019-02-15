@@ -1,5 +1,33 @@
 # Change Log
 
+## v5.1.0 (2019-02-15)
+
+#### :rocket: Enhancement
+* [#295](https://github.com/ember-cli/ember-resolver/pull/295) Remove deprecated legacy shims ([@Turbo87](https://github.com/Turbo87))
+
+#### :bug: Bug Fix
+* [#330](https://github.com/ember-cli/ember-resolver/pull/330) Support engine resolution in scoped packages ([@dfreeman](https://github.com/dfreeman))
+* [#300](https://github.com/ember-cli/ember-resolver/pull/300) fix(glimmer-wrapper): add `normalize` method for `Registry#has` ([@buschtoens](https://github.com/buschtoens))
+* [#247](https://github.com/ember-cli/ember-resolver/pull/247) Fix MU for deeply nested classic components ([@simonihmig](https://github.com/simonihmig))
+* [#301](https://github.com/ember-cli/ember-resolver/pull/301) Add component-manager and modifier-manager to default module unification configuration ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### :memo: Documentation
+* [#316](https://github.com/ember-cli/ember-resolver/pull/316) Adds changelog entry for version v5.0.0 ([@NLincoln](https://github.com/NLincoln))
+
+#### :house: Internal
+* [#310](https://github.com/ember-cli/ember-resolver/pull/310) Remove outaded comment ([@dcyriller](https://github.com/dcyriller))
+* [#294](https://github.com/ember-cli/ember-resolver/pull/294) Remove unused dependencies ([@Turbo87](https://github.com/Turbo87))
+
+#### Committers: 8
+- Cyrille David ([@dcyriller](https://github.com/dcyriller))
+- Dan Freeman ([@dfreeman](https://github.com/dfreeman))
+- Jan Buschtöns ([@buschtoens](https://github.com/buschtoens))
+- L. Preston Sego III ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+- Léo Bugoni ([@leobugoni](https://github.com/leobugoni))
+- Nathan Lincoln ([@NLincoln](https://github.com/NLincoln))
+- Simon Ihmig ([@simonihmig](https://github.com/simonihmig))
+- Tobias Bieniek ([@Turbo87](https://github.com/Turbo87))
+
 ## [v5.0.0](https://github.com/ember-cli/ember-resolver/tree/v5.0.0) (2018-07-23)
 
 [Full Changelog](https://github.com/ember-cli/ember-resolver/compare/v4.5.6...v5.0.0)
