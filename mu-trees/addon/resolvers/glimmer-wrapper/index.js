@@ -64,7 +64,7 @@ function cleanupEmberSpecifier(specifier, source, _namespace) {
   return [specifier, source];
 }
 
-const normalize = !DEBUG ? null : function (specifier) {
+const normalize = !DEBUG ? null : function(specifier) {
   // This method is called by `Registry#validateInjections` in dev mode.
   // https://github.com/ember-cli/ember-resolver/issues/299
   const [type, name] = specifier.split(':', 2);
