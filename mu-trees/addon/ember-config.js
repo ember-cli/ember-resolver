@@ -25,13 +25,13 @@ export default function generateConfig(name) {
       'instance-initializers': { definitiveCollection: 'instance-initializer' },
       location: { definitiveCollection: 'main' },
       model: { definitiveCollection: 'models' },
-      modifier: { definitiveCollection: 'main' },
+      modifier: { definitiveCollection: 'components' },
       'modifier-manager': { definitiveCollection: 'modifier-managers' },
       partial: { definitiveCollection: 'partials' },
       renderer: { definitiveCollection: 'main' },
       route: { definitiveCollection: 'routes' },
       router: { definitiveCollection: 'main' },
-      'route-map': { definitiveCollection: 'route-map' },
+      'route-map': { definitiveCollection: 'main' },
       serializer: { definitiveCollection: 'models' },
       service: { definitiveCollection: 'services' },
       template: { definitiveCollection: 'components' },
@@ -45,12 +45,12 @@ export default function generateConfig(name) {
     },
     collections: {
       'main': {
-        types: ['router', '-bucket-cache', 'component-lookup', '-view-registry', 'event_dispatcher', 'application', 'location', 'renderer', '-environment', '-application-instance']
+        types: ['router', '-bucket-cache', 'component-lookup', '-view-registry', 'event_dispatcher', 'application', 'location', 'renderer', '-environment', '-application-instance', 'route-map']
       },
       components: {
         group: 'ui',
         privateCollections: ['utils'],
-        types: ['component', 'helper', 'template']
+        types: ['component', 'helper', 'template', 'modifier']
       },
       'component-managers': {
         types: ['component-manager']
