@@ -1,5 +1,14 @@
 # Change Log
 
+## v5.1.2 (2019-02-21)
+
+#### :bug: Bug Fix
+* [#336](https://github.com/ember-cli/ember-resolver/pull/336) Update modifiers and router-map in MU resolver configuration. ([@rwjblue](https://github.com/rwjblue))
+
+#### Committers: 2
+- L. Preston Sego III ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+- Robert Jackson ([@rwjblue](https://github.com/rwjblue))
+
 ## v5.1.1 (2019-02-15)
 
 #### :bug: Bug Fix
