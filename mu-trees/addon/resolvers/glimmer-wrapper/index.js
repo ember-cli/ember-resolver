@@ -102,13 +102,13 @@ const Resolver = GlobalsResolver.extend({
     if (source || namespace) {
       let rootName = namespace || this._configRootName;
 
-      let [type] = specifier.split(':');
-
       /*
        * Ember components require their lookupString to be massaged. Make this
        * as "pay-go" as possible.
        */
       if (namespace) {
+        let [type] = specifier.split(':', 2);
+
         // This is only required because:
         // https://github.com/glimmerjs/glimmer-di/issues/45
         source = `${type}:/${rootName}/`;
