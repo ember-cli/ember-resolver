@@ -1,5 +1,13 @@
 # Change Log
 
+## v5.1.3 (2019-02-22)
+
+#### :bug: Bug Fix
+* [#338](https://github.com/ember-cli/ember-resolver/pull/338) Fix MU `GlimmerResolver.normalize` when `fullName` is not present ([@ppcano](https://github.com/ppcano))
+
+#### Committers: 1
+- Pepe Cano ([@ppcano](https://github.com/ppcano))
+
 ## v5.1.2 (2019-02-21)
 
 #### :bug: Bug Fix
