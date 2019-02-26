@@ -3,6 +3,7 @@ import GlimmerResolver from '@glimmer/resolver/resolver';
 import RequireJSRegistry from '../../module-registries/requirejs';
 import GlobalsResolver from '@ember/application/globals-resolver';
 import { dasherize } from '@ember/string';
+import { assert } from '@ember/debug';
 
 function slasherize(dotted) {
   return dotted.replace(/\./g, '/');
@@ -103,7 +104,7 @@ const Resolver = GlobalsResolver.extend({
     if (source || namespace) {
       let rootName = namespace || this._configRootName;
 
-      let [type] = specifier.split(':');
+      let [type, absolutePath] = specifier.split(':', 2);
 
       /*
        * Ember components require their lookupString to be massaged. Make this
@@ -115,9 +116,18 @@ const Resolver = GlobalsResolver.extend({
         source = `${type}:/${rootName}/`;
       } else if (source) {
         // make absolute
-        let parts = source.split(':src/ui/');
-        source = `${parts[0]}:/${rootName}/${parts[1]}`;
-        source = source.split('/template.hbs')[0];
+        let parts = source.split(':src/ui/', 2);
+        if (parts.length === 2) {
+          // For apps: template:src/ui/components/foo/template.hbs
+          source = `${parts[0]}:/${rootName}/${parts[1]}`;
+        } else {
+          // For addons:        template:addon-name/src/ui/components/foo/template.hbs
+          // For scoped addons: template:@scope/addon-name/src/ui/components/foo/template.hbs
+          let [addonName, relativePath] = absolutePath.split('/src/ui/', 2);
+          assert(`Invalid specifier: '${specifier}'`, relativePath);
+          source = `${type}:/${addonName}/${relativePath}`;
+        }
+        source = source.split('/template.hbs', 1)[0];
       }
 
       let [_specifier, _source] = cleanupEmberSpecifier(specifier, source, rootName);
