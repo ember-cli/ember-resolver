@@ -1,5 +1,6 @@
 'use strict';
 
+var writeFile = require('broccoli-file-creator');
 var VersionChecker = require('ember-cli-version-checker');
 var path = require('path');
 var isModuleUnification;
@@ -57,7 +58,61 @@ module.exports = {
     return new MergeTrees(addonTrees);
   },
 
-  _moduleUnificationTrees() {
+  // Trigger exception if the result of `addon.resolverConfig` method has an unexpected format
+  // Show a warning if there are collisions between addon types or addon collections
+  validateAddonsConfig: function(addonsConfig) {
+
+    let types = {};
+    let collections = {};
+
+    Object.keys(addonsConfig).forEach(addonName => {
+
+      let addonConfig = addonsConfig[addonName];
+      if (addonConfig) {
+        if (typeof(addonConfig) !== 'object') {
+          throw new Error(`"addon.resolverConfig" returns an unexpected value. Addon: ${addonName}.`);
+        }
+
+        let addonTypes = addonConfig.types || {};
+        if (typeof(addonTypes) !== 'object') {
+          throw new Error(`"addon.resolverConfig" returns an unexpected "types" value. Addon: ${addonName}.`);
+        }
+
+        let addonCollections = addonConfig.collections || {};
+        if (typeof(addonCollections) !== 'object') {
+          throw new Error(`"addon.resolverConfig" returns an unexpected "collections" value. Addon: ${addonName}.`);
+        }
+
+        Object.keys(addonTypes).forEach(key => {
+          if (!types.hasOwnProperty(key)) {
+            types[key] = key;
+          } else {
+            this.ui.writeLine(`Addon '${types[key]}' configured the type '${key}' on the resolver, but addon '${addonName}' has overwritten the type '${key}'.`);
+          }
+        });
+        Object.keys(addonCollections).forEach(key => {
+          if (!collections.hasOwnProperty(key)) {
+            collections[key] = key;
+          } else {
+            this.ui.writeLine(`Addon '${types[key]}' configured the collection '${key}' on the resolver, but addon '${addonName}' has overwritten the collection '${key}'.`);
+          }
+        });
+      }
+    });
+  },
+
+  _moduleUnificationTrees: function() {
+
+    let addonConfigs = {};
+    this.project.addons.forEach(addon => {
+      if (addon.resolverConfig) {
+        addonConfigs[addon.name] = addon.resolverConfig() || {};
+      }
+    });
+    this.validateAddonsConfig(addonConfigs);
+
+    let addonConfigsFileContent = `export default ${JSON.stringify(addonConfigs)};`;
+
     var resolve = require('resolve');
     var Funnel = require('broccoli-funnel');
 
@@ -65,6 +120,11 @@ module.exports = {
     var featureTree = new Funnel(featureTreePath, {
       destDir: 'ember-resolver'
     });
+
+    var addonsConfigTree = writeFile(
+      'ember-resolver/addons-config.js',
+      addonConfigsFileContent
+    );
 
     var glimmerResolverSrc = require.resolve('@glimmer/resolver/package');
     var glimmerResolverPath = path.dirname(glimmerResolverSrc);
@@ -80,6 +140,7 @@ module.exports = {
     });
 
     return [
+      this.preprocessJs(addonsConfigTree, { registry: this.registry }),
       this.preprocessJs(featureTree, { registry: this.registry }),
       this.preprocessJs(glimmerResolverTree, { registry: this.registry }),
       this.preprocessJs(glimmerDITree, { registry: this.registry }),
