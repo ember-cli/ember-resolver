@@ -1,7 +1,7 @@
 import { module, test } from "qunit";
-import mergeAddonsConfig from "ember-resolver/merge-addons-config";
+import mergeAddonsConfig from "ember-resolver/utils/merge-addons-config";
 
-module("ember-resolver/merge-addons-config");
+module("ember-resolver/utils/merge-addons-config");
 
 const emptyConfig = function() {
   return { types: {}, collections: {} };

@@ -1,6 +1,5 @@
 /**
-   This function merges the types and collections from addons `addonsConfig`
-   into the `config` parameter.
+   This function provides the types and collections from addons `addonsConfig` to `ember-config`.
 
    It will throw an exception if an addon tries to override
    an existing type or collection on the resolver config object or
@@ -19,24 +18,7 @@
      }
      ```
 
-     The value of `addonsConfig` can be imported from 'ember-resolver/addons-config'.
-
-   Usage:
-
-     ```resolver.js
-     import Resolver from 'ember-resolver/resolvers/fallback';
-     import buildResolverConfig from 'ember-resolver/ember-config';
-     import config from '../config/environment';
-     import addonsConfig from 'ember-resolver/addons-config';
-     import mergeAddonsConfig from 'ember-resolver/merge-addons-config';
-
-     let moduleConfig = buildResolverConfig(config.modulePrefix);
-     mergeAddonsConfig(moduleConfig, addonsConfig);
-
-     export default Resolver.extend({
-       config: moduleConfig
-     });
-     ```
+     The value of `addonsConfig` is be imported from 'ember-resolver/addons-config'.
  */
 export default function mergeAddonsConfig(config, addonsConfig) {
 
