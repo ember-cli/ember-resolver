@@ -5,6 +5,21 @@ var VersionChecker = require('ember-cli-version-checker');
 var path = require('path');
 var isModuleUnification;
 
+function mergeRecursivelyAddonResolverConfig(config, addon) {
+
+  if (!config.hasOwnProperty(addon.name)) {
+
+    if (addon.resolverConfig) {
+      config[addon.name] = addon.resolverConfig() || {};
+    }
+
+    addon.addons.forEach(nestedAddon => {
+      mergeRecursivelyAddonResolverConfig(config, nestedAddon);
+    });
+  }
+
+}
+
 module.exports = {
   name: 'ember-resolver',
 
@@ -104,10 +119,9 @@ module.exports = {
   _moduleUnificationTrees: function() {
 
     let addonConfigs = {};
+
     this.project.addons.forEach(addon => {
-      if (addon.resolverConfig) {
-        addonConfigs[addon.name] = addon.resolverConfig() || {};
-      }
+      mergeRecursivelyAddonResolverConfig(addonConfigs, addon);
     });
     this.validateAddonsConfig(addonConfigs);
 
