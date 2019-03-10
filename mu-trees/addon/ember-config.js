@@ -4,7 +4,7 @@ import mergeAddonsConfig from 'ember-resolver/utils/merge-addons-config';
 
 export default function generateConfig(name) {
 
-  let result = {
+  let config = {
     app: {
       name,
       rootName: name
@@ -13,5 +13,5 @@ export default function generateConfig(name) {
 
   mergeAddonsConfig(moduleConfig, addonsConfig);
 
-  return Object.assign(result, moduleConfig);
+  return Object.assign(config, moduleConfig);
 }
