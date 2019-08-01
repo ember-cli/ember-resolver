@@ -1,4 +1,15 @@
-# Change Log
+## v5.2.0 (2019-08-01)
+
+#### :bug: Bug Fix
+* [#392](https://github.com/ember-cli/ember-resolver/pull/392) Add components to dasherisation exception ([@backspace](https://github.com/backspace))
+
+#### :memo: Documentation
+* [#376](https://github.com/ember-cli/ember-resolver/pull/376) Add basic project description to README.md. ([@abhilashlr](https://github.com/abhilashlr))
+
+#### Committers: 3
+- Buck Doyle ([@backspace](https://github.com/backspace))
+- [@dependabot-preview[bot]](https://github.com/apps/dependabot-preview)
+- abhilashlr ([@abhilashlr](https://github.com/abhilashlr))
 
 ## v5.1.3 (2019-02-22)
 
