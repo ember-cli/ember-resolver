@@ -165,7 +165,7 @@ const Resolver = EmberObject.extend({
 
   _normalize(fullName) {
     // A) Convert underscores to dashes
-    // B) Convert camelCase to dash-case, except for helpers where we want to avoid shadowing camelCase expressions
+    // B) Convert camelCase to dash-case, except for components and helpers where we want to avoid shadowing camelCase expressions
     // C) replace `.` with `/` in order to make nested controllers work in the following cases
     //      1. `needs: ['posts/post']`
     //      2. `{{render "posts/post"}}`
@@ -173,7 +173,7 @@ const Resolver = EmberObject.extend({
 
     let split = fullName.split(':');
     if (split.length > 1) {
-      if (split[0] === 'helper') {
+      if (split[0] === 'component' || split[0] === 'helper') {
         return split[0] + ':' + split[1].replace(/_/g, '-');
       } else {
         return split[0] + ':' + dasherize(split[1].replace(/\./g, '/'));
