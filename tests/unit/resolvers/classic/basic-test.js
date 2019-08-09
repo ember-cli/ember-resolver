@@ -462,6 +462,7 @@ test('normalization', function(assert) {
   // The same applies to components
   assert.equal(resolver.normalize('component:fabulous-component'), 'component:fabulous-component');
   assert.equal(resolver.normalize('component:fabulousComponent'), 'component:fabulousComponent');
+  assert.equal(resolver.normalize('template:components/fabulousComponent'), 'template:components/fabulousComponent');
 });
 
 test('normalization is idempotent', function(assert) {
