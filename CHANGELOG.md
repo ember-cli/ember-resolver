@@ -1,3 +1,11 @@
+## v5.2.1 (2019-08-09)
+
+#### :bug: Bug Fix
+* [#396](https://github.com/ember-cli/ember-resolver/pull/396) Component and their templates should be normalized the same. ([@rwjblue](https://github.com/rwjblue))
+
+#### Committers: 1
+- Robert Jackson ([@rwjblue](https://github.com/rwjblue))
+
 ## v5.2.0 (2019-08-01)
 
 #### :bug: Bug Fix
