@@ -20,7 +20,7 @@ export class ModuleRegistry {
     return Object.keys(this._entries);
   }
   has(moduleName) {
-    return moduleName in this._entries;
+    return require.has(moduleName);
   }
   get(moduleName) {
     return require(moduleName);
@@ -408,6 +408,15 @@ const Resolver = EmberObject.extend({
 
       if (fullname) {
         items[fullname] = true;
+      }
+
+      if (moduleName.endsWith('/index')) {
+        let fallbackModuleName = moduleName.slice(0, -6);
+        let fallbackFullname = this.translateToContainerFullname(type, fallbackModuleName);
+
+        if (fallbackFullname) {
+          items[fallbackFullname] = true;
+        }
       }
     }
 
