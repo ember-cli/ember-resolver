@@ -6,7 +6,7 @@ node_js:
   - "6"
 
 sudo: false
-dist: trusty
+dist: xenial
 
 addons:
   chrome: stable
