@@ -617,6 +617,16 @@ test("will not use custom type prefix when using POD format", function(assert) {
   resolver.resolve('controller:foo');
 });
 
+test('it will find components nested in app/components/name/index.js', function(assert) {
+  define('appkit/components/foo-bar/index', [], function(){
+    assert.ok(true, 'appkit/components/foo-bar was used');
+
+    return 'whatever';
+  });
+
+  resolver.resolve('component:foo-bar');
+});
+
 test("will lookup a components template without being rooted in `components/`", function(assert) {
   define('appkit/components/foo-bar/template', [], function(){
     assert.ok(false, 'appkit/components was used');
