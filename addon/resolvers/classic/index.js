@@ -261,6 +261,12 @@ const Resolver = EmberObject.extend({
     return parsedName.prefix + '/' +  this.pluralize(parsedName.type) + '/' + parsedName.fullNameWithoutType;
   },
 
+  nestedColocationComponentModuleName(parsedName) {
+    if (parsedName.type === 'component') {
+      return parsedName.prefix + '/' +  this.pluralize(parsedName.type) + '/' + parsedName.fullNameWithoutType + '/index';
+    }
+  },
+
   prefix(parsedName) {
     let tmpPrefix = this.namespace.modulePrefix;
 
@@ -285,7 +291,8 @@ const Resolver = EmberObject.extend({
       this.podBasedModuleName,
       this.podBasedComponentsInSubdir,
       this.mainModuleName,
-      this.defaultModuleName
+      this.defaultModuleName,
+      this.nestedColocationComponentModuleName,
     ];
   }).readOnly(),
 
