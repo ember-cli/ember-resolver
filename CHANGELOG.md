@@ -1,3 +1,11 @@
+## v6.0.0 (2019-11-19)
+
+#### :boom: Breaking Change
+* [#449](https://github.com/ember-cli/ember-resolver/pull/449) Upgrade deps and drop node 6 support ([@stefanpenner](https://github.com/stefanpenner))
+
+#### Committers: 1
+- Stefan Penner ([@stefanpenner](https://github.com/stefanpenner))
+
 ## v5.2.1 (2019-08-09)
 
 #### :bug: Bug Fix
