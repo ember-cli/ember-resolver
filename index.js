@@ -5,7 +5,7 @@ var path = require('path');
 var isModuleUnification;
 
 module.exports = {
-  name: 'ember-resolver',
+  name: require('./package.json').name,
 
   emberResolverFeatureFlags() {
     var resolverConfig = {}; //TODO: load from ember-cli-build.js
