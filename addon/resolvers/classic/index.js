@@ -6,7 +6,6 @@ import EmberObject, { get, computed } from '@ember/object';
 import { dasherize, classify, underscore } from '@ember/string';
 import { DEBUG } from '@glimmer/env';
 import classFactory from '../../utils/class-factory';
-import makeDictionary from '../../utils/make-dictionary';
 
 if (typeof requirejs.entries === 'undefined') {
   requirejs.entries = requirejs._eak_seen;
@@ -133,9 +132,9 @@ const Resolver = EmberObject.extend({
       this._moduleRegistry = new ModuleRegistry();
     }
 
-    this._normalizeCache = makeDictionary();
+    this._normalizeCache = Object.create(null);
 
-    this.pluralizedTypes = this.pluralizedTypes || makeDictionary();
+    this.pluralizedTypes = this.pluralizedTypes || Object.create(null);
 
     if (!this.pluralizedTypes.config) {
       this.pluralizedTypes.config = 'config';
@@ -408,7 +407,7 @@ const Resolver = EmberObject.extend({
   knownForType(type) {
     let moduleKeys = this._moduleRegistry.moduleNames();
 
-    let items = makeDictionary();
+    let items = Object.create(null);
     for (let index = 0, length = moduleKeys.length; index < length; index++) {
       let moduleName = moduleKeys[index];
       let fullname = this.translateToContainerFullname(type, moduleName);
