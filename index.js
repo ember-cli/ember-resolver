@@ -1,21 +1,21 @@
 'use strict';
 
-var VersionChecker = require('ember-cli-version-checker');
-var path = require('path');
-var isModuleUnification;
+const VersionChecker = require('ember-cli-version-checker');
+const path = require('path');
+let isModuleUnification;
 
 module.exports = {
   name: require('./package.json').name,
 
   emberResolverFeatureFlags() {
-    var resolverConfig = {}; //TODO: load from ember-cli-build.js
+    const resolverConfig = {}; //TODO: load from ember-cli-build.js
 
     return Object.assign({
       /* Add default feature flags here, for now there is none */
     }, resolverConfig.features);
   },
 
-  init: function() {
+  init() {
     this._super.init.apply(this, arguments);
     this.options = this.options || {};
     if (process.env.EMBER_CLI_MODULE_UNIFICATION) {
@@ -47,9 +47,9 @@ module.exports = {
     };
   },
 
-  treeForAddon: function() {
-    var MergeTrees = require('broccoli-merge-trees');
-    let addonTrees = [].concat(
+  treeForAddon() {
+    const MergeTrees = require('broccoli-merge-trees');
+    const addonTrees = [].concat(
       this._super.treeForAddon.apply(this, arguments),
       isModuleUnification && this._moduleUnificationTrees()
     ).filter(Boolean);
@@ -58,23 +58,23 @@ module.exports = {
   },
 
   _moduleUnificationTrees() {
-    var resolve = require('resolve');
-    var Funnel = require('broccoli-funnel');
+    const resolve = require('resolve');
+    const Funnel = require('broccoli-funnel');
 
     let featureTreePath = path.join(this.root, 'mu-trees/addon');
-    var featureTree = new Funnel(featureTreePath, {
+    let featureTree = new Funnel(featureTreePath, {
       destDir: 'ember-resolver'
     });
 
-    var glimmerResolverSrc = require.resolve('@glimmer/resolver/package');
-    var glimmerResolverPath = path.dirname(glimmerResolverSrc);
-    var glimmerResolverTree = new Funnel(glimmerResolverPath, {
+    const glimmerResolverSrc = require.resolve('@glimmer/resolver/package');
+    let glimmerResolverPath = path.dirname(glimmerResolverSrc);
+    let glimmerResolverTree = new Funnel(glimmerResolverPath, {
       srcDir: 'dist/modules/es2017',
       destDir: '@glimmer/resolver'
     });
 
-    var glimmerDISrc = resolve.sync('@glimmer/di', { basedir: glimmerResolverPath });
-    var glimmerDITree = new Funnel(path.join(glimmerDISrc, '../../../..'), {
+    let glimmerDISrc = resolve.sync('@glimmer/di', { basedir: glimmerResolverPath });
+    let glimmerDITree = new Funnel(path.join(glimmerDISrc, '../../../..'), {
       srcDir: 'dist/modules/es2017',
       destDir: '@glimmer/di'
     });
@@ -86,20 +86,20 @@ module.exports = {
     ];
   },
 
-  included: function() {
+  included() {
     this._super.included.apply(this, arguments);
 
-    var checker = new VersionChecker(this);
-    var dep = checker.for('ember-cli', 'npm');
+    let checker = new VersionChecker(this);
+    let dep = checker.for('ember-cli', 'npm');
 
     if (dep.lt('2.0.0')) {
       this.monkeyPatchVendorFiles();
     }
   },
 
-  monkeyPatchVendorFiles: function() {
-    var filesToAppend = this.app.legacyFilesToAppend;
-    var legacyResolverIndex = filesToAppend.indexOf(this.app.bowerDirectory + '/ember-resolver/dist/modules/ember-resolver.js');
+  monkeyPatchVendorFiles() {
+    let filesToAppend = this.app.legacyFilesToAppend;
+    let legacyResolverIndex = filesToAppend.indexOf(this.app.bowerDirectory + '/ember-resolver/dist/modules/ember-resolver.js');
 
     if (legacyResolverIndex > -1) {
       filesToAppend.splice(legacyResolverIndex, 1);
