@@ -24,7 +24,6 @@
     "test:all": "ember try:each"
   },
   "dependencies": {
-    "@glimmer/resolver": "^0.4.1",
     "babel-plugin-debug-macros": "^0.3.3",
     "broccoli-funnel": "^2.0.2",
     "broccoli-merge-trees": "^3.0.0",
