@@ -1,6 +1,7 @@
 /* globals requirejs, require */
 
 import Ember from 'ember';
+import { instrument } from '@ember/instrumentation';
 import { assert, deprecate, warn } from '@ember/debug';
 import EmberObject, { get, computed } from '@ember/object';
 import { dasherize, classify, underscore } from '@ember/string';
@@ -147,19 +148,24 @@ const Resolver = EmberObject.extend({
   },
 
   resolve(fullName) {
-    let parsedName = this.parseName(fullName);
-    let resolveMethodName = parsedName.resolveMethodName;
-    let resolved;
+    return instrument('resolver.resolve', {
+      fullName
+    },
+      () => {
+        let parsedName = this.parseName(fullName);
+        let resolveMethodName = parsedName.resolveMethodName;
+        let resolved;
 
-    if (typeof this[resolveMethodName] === 'function') {
-      resolved = this[resolveMethodName](parsedName);
-    }
+        if (typeof this[resolveMethodName] === 'function') {
+          resolved = this[resolveMethodName](parsedName);
+        }
 
-    if (resolved == null) {
-      resolved = this.resolveOther(parsedName);
-    }
+        if (resolved == null) {
+          resolved = this.resolveOther(parsedName);
+        }
 
-    return resolved;
+        return resolved;
+      });
   },
 
   _normalize(fullName) {
