@@ -1,3 +1,18 @@
+## v7.0.0 (2019-12-18)
+
+#### :boom: Breaking Change
+* [#452](https://github.com/ember-cli/ember-resolver/pull/452) Remove dead module unification code ([@stefanpenner](https://github.com/stefanpenner))
+
+#### :rocket: Enhancement
+* [#450](https://github.com/ember-cli/ember-resolver/pull/450) remove now defunct v8 optimization ([@stefanpenner](https://github.com/stefanpenner))
+
+#### :bug: Bug Fix
+* [#475](https://github.com/ember-cli/ember-resolver/pull/475) Fix babel-plugin-debug-macros warning ([@hjdivad](https://github.com/hjdivad))
+
+#### Committers: 2
+- David J. Hamilton ([@hjdivad](https://github.com/hjdivad))
+- Stefan Penner ([@stefanpenner](https://github.com/stefanpenner))
+
 ## v6.0.2 (2019-12-18)
 
 * Re-release v6.0.0, to avoid SemVer issue with removal of module unification support within 6.x.
