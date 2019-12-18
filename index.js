@@ -13,37 +13,6 @@ module.exports = {
     }, resolverConfig.features);
   },
 
-  init() {
-    this._super.init.apply(this, arguments);
-    this.options = this.options || {};
-    if (process.env.EMBER_CLI_MODULE_UNIFICATION) {
-      this.project.isModuleUnification = function () {
-        return true;
-      }
-    }
-    this._emberResolverFeatureFlags = this.emberResolverFeatureFlags();
-
-    this.options.babel = {
-      loose: true,
-      plugins: [
-        [require.resolve('babel-plugin-debug-macros'), {
-          debugTools: {
-            source: 'this-is-dumb-it-should-not-be-required-i-blame-rwjblue'
-          },
-          envFlags: {
-            source: 'ember-resolver-env-flags',
-            flags: { DEBUG: process.env.EMBER_ENV != 'production' }
-          },
-          features: {
-            name: 'ember-resolver',
-            source: 'ember-resolver/features',
-            flags: this._emberResolverFeatureFlags
-          }
-        }]
-      ]
-    };
-  },
-
   included() {
     this._super.included.apply(this, arguments);
 
