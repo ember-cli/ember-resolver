@@ -1,3 +1,7 @@
+## v6.0.2 (2019-12-18)
+
+* Re-release v6.0.0, to avoid SemVer issue with removal of module unification support within 6.x.
+
 ## v6.0.1 (2019-12-18)
 
 #### :boom: Breaking Change
