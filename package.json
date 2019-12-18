@@ -5,15 +5,20 @@
   "keywords": [
     "ember-addon"
   ],
-  "license": "MIT",
-  "author": "Robert Jackson <me@rwjblue.com>",
-  "directories": {
-    "doc": "doc",
-    "test": "tests"
+  "homepage": "https://github.com/ember-cli/ember-resolver#readme",
+  "bugs": {
+    "url": "https://github.com/ember-cli/ember-resolver/issues"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ember-cli/ember-resolver.git"
+  },
+  "license": "MIT",
+  "author": "Robert Jackson <me@rwjblue.com>",
+  "main": "index.js",
+  "directories": {
+    "doc": "doc",
+    "test": "tests"
   },
   "scripts": {
     "build": "ember build",
@@ -51,20 +56,33 @@
     "eslint-plugin-node": "^10.0.0",
     "lerna-changelog": "^0.8.3",
     "loader.js": "^4.7.0",
-    "qunit-dom": "^0.9.0"
+    "qunit-dom": "^0.9.0",
+    "release-it": "^12.2.1",
+    "release-it-lerna-changelog": "^1.0.3"
+  },
+  "resolutions": {
+    "**/engine.io": "3.3.1"
   },
   "engines": {
     "node": "8.* || >= 10.*"
   },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
+  },
   "ember-addon": {
     "configPath": "tests/dummy/config"
   },
-  "main": "index.js",
-  "bugs": {
-    "url": "https://github.com/ember-cli/ember-resolver/issues"
-  },
-  "homepage": "https://github.com/ember-cli/ember-resolver#readme",
-  "resolutions": {
-    "**/engine.io": "3.3.1"
+  "release-it": {
+    "plugins": {
+      "release-it-lerna-changelog": {
+        "infile": "CHANGELOG.md"
+      }
+    },
+    "git": {
+      "tagName": "v${version}"
+    },
+    "github": {
+      "release": true
+    }
   }
 }
