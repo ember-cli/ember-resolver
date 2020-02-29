@@ -111,6 +111,20 @@ test("can lookup something in another namespace with different syntax", function
   assert.equal(adapter, expected, 'default export was returned');
 });
 
+test("can lookup something in another namespace contains a @ sign in module prefix", function(assert) {
+  let expected = {};
+
+  define('@scope/other/components/foo-bar', [], function() {
+    assert.ok(true, "component was invoked properly");
+    return { default: expected }
+  })
+
+  const component = resolver.resolve('component:@scope/other@component:foo-bar');
+
+  assert.ok(component, 'component was returned');
+  assert.equal(component, expected, 'default export was returned');
+});
+
 test("can lookup a view in another namespace", function(assert) {
   assert.expect(3);
 
