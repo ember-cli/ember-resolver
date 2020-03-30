@@ -44,7 +44,25 @@ function parseName(fullName) {
   let prefix, type, name;
   let fullNameParts = fullName.split('@');
 
-  if (fullNameParts.length === 2) {
+  if (fullNameParts.length === 3) {
+    if (fullNameParts[0].length === 0) {
+      // leading scoped namespace: `@scope/pkg@type:name`
+      prefix = `@${fullNameParts[1]}`;
+      let prefixParts = fullNameParts[2].split(':');
+      type = prefixParts[0];
+      name = prefixParts[1];
+    } else {
+      // interweaved scoped namespace: `type:@scope/pkg@name`
+      prefix = `@${fullNameParts[1]}`;
+      type = fullNameParts[0].slice(0, -1);
+      name = fullNameParts[2];
+    }
+
+    if (type === 'template:components') {
+      name = `components/${name}`;
+      type = 'template';
+    }
+  } else if (fullNameParts.length === 2) {
     let prefixParts = fullNameParts[0].split(':');
 
     if (prefixParts.length === 2) {
