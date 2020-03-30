@@ -79,6 +79,25 @@ test("can lookup something in another namespace", function(assert){
   assert.equal(adapter, expected, 'default export was returned');
 });
 
+test("can lookup something in another namespace with an @ scope", function(assert){
+  assert.expect(3);
+
+  let expected = {};
+
+  define('@scope/other/adapters/post', [], function(){
+    assert.ok(true, "adapter was invoked properly");
+
+    return {
+      default: expected
+    };
+  });
+
+  var adapter = resolver.resolve('@scope/other@adapter:post');
+
+  assert.ok(adapter, 'adapter was returned');
+  assert.equal(adapter, expected, 'default export was returned');
+});
+
 test("can lookup something with an @ sign", function(assert){
   assert.expect(3);
 
@@ -111,6 +130,22 @@ test("can lookup something in another namespace with different syntax", function
   assert.equal(adapter, expected, 'default export was returned');
 });
 
+test("can lookup something in another namespace with an @ scope with different syntax", function(assert){
+  assert.expect(3);
+
+  let expected = {};
+  define('@scope/other/adapters/post', [], function(){
+    assert.ok(true, "adapter was invoked properly");
+
+    return { default: expected };
+  });
+
+  var adapter = resolver.resolve('adapter:@scope/other@post');
+
+  assert.ok(adapter, 'adapter was returned');
+  assert.equal(adapter, expected, 'default export was returned');
+});
+
 test("can lookup a view in another namespace", function(assert) {
   assert.expect(3);
 
@@ -122,6 +157,22 @@ test("can lookup a view in another namespace", function(assert) {
   });
 
   var view = resolver.resolve('other@view:post');
+
+  assert.ok(view, 'view was returned');
+  assert.equal(view, expected, 'default export was returned');
+});
+
+test("can lookup a view in another namespace with an @ scope", function(assert) {
+  assert.expect(3);
+
+  let expected = { isViewFactory: true };
+  define('@scope/other/views/post', [], function(){
+    assert.ok(true, "view was invoked properly");
+
+    return { default: expected };
+  });
+
+  var view = resolver.resolve('@scope/other@view:post');
 
   assert.ok(view, 'view was returned');
   assert.equal(view, expected, 'default export was returned');
@@ -143,6 +194,22 @@ test("can lookup a view in another namespace with different syntax", function(as
   assert.equal(view, expected, 'default export was returned');
 });
 
+test("can lookup a view in another namespace with an @ scope with different syntax", function(assert) {
+  assert.expect(3);
+
+  let expected = { isViewFactory: true };
+  define('@scope/other/views/post', [], function(){
+    assert.ok(true, "view was invoked properly");
+
+    return { default: expected };
+  });
+
+  var view = resolver.resolve('view:@scope/other@post');
+
+  assert.ok(view, 'view was returned');
+  assert.equal(view, expected, 'default export was returned');
+});
+
 test("can lookup a component template in another namespace with different syntax", function(assert) {
   assert.expect(2);
 
@@ -154,6 +221,21 @@ test("can lookup a component template in another namespace with different syntax
   });
 
   var template = resolver.resolve('template:components/other@foo-bar');
+
+  assert.equal(template, expected, 'default export was returned');
+});
+
+test("can lookup a component template in another namespace with an @ scope with different syntax", function(assert) {
+  assert.expect(2);
+
+  let expected = { isTemplate: true };
+  define('@scope/other/templates/components/foo-bar', [], function(){
+    assert.ok(true, "template was looked up properly");
+
+    return { default: expected };
+  });
+
+  var template = resolver.resolve('template:components/@scope/other@foo-bar');
 
   assert.equal(template, expected, 'default export was returned');
 });
