@@ -22,7 +22,6 @@
   },
   "scripts": {
     "build": "ember build",
-    "changelog": "lerna-changelog",
     "lint:js": "eslint .",
     "start": "ember serve",
     "test": "ember test",
@@ -54,11 +53,10 @@
     "eslint": "^6.8.0",
     "eslint-plugin-ember": "^7.8.1",
     "eslint-plugin-node": "^11.1.0",
-    "lerna-changelog": "^0.8.3",
     "loader.js": "^4.7.0",
     "qunit-dom": "^1.2.0",
     "release-it": "^13.5.2",
-    "release-it-lerna-changelog": "^1.0.3"
+    "release-it-lerna-changelog": "^2.1.2"
   },
   "engines": {
     "node": ">= 10.*"
@@ -72,14 +70,16 @@
   "release-it": {
     "plugins": {
       "release-it-lerna-changelog": {
-        "infile": "CHANGELOG.md"
+        "infile": "CHANGELOG.md",
+        "launchEditor": true
       }
     },
     "git": {
       "tagName": "v${version}"
     },
     "github": {
-      "release": true
+      "release": true,
+      "tokenRef": "GITHUB_AUTH"
     }
   }
 }
