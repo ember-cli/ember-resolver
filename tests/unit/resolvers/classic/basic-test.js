@@ -545,6 +545,34 @@ test('normalization', function(assert) {
   assert.equal(resolver.normalize('component:fabulous-component'), 'component:fabulous-component');
   assert.equal(resolver.normalize('component:fabulousComponent'), 'component:fabulousComponent');
   assert.equal(resolver.normalize('template:components/fabulousComponent'), 'template:components/fabulousComponent');
+
+  // and modifiers
+  assert.equal(resolver.normalize('modifier:fabulous-component'), 'modifier:fabulous-component');
+
+  // deprecated when fabulously-missing actually exists, but normalize still returns it
+  assert.equal(resolver.normalize('modifier:fabulouslyMissing'), 'modifier:fabulouslyMissing');
+});
+
+test('camel case modifier is not normalized', function(assert) {
+  assert.expect(2);
+
+  let expected = { };
+  define('appkit/modifiers/other-thing', [], function(){
+    assert.ok(false, 'appkit/modifiers/other-thing was accessed');
+
+    return { default: 'oh no' };
+  });
+
+  define('appkit/modifiers/otherThing', [], function(){
+    assert.ok(true, 'appkit/modifiers/otherThing was accessed');
+
+    return { default: expected };
+  });
+
+
+  let modifier = resolver.resolve('modifier:otherThing');
+
+  assert.strictEqual(modifier, expected);
 });
 
 test('normalization is idempotent', function(assert) {
