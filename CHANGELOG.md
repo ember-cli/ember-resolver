@@ -1,3 +1,17 @@
+## v8.0.0 (2020-04-11)
+
+#### :boom: Breaking Change
+* [#542](https://github.com/ember-cli/ember-resolver/pull/542) Remove automatic dasherization of modifiers. ([@rwjblue](https://github.com/rwjblue))
+* [#532](https://github.com/ember-cli/ember-resolver/pull/532) Drop support for Node 8 ([@buschtoens](https://github.com/buschtoens))
+
+#### :bug: Bug Fix
+* [#531](https://github.com/ember-cli/ember-resolver/pull/531) Fix resolving `@scope/name` namespaces ([@buschtoens](https://github.com/buschtoens))
+
+#### Committers: 2
+- Jan Buschtöns ([@buschtoens](https://github.com/buschtoens))
+- Robert Jackson ([@rwjblue](https://github.com/rwjblue))
+
+
 ## v7.0.0 (2019-12-18)
 
 #### :boom: Breaking Change
