@@ -197,6 +197,7 @@ const Resolver = EmberObject.extend({
       if (
         type === 'component' ||
         type === 'helper' ||
+        type === 'modifier' ||
         (type === 'template' && split[1].indexOf('components/') === 0)
       ) {
         return type + ':' + split[1].replace(/_/g, '-');
