@@ -31,7 +31,7 @@
     "babel-plugin-debug-macros": "^0.3.3",
     "broccoli-funnel": "^3.0.3",
     "broccoli-merge-trees": "^4.2.0",
-    "ember-cli-babel": "^7.21.0",
+    "ember-cli-babel": "^7.22.1",
     "ember-cli-version-checker": "^5.1.1",
     "resolve": "^1.17.0"
   },
