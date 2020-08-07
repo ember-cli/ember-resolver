@@ -1,3 +1,12 @@
+## v8.0.1 (2020-08-07)
+
+#### :bug: Bug Fix
+* [#588](https://github.com/ember-cli/ember-resolver/pull/588) Ensure `app/foo/index.js` can be looked up with `foo:main` ([@snewcomer](https://github.com/snewcomer))
+
+#### Committers: 1
+- Scott Newcomer ([@snewcomer](https://github.com/snewcomer))
+
+
 ## v8.0.0 (2020-04-11)
 
 #### :boom: Breaking Change
