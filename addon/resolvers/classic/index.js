@@ -19,7 +19,7 @@ export class ModuleRegistry {
     return Object.keys(this._entries);
   }
   has(moduleName) {
-    return moduleName in this._entries;
+    return require.has(moduleName);
   }
   get(moduleName) {
     return require(moduleName);
