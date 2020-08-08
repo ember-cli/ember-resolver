@@ -386,17 +386,6 @@ test("store:main is looked up as prefix/store", function(assert) {
   resolver.resolve('store:main');
 });
 
-test("store:main is looked up as prefix/store/index.js", function(assert) {
-  assert.expect(1);
-
-  define('appkit/store/index', [], function(){
-    assert.ok(true, 'store:main was looked up');
-    return 'whatever';
-  });
-
-  resolver.resolve('store:main');
-});
-
 test("store:posts as prefix/stores/post", function(assert) {
   assert.expect(1);
 
