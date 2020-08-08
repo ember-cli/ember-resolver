@@ -1,3 +1,12 @@
+## v8.0.2 (2020-08-08)
+
+#### :bug: Bug Fix
+* [#590](https://github.com/ember-cli/ember-resolver/pull/590) Revert "Ensure app/foo/index.js can be looked up with foo:main" ([@rwjblue](https://github.com/rwjblue))
+
+#### Committers: 1
+- Robert Jackson ([@rwjblue](https://github.com/rwjblue))
+
+
 ## v8.0.1 (2020-08-07)
 
 #### :bug: Bug Fix
