@@ -48,7 +48,7 @@
     "ember-load-initializers": "^2.1.1",
     "ember-qunit-assert-helpers": "^0.2.2",
     "ember-source": "~3.20.3",
-    "ember-source-channel-url": "^2.0.1",
+    "ember-source-channel-url": "^3.0.0",
     "ember-try": "^1.4.0",
     "eslint": "^7.10.0",
     "eslint-plugin-ember": "^7.8.1",
