@@ -1,4 +1,4 @@
-/* globals requirejs, require */
+/* globals requirejs, require, loader */
 
 import Ember from 'ember';
 import { assert, deprecate, warn } from '@ember/debug';
@@ -13,7 +13,11 @@ if (typeof requirejs.entries === 'undefined') {
 
 export class ModuleRegistry {
   constructor(entries) {
-    this._entries = entries || requirejs.entries;
+    if(loader.__aliases && loader.__aliases.requirejs) {
+      this._entries = entries || window[loader.__aliases.requirejs].entries;
+    } else {
+      this._entries = entries || requirejs.entries;
+    }
   }
   moduleNames() {
     return Object.keys(this._entries);
@@ -466,7 +470,13 @@ const Resolver = EmberObject.extend({
   },
 
   _extractDefaultExport(normalizedModuleName) {
-    let module = require(normalizedModuleName, null, null, true /* force sync */);
+
+    let module;
+    if(loader.__aliases && loader.__aliases.require) {
+     module = window[loader.__aliases.require](normalizedModuleName, null, null, true /* force sync */);
+    } else {
+     module = require(normalizedModuleName, null, null, true /* force sync */);
+    }
 
     if (module && module['default']) {
       module = module['default'];
