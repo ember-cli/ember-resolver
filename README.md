@@ -1,4 +1,4 @@
-# Ember Resolver [![Build Status](https://travis-ci.org/ember-cli/ember-resolver.svg?branch=master)](https://travis-ci.org/ember-cli/ember-resolver)
+# Ember Resolver [![CI Build](https://github.com/ember-cli/ember-resolver/actions/workflows/ci-build.yml/badge.svg)](https://github.com/ember-cli/ember-resolver/actions/workflows/ci-build.yml)
 
 The Ember Resolver is the mechanism responsible for looking up code in your application and converting its naming conventions into the actual classes, functions, and templates that Ember needs to resolve its dependencies, for example, what template to render for a given route. It is a system that helps the app resolve the lookup of JavaScript modules agnostic of what kind of module system is used, which can be AMD, CommonJS or just plain globals. It is used to lookup routes, models, components, templates, or anything that is used in your Ember app.
 
