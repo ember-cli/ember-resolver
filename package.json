@@ -43,7 +43,7 @@
   },
   "devDependencies": {
     "@ember/optional-features": "^2.0.0",
-    "@ember/test-helpers":"^2.2.5",
+    "@ember/test-helpers": "^2.2.5",
     "babel-eslint": "^10.1.0",
     "broccoli-asset-rev": "^3.0.0",
     "ember-cli": "~3.27.0",
@@ -53,7 +53,6 @@
     "ember-disable-prototype-extensions": "^1.1.2",
     "ember-load-initializers": "^2.1.2",
     "ember-qunit": "^5.1.4",
-    "ember-qunit-assert-helpers": "^0.2.2",
     "ember-source": "3.27.2",
     "ember-source-channel-url": "^3.0.0",
     "ember-try": "^1.4.0",
@@ -69,8 +68,7 @@
     "release-it": "^14.10.1",
     "release-it-lerna-changelog": "^3.1.0",
     "prettier": "^2.3.0",
-    "qunit": "^2.15.0",
-    "qunit-dom": "^1.6.0"
+    "qunit": "^2.15.0"
   },
   "engines": {
     "node": ">= 10.*"
