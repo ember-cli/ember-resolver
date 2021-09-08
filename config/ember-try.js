@@ -2,18 +2,50 @@
 
 const getChannelURL = require('ember-source-channel-url');
 
+const EMBROIDER_VERSION = '^0.44.1';
+const embroider = {
+  safe: {
+    name: 'embroider-safe',
+    npm: {
+      devDependencies: {
+        '@embroider/core': EMBROIDER_VERSION,
+        '@embroider/webpack': EMBROIDER_VERSION,
+        '@embroider/compat': EMBROIDER_VERSION,
+        '@embroider/test-setup': EMBROIDER_VERSION,
+
+        // Webpack is a peer dependency of `@embroider/webpack`
+        webpack: '^5.0.0',
+      },
+    },
+    env: {
+      EMBROIDER_TEST_SETUP_OPTIONS: 'safe',
+    },
+  },
+
+  optimized: {
+    name: 'embroider-optimized',
+    npm: {
+      devDependencies: {
+        '@embroider/core': EMBROIDER_VERSION,
+        '@embroider/webpack': EMBROIDER_VERSION,
+        '@embroider/compat': EMBROIDER_VERSION,
+        '@embroider/test-setup': EMBROIDER_VERSION,
+
+        // Webpack is a peer dependency of `@embroider/webpack`
+        webpack: '^5.0.0',
+      },
+    },
+    env: {
+      EMBROIDER_TEST_SETUP_OPTIONS: 'optimized',
+    },
+  },
+};
+
+
 module.exports = async function() {
   return {
     useYarn: true,
     scenarios: [
-      {
-        name: 'ember-lts-3.4',
-        npm: {
-          devDependencies: {
-            'ember-source': '~3.4.0'
-          }
-        }
-      },
       {
         name: 'ember-lts-3.8',
         npm: {
@@ -22,6 +54,47 @@ module.exports = async function() {
           }
         }
       },
+      {
+        name: 'ember-lts-3.12',
+        npm: {
+          devDependencies: {
+            'ember-source': '~3.12.0'
+          }
+        }
+      },
+      {
+        name: 'ember-lts-3.16',
+        npm: {
+          devDependencies: {
+            'ember-source': '~3.16.0'
+          }
+        }
+      },
+      {
+        name: 'ember-lts-3.16',
+        npm: {
+          devDependencies: {
+            'ember-source': '~3.16.0'
+          }
+        }
+      },
+      {
+        name: 'ember-lts-3.20',
+        npm: {
+          devDependencies: {
+            'ember-source': '~3.20.0'
+          }
+        }
+      },
+      {
+        name: 'ember-lts-3.24',
+        npm: {
+          devDependencies: {
+            'ember-source': '~3.24.0'
+          }
+        }
+      },
+
       {
         name: 'ember-release',
         npm: {
@@ -46,6 +119,21 @@ module.exports = async function() {
           }
         }
       },
+      {
+        name: 'ember-classic',
+        env: {
+          EMBER_OPTIONAL_FEATURES: JSON.stringify({
+            'application-template-wrapper': true,
+            'default-async-observers': false,
+            'template-only-glimmer-components': false,
+          }),
+        },
+        npm: {
+          ember: {
+            edition: 'classic',
+          },
+        },
+      },
       // The default `.travis.yml` runs this scenario via `yarn test`,
       // not via `ember try`. It's still included here so that running
       // `ember try:each` manually or from a customized CI config will run it
@@ -68,7 +156,10 @@ module.exports = async function() {
             '@ember/jquery': '^0.5.1'
           }
         }
-      }
+      },
+
+      embroider.safe,
+      embroider.optimized,
     ]
   };
 };
