@@ -1,37 +1,39 @@
-/* globals requirejs, define */
-
 /* eslint-disable no-console */
 
 import Ember from 'ember';
-import { assign } from '@ember/polyfills';
 import { module, test } from 'qunit';
-import Resolver from 'ember-resolver/resolvers/classic';
+import Resolver, { ModuleRegistry } from 'ember-resolver/resolvers/classic';
 
-let originalRegistryEntries, originalConsoleInfo, logCalls, resolver;
+let originalConsoleInfo, logCalls, resolver, loader;
 
 function setupResolver(options = {}) {
-  if (!options.namespace)
+  if (!options.namespace) {
     options.namespace = { modulePrefix: 'appkit' };
+  }
+  loader = { 
+    entries: Object.create(null),
+    define(id, deps, callback) {
+      if (deps.length > 0) {
+        throw new Error('Test Module loader does not support dependencies');
+      }
+      this.entries[id] = callback;
+    }
+  };
+  options._moduleRegistry = new ModuleRegistry(loader.entries) 
+  options._moduleRegistry.get = function(moduleName) {
+    return loader.entries[moduleName]();
+  }
 
   resolver = Resolver.create(options);
 }
 
-function resetRegistry() {
-  requirejs.clear();
-  assign(requirejs.entries, originalRegistryEntries);
-}
 
 module('ember-resolver/resolvers/classic', {
   beforeEach() {
-    originalRegistryEntries = assign({}, requirejs.entries);
-    originalConsoleInfo = console ? console.info : null;
-
     setupResolver();
   },
 
   afterEach() {
-    resetRegistry();
-
     if (originalConsoleInfo) {
       console.info = originalConsoleInfo;
     }
@@ -49,7 +51,7 @@ module('ember-resolver/resolvers/classic', {
 test("can lookup something", function(assert){
   assert.expect(2);
 
-  define('appkit/adapters/post', [], function(){
+  loader.define('appkit/adapters/post', [], function(){
     assert.ok(true, "adapter was invoked properly");
 
     return {};
@@ -65,7 +67,7 @@ test("can lookup something in another namespace", function(assert){
 
   let expected = {};
 
-  define('other/adapters/post', [], function(){
+  loader.define('other/adapters/post', [], function(){
     assert.ok(true, "adapter was invoked properly");
 
     return {
@@ -84,7 +86,7 @@ test("can lookup something in another namespace with an @ scope", function(asser
 
   let expected = {};
 
-  define('@scope/other/adapters/post', [], function(){
+  loader.define('@scope/other/adapters/post', [], function(){
     assert.ok(true, "adapter was invoked properly");
 
     return {
@@ -102,7 +104,7 @@ test("can lookup something with an @ sign", function(assert){
   assert.expect(3);
 
   let expected = {};
-  define('appkit/helpers/@content-helper', [], function(){
+  loader.define('appkit/helpers/@content-helper', [], function(){
     assert.ok(true, "helper was invoked properly");
 
     return { default: expected };
@@ -118,7 +120,7 @@ test("can lookup something in another namespace with different syntax", function
   assert.expect(3);
 
   let expected = {};
-  define('other/adapters/post', [], function(){
+  loader.define('other/adapters/post', [], function(){
     assert.ok(true, "adapter was invoked properly");
 
     return { default: expected };
@@ -134,7 +136,7 @@ test("can lookup something in another namespace with an @ scope with different s
   assert.expect(3);
 
   let expected = {};
-  define('@scope/other/adapters/post', [], function(){
+  loader.define('@scope/other/adapters/post', [], function(){
     assert.ok(true, "adapter was invoked properly");
 
     return { default: expected };
@@ -150,7 +152,7 @@ test("can lookup a view in another namespace", function(assert) {
   assert.expect(3);
 
   let expected = { isViewFactory: true };
-  define('other/views/post', [], function(){
+  loader.define('other/views/post', [], function(){
     assert.ok(true, "view was invoked properly");
 
     return { default: expected };
@@ -166,7 +168,7 @@ test("can lookup a view in another namespace with an @ scope", function(assert) 
   assert.expect(3);
 
   let expected = { isViewFactory: true };
-  define('@scope/other/views/post', [], function(){
+  loader.define('@scope/other/views/post', [], function(){
     assert.ok(true, "view was invoked properly");
 
     return { default: expected };
@@ -182,7 +184,7 @@ test("can lookup a view in another namespace with different syntax", function(as
   assert.expect(3);
 
   let expected = { isViewFactory: true };
-  define('other/views/post', [], function(){
+  loader.define('other/views/post', [], function(){
     assert.ok(true, "view was invoked properly");
 
     return { default: expected };
@@ -198,7 +200,7 @@ test("can lookup a view in another namespace with an @ scope with different synt
   assert.expect(3);
 
   let expected = { isViewFactory: true };
-  define('@scope/other/views/post', [], function(){
+  loader.define('@scope/other/views/post', [], function(){
     assert.ok(true, "view was invoked properly");
 
     return { default: expected };
@@ -214,7 +216,7 @@ test("can lookup a component template in another namespace with different syntax
   assert.expect(2);
 
   let expected = { isTemplate: true };
-  define('other/templates/components/foo-bar', [], function(){
+  loader.define('other/templates/components/foo-bar', [], function(){
     assert.ok(true, "template was looked up properly");
 
     return { default: expected };
@@ -229,7 +231,7 @@ test("can lookup a component template in another namespace with an @ scope with 
   assert.expect(2);
 
   let expected = { isTemplate: true };
-  define('@scope/other/templates/components/foo-bar', [], function(){
+  loader.define('@scope/other/templates/components/foo-bar', [], function(){
     assert.ok(true, "template was looked up properly");
 
     return { default: expected };
@@ -244,7 +246,7 @@ test("can lookup a view", function(assert) {
   assert.expect(3);
 
   let expected = { isViewFactory: true };
-  define('appkit/views/queue-list', [], function(){
+  loader.define('appkit/views/queue-list', [], function(){
     assert.ok(true, "view was invoked properly");
 
     return { default: expected };
@@ -260,7 +262,7 @@ test("can lookup a helper", function(assert) {
   assert.expect(3);
 
   let expected = { isHelperInstance: true };
-  define('appkit/helpers/reverse-list', [], function(){
+  loader.define('appkit/helpers/reverse-list', [], function(){
     assert.ok(true, "helper was invoked properly");
 
     return { default: expected };
@@ -276,7 +278,7 @@ test('can lookup an engine', function(assert) {
   assert.expect(3);
 
   let expected = {};
-  define('appkit/engine', [], function(){
+  loader.define('appkit/engine', [], function(){
     assert.ok(true, 'engine was invoked properly');
 
     return { default: expected };
@@ -292,7 +294,7 @@ test('can lookup an engine from a scoped package', function(assert) {
   assert.expect(3);
 
   let expected = {};
-  define('@some-scope/some-module/engine', [], function(){
+  loader.define('@some-scope/some-module/engine', [], function(){
     assert.ok(true, "engine was invoked properly");
 
     return { default: expected };
@@ -308,7 +310,7 @@ test('can lookup a route-map', function(assert) {
   assert.expect(3);
 
   let expected = { isRouteMap: true };
-  define('appkit/routes', [], function(){
+  loader.define('appkit/routes', [], function(){
     assert.ok(true, 'route-map was invoked properly');
 
     return { default: expected };
@@ -324,7 +326,7 @@ test('can lookup a route-map', function(assert) {
 test.skip('warns if looking up a camelCase helper that has a dasherized module present', function(assert){
   assert.expect(1);
 
-  define('appkit/helpers/reverse-list', [], function(){
+  loader.define('appkit/helpers/reverse-list', [], function(){
     return { default: { isHelperInstance: true } };
   });
 
@@ -338,7 +340,7 @@ test('errors if lookup of a route-map does not specify isRouteMap', function(ass
   assert.expect(2);
 
   let expected = { isRouteMap: false };
-  define('appkit/routes', [], function(){
+  loader.define('appkit/routes', [], function(){
     assert.ok(true, 'route-map was invoked properly');
 
     return { default: expected };
@@ -350,7 +352,7 @@ test('errors if lookup of a route-map does not specify isRouteMap', function(ass
 });
 
 test("will return the raw value if no 'default' is available", function(assert) {
-  define('appkit/fruits/orange', [], function(){
+  loader.define('appkit/fruits/orange', [], function(){
     return 'is awesome';
   });
 
@@ -358,7 +360,7 @@ test("will return the raw value if no 'default' is available", function(assert) 
 });
 
 test("will unwrap the 'default' export automatically", function(assert) {
-  define('appkit/fruits/orange', [], function(){
+  loader.define('appkit/fruits/orange', [], function(){
     return { default: 'is awesome' };
   });
 
@@ -368,7 +370,7 @@ test("will unwrap the 'default' export automatically", function(assert) {
 test("router:main is hard-coded to prefix/router.js", function(assert) {
   assert.expect(1);
 
-  define('appkit/router', [], function(){
+  loader.define('appkit/router', [], function(){
     assert.ok(true, 'router:main was looked up');
     return 'whatever';
   });
@@ -379,7 +381,7 @@ test("router:main is hard-coded to prefix/router.js", function(assert) {
 test("store:main is looked up as prefix/store", function(assert) {
   assert.expect(1);
 
-  define('appkit/store', [], function(){
+  loader.define('appkit/store', [], function(){
     assert.ok(true, 'store:main was looked up');
     return 'whatever';
   });
@@ -390,7 +392,7 @@ test("store:main is looked up as prefix/store", function(assert) {
 test("store:posts as prefix/stores/post", function(assert) {
   assert.expect(1);
 
-  define('appkit/stores/post', [], function(){
+  loader.define('appkit/stores/post', [], function(){
     assert.ok(true, 'store:post was looked up');
     return 'whatever';
   });
@@ -399,12 +401,12 @@ test("store:posts as prefix/stores/post", function(assert) {
 });
 
 test("will raise error if both dasherized and underscored modules exist", function(assert) {
-  define('appkit/big-bands/steve-miller-band', [], function(){
+  loader.define('appkit/big-bands/steve-miller-band', [], function(){
     assert.ok(true, 'dasherized version looked up');
     return 'whatever';
   });
 
-  define('appkit/big_bands/steve_miller_band', [], function(){
+  loader.define('appkit/big_bands/steve_miller_band', [], function(){
     assert.ok(false, 'underscored version looked up');
     return 'whatever';
   });
@@ -419,7 +421,7 @@ test("will raise error if both dasherized and underscored modules exist", functi
 test("will lookup an underscored version of the module name when the dasherized version is not found", function(assert) {
   assert.expect(1);
 
-  define('appkit/big_bands/steve_miller_band', [], function(){
+  loader.define('appkit/big_bands/steve_miller_band', [], function(){
     assert.ok(true, 'underscored version looked up properly');
     return 'whatever';
   });
@@ -430,7 +432,7 @@ test("will lookup an underscored version of the module name when the dasherized 
 test("can lookup templates with mixed naming moduleName", function(assert) {
   assert.expect(1);
 
-  define('appkit/bands/_steve-miller-band', [], function(){
+  loader.define('appkit/bands/_steve-miller-band', [], function(){
     assert.ok(true, 'underscored version looked up properly');
 
     return 'whatever';
@@ -454,17 +456,17 @@ test("can lookup templates via Ember.TEMPLATES", function(assert) {
 test('it provides eachForType which invokes the callback for each item found', function(assert) {
 
   function orange() { }
-  define('appkit/fruits/orange', [], function() {
+  loader.define('appkit/fruits/orange', [], function() {
     return { default: orange };
   });
 
   function apple() { }
-  define('appkit/fruits/apple', [], function() {
+  loader.define('appkit/fruits/apple', [], function() {
     return {default: apple };
   });
 
   function other() {}
-  define('appkit/stuffs/other', [], function() {
+  loader.define('appkit/stuffs/other', [], function() {
     return { default: other };
   });
 
@@ -478,12 +480,12 @@ test('it provides eachForType which invokes the callback for each item found', f
 
 test('eachForType can find both pod and non-pod factories', function(assert) {
   function orange() { }
-  define('appkit/fruits/orange', [], function() {
+  loader.define('appkit/fruits/orange', [], function() {
     return { default: orange };
   });
 
   function lemon() { }
-  define('appkit/lemon/fruit', [], function() {
+  loader.define('appkit/lemon/fruit', [], function() {
     return { default: lemon };
   });
 
@@ -503,7 +505,7 @@ test('if shouldWrapInClassFactory returns true a wrapped object is returned', fu
     return true;
   };
 
-  define('appkit/strings/foo', [], function() {
+  loader.define('appkit/strings/foo', [], function() {
     return { default: 'foo' };
   });
 
@@ -559,13 +561,13 @@ test('camel case modifier is not normalized', function(assert) {
   assert.expect(2);
 
   let expected = { };
-  define('appkit/modifiers/other-thing', [], function(){
+  loader.define('appkit/modifiers/other-thing', [], function(){
     assert.ok(false, 'appkit/modifiers/other-thing was accessed');
 
     return { default: 'oh no' };
   });
 
-  define('appkit/modifiers/otherThing', [], function(){
+  loader.define('appkit/modifiers/otherThing', [], function(){
     assert.ok(true, 'appkit/modifiers/otherThing was accessed');
 
     return { default: expected };
@@ -603,7 +605,7 @@ module("Logging", {
 });
 
 test("logs lookups when logging is enabled", function(assert) {
-  define('appkit/fruits/orange', [], function(){
+  loader.define('appkit/fruits/orange', [], function(){
     return 'is logged';
   });
 
@@ -615,7 +617,7 @@ test("logs lookups when logging is enabled", function(assert) {
 });
 
 test("doesn't log lookups if disabled", function(assert) {
-  define('appkit/fruits/orange', [], function(){
+  loader.define('appkit/fruits/orange', [], function(){
     return 'is not logged';
   });
 
@@ -628,7 +630,6 @@ test("doesn't log lookups if disabled", function(assert) {
 
 module("custom prefixes by type", {
   beforeEach: setupResolver,
-  afterEach: resetRegistry
 });
 
 test("will use the prefix specified for a given type if present", function(assert) {
@@ -638,7 +639,7 @@ test("will use the prefix specified for a given type if present", function(asser
     modulePrefix: 'appkit'
   }});
 
-  define('grovestand/fruits/orange', [], function(){
+  loader.define('grovestand/fruits/orange', [], function(){
     assert.ok(true, 'custom prefix used');
     return 'whatever';
   });
@@ -650,17 +651,15 @@ module("pods lookup structure", {
   beforeEach: function() {
     setupResolver();
   },
-
-  afterEach: resetRegistry
 });
 
 test("will lookup modulePrefix/name/type before prefix/type/name", function(assert) {
-  define('appkit/controllers/foo', [], function(){
+  loader.define('appkit/controllers/foo', [], function(){
     assert.ok(false, 'appkit/controllers was used');
     return 'whatever';
   });
 
-  define('appkit/foo/controller', [], function(){
+  loader.define('appkit/foo/controller', [], function(){
     assert.ok(true, 'appkit/foo/controllers was used');
     return 'whatever';
   });
@@ -669,12 +668,12 @@ test("will lookup modulePrefix/name/type before prefix/type/name", function(asse
 });
 
 test("will lookup names with slashes properly", function(assert) {
-  define('appkit/controllers/foo/index', [], function(){
+  loader.define('appkit/controllers/foo/index', [], function(){
     assert.ok(false, 'appkit/controllers was used');
     return 'whatever';
   });
 
-  define('appkit/foo/index/controller', [], function(){
+  loader.define('appkit/foo/index/controller', [], function(){
     assert.ok(true, 'appkit/foo/index/controller was used');
     return 'whatever';
   });
@@ -690,17 +689,17 @@ test("specifying a podModulePrefix overrides the general modulePrefix", function
     }
   });
 
-  define('appkit/controllers/foo', [], function(){
+  loader.define('appkit/controllers/foo', [], function(){
     assert.ok(false, 'appkit/controllers was used');
     return 'whatever';
   });
 
-  define('appkit/foo/controller', [], function(){
+  loader.define('appkit/foo/controller', [], function(){
     assert.ok(false, 'appkit/foo/controllers was used');
     return 'whatever';
   });
 
-  define('appkit/pods/foo/controller', [], function(){
+  loader.define('appkit/pods/foo/controller', [], function(){
     assert.ok(true, 'appkit/pods/foo/controllers was used');
     return 'whatever';
   });
@@ -711,17 +710,17 @@ test("specifying a podModulePrefix overrides the general modulePrefix", function
 test("will not use custom type prefix when using POD format", function(assert) {
   resolver.namespace['controllerPrefix'] = 'foobar';
 
-  define('foobar/controllers/foo', [], function(){
+  loader.define('foobar/controllers/foo', [], function(){
     assert.ok(false, 'foobar/controllers was used');
     return 'whatever';
   });
 
-  define('foobar/foo/controller', [], function(){
+  loader.define('foobar/foo/controller', [], function(){
     assert.ok(false, 'foobar/foo/controllers was used');
     return 'whatever';
   });
 
-  define('appkit/foo/controller', [], function(){
+  loader.define('appkit/foo/controller', [], function(){
     assert.ok(true, 'appkit/foo/controllers was used');
     return 'whatever';
   });
@@ -730,7 +729,7 @@ test("will not use custom type prefix when using POD format", function(assert) {
 });
 
 test('it will find components nested in app/components/name/index.js', function(assert) {
-  define('appkit/components/foo-bar/index', [], function(){
+  loader.define('appkit/components/foo-bar/index', [], function(){
     assert.ok(true, 'appkit/components/foo-bar was used');
 
     return 'whatever';
@@ -740,12 +739,12 @@ test('it will find components nested in app/components/name/index.js', function(
 });
 
 test("will lookup a components template without being rooted in `components/`", function(assert) {
-  define('appkit/components/foo-bar/template', [], function(){
+  loader.define('appkit/components/foo-bar/template', [], function(){
     assert.ok(false, 'appkit/components was used');
     return 'whatever';
   });
 
-  define('appkit/foo-bar/template', [], function(){
+  loader.define('appkit/foo-bar/template', [], function(){
     assert.ok(true, 'appkit/foo-bar/template was used');
     return 'whatever';
   });
@@ -757,12 +756,12 @@ test("will use pods format to lookup components in components/", function(assert
   assert.expect(3);
 
   let expectedComponent = { isComponentFactory: true };
-  define('appkit/components/foo-bar/template', [], function(){
+  loader.define('appkit/components/foo-bar/template', [], function(){
     assert.ok(true, 'appkit/components was used');
     return 'whatever';
   });
 
-  define('appkit/components/foo-bar/component', [], function(){
+  loader.define('appkit/components/foo-bar/component', [], function(){
     assert.ok(true, 'appkit/components was used');
     return { default: expectedComponent };
   });
@@ -776,12 +775,12 @@ test("will use pods format to lookup components in components/", function(assert
 test("will not lookup routes in components/", function(assert) {
   assert.expect(1);
 
-  define('appkit/components/foo-bar/route', [], function(){
+  loader.define('appkit/components/foo-bar/route', [], function(){
     assert.ok(false, 'appkit/components was used');
     return { isRouteFactory: true };
   });
 
-  define('appkit/routes/foo-bar', [], function(){
+  loader.define('appkit/routes/foo-bar', [], function(){
     assert.ok(true, 'appkit/routes was used');
     return { isRouteFactory: true };
   });
@@ -792,12 +791,12 @@ test("will not lookup routes in components/", function(assert) {
 test("will not lookup non component templates in components/", function(assert) {
   assert.expect(1);
 
-  define('appkit/components/foo-bar/template', [], function(){
+  loader.define('appkit/components/foo-bar/template', [], function(){
     assert.ok(false, 'appkit/components was used');
     return 'whatever';
   });
 
-  define('appkit/templates/foo-bar', [], function(){
+  loader.define('appkit/templates/foo-bar', [], function(){
     assert.ok(true, 'appkit/templates was used');
     return 'whatever';
   });
@@ -805,9 +804,7 @@ test("will not lookup non component templates in components/", function(assert) 
   resolver.resolve('template:foo-bar');
 });
 
-module("custom pluralization", {
-  afterEach: resetRegistry
-});
+module("custom pluralization");
 
 test("will use the pluralization specified for a given type", function(assert) {
   assert.expect(1);
@@ -823,7 +820,7 @@ test("will use the pluralization specified for a given type", function(assert) {
     }
   });
 
-  define('appkit/sheep/baaaaaa', [], function(){
+  loader.define('appkit/sheep/baaaaaa', [], function(){
     assert.ok(true, 'custom pluralization used');
     return 'whatever';
   });
@@ -836,7 +833,7 @@ test("will pluralize 'config' as 'config' by default", function(assert) {
 
   setupResolver();
 
-  define('appkit/config/environment', [], function(){
+  loader.define('appkit/config/environment', [], function(){
     assert.ok(true, 'config/environment is found');
     return 'whatever';
   });
@@ -857,7 +854,7 @@ test("'config' can be overridden", function(assert) {
     }
   });
 
-  define('appkit/super-duper-config/environment', [], function(){
+  loader.define('appkit/super-duper-config/environment', [], function(){
     assert.ok(true, 'super-duper-config/environment is found');
     return 'whatever';
   });
