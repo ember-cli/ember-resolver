@@ -364,7 +364,12 @@ const Resolver = EmberObject.extend({
       'Attempted to lookup "'+moduleName+'" which ' +
       'was not found. Please rename "'+partializedModuleName+'" '+
       'to "'+moduleName+'" instead.', false,
-      { id: 'ember-resolver.underscored-modules', until: '3.0.0' });
+      {
+        id: 'ember-resolver.underscored-modules',
+        until: '3.0.0',
+        for: 'ember-resolver',
+        since: '0.1.0'
+      });
 
       return partializedModuleName;
     }

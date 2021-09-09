@@ -3,7 +3,7 @@
 /* eslint-disable no-console */
 
 import Ember from 'ember';
-import { merge } from '@ember/polyfills';
+import { assign } from '@ember/polyfills';
 import { module, test } from 'qunit';
 import Resolver from 'ember-resolver/resolvers/classic';
 
@@ -18,12 +18,12 @@ function setupResolver(options = {}) {
 
 function resetRegistry() {
   requirejs.clear();
-  merge(requirejs.entries, originalRegistryEntries);
+  assign(requirejs.entries, originalRegistryEntries);
 }
 
 module('ember-resolver/resolvers/classic', {
   beforeEach() {
-    originalRegistryEntries = merge({}, requirejs.entries);
+    originalRegistryEntries = assign({}, requirejs.entries);
     originalConsoleInfo = console ? console.info : null;
 
     setupResolver();
