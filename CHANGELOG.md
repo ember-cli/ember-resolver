@@ -1,3 +1,20 @@
+## v8.0.3 (2021-09-09)
+
+#### :bug: Bug Fix
+* [#699](https://github.com/ember-cli/ember-resolver/pull/699) enable embroider scenarios ([@stefanpenner](https://github.com/stefanpenner))
+* [#697](https://github.com/ember-cli/ember-resolver/pull/697) Fix issues with ember-source@4.0.0-beta.1+  ([@stefanpenner](https://github.com/stefanpenner))
+
+#### :house: Internal
+* [#700](https://github.com/ember-cli/ember-resolver/pull/700) re-roll-lockfile ([@stefanpenner](https://github.com/stefanpenner))
+* [#696](https://github.com/ember-cli/ember-resolver/pull/696) Update test setup to latest ember-qunit / @ember/test-helpers ([@stefanpenner](https://github.com/stefanpenner))
+* [#695](https://github.com/ember-cli/ember-resolver/pull/695) Update ember-cli + ember-source to latest ([@stefanpenner](https://github.com/stefanpenner))
+* [#688](https://github.com/ember-cli/ember-resolver/pull/688) GH Actions ([@stefanpenner](https://github.com/stefanpenner))
+
+#### Committers: 2
+- Stefan Penner ([@stefanpenner](https://github.com/stefanpenner))
+- [@dependabot-preview[bot]](https://github.com/apps/dependabot-preview)
+
+
 ## v8.0.2 (2020-08-08)
 
 #### :bug: Bug Fix

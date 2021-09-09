@@ -1,6 +1,6 @@
 {
   "name": "ember-resolver",
-  "version": "8.0.2",
+  "version": "8.0.3",
   "description": "The default modules based resolver for Ember CLI.",
   "keywords": [
     "ember-addon"
