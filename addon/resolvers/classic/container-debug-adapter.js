@@ -1,6 +1,7 @@
 import { A } from '@ember/array';
 import ContainerDebugAdapter from '@ember/debug/container-debug-adapter';
 import { ModuleRegistry } from './index';
+import { getOwner } from '@ember/application';
 
 function getPod(type, key, prefix) {
   let match = key.match(new RegExp('^/?' + prefix + '/(.+)/' + type + '$'));
@@ -19,6 +20,7 @@ export default ContainerDebugAdapter.extend({
 
   init() {
     this._super(...arguments);
+    this.namespace = getOwner(this).lookup('application:main');
 
     if (!this._moduleRegistry) {
       this._moduleRegistry = new ModuleRegistry();

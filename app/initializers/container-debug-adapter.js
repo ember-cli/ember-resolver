@@ -7,6 +7,5 @@ export default {
     let app = arguments[1] || arguments[0];
 
     app.register('container-debug-adapter:main', ContainerDebugAdapter);
-    app.inject('container-debug-adapter:main', 'namespace', 'application:main');
   }
 };
