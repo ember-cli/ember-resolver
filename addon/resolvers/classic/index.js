@@ -21,8 +21,8 @@ export class ModuleRegistry {
   has(moduleName) {
     return moduleName in this._entries;
   }
-  get(moduleName) {
-    return require(moduleName);
+  get(...args) {
+    return require(...args);
   }
 }
 
@@ -471,7 +471,7 @@ const Resolver = EmberObject.extend({
   },
 
   _extractDefaultExport(normalizedModuleName) {
-    let module = require(normalizedModuleName, null, null, true /* force sync */);
+    let module = this._moduleRegistry.get(normalizedModuleName, null, null, true /* force sync */);
 
     if (module && module['default']) {
       module = module['default'];
