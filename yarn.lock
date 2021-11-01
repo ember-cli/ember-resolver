@@ -1199,10 +1199,10 @@
     "@glimmer/env" "^0.1.7"
     "@glimmer/global-context" "0.65.3"
 
-"@glimmer/vm-babel-plugins@0.79.2":
-  version "0.79.2"
-  resolved "https://registry.yarnpkg.com/@glimmer/vm-babel-plugins/-/vm-babel-plugins-0.79.2.tgz#8fa4af60c5089977690ee501c7b358c90b8d6bc5"
-  integrity sha512-c5XQQwM8iogT1mdE/U2+UuGsiFmhP4d53lgXOAq1DQ2/AMFlAXa5djMVETDUlncvLLlo6S3Iaj/FvpqTxwqn2g==
+"@glimmer/vm-babel-plugins@0.80.3":
+  version "0.80.3"
+  resolved "https://registry.yarnpkg.com/@glimmer/vm-babel-plugins/-/vm-babel-plugins-0.80.3.tgz#434b62172318cac43830d3ac29818cf2c5f111c1"
+  integrity sha512-9ej6xlm5MzHBJ5am2l0dbbn8Z0wJoYoMpM8FcrGMlUP6SPMLWxvxpMsApgQo8u6dvZRCjR3/bw3fdf7GOy0AFw==
   dependencies:
     babel-plugin-debug-macros "^0.3.4"
 
@@ -2266,7 +2266,7 @@ babel-plugin-debug-macros@^0.2.0:
   dependencies:
     semver "^5.3.0"
 
-babel-plugin-debug-macros@^0.3.3, babel-plugin-debug-macros@^0.3.4:
+babel-plugin-debug-macros@^0.3.4:
   version "0.3.4"
   resolved "https://registry.yarnpkg.com/babel-plugin-debug-macros/-/babel-plugin-debug-macros-0.3.4.tgz#22961d0cb851a80654cece807a8b4b73d85c6075"
   integrity sha512-wfel/vb3pXfwIDZUrkoDrn5FHmlWI96PCJ3UCDv2a86poJ3EQrnArNW5KfHSVJ9IOgxHbo748cQt7sDU+0KCEw==
@@ -2761,6 +2761,14 @@ broccoli-debug@^0.6.4, broccoli-debug@^0.6.5:
     symlink-or-copy "^1.1.8"
     tree-sync "^1.2.2"
 
+broccoli-file-creator@^2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/broccoli-file-creator/-/broccoli-file-creator-2.1.1.tgz#7351dd2496c762cfce7736ce9b49e3fce0c7b7db"
+  integrity sha512-YpjOExWr92C5vhnK0kmD81kM7U09kdIRZk9w4ZDCDHuHXW+VE/x6AGEOQQW3loBQQ6Jk+k+TSm8dESy4uZsnjw==
+  dependencies:
+    broccoli-plugin "^1.1.0"
+    mkdirp "^0.5.1"
+
 broccoli-filter@^1.2.2, broccoli-filter@^1.2.3:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/broccoli-filter/-/broccoli-filter-1.3.0.tgz#71e3a8e32a17f309e12261919c5b1006d6766de6"
@@ -2927,7 +2935,7 @@ broccoli-persistent-filter@^3.1.2:
     symlink-or-copy "^1.0.1"
     sync-disk-cache "^2.0.0"
 
-broccoli-plugin@^1.0.0, broccoli-plugin@^1.2.0, broccoli-plugin@^1.2.1, broccoli-plugin@^1.3.0:
+broccoli-plugin@^1.0.0, broccoli-plugin@^1.1.0, broccoli-plugin@^1.2.0, broccoli-plugin@^1.2.1, broccoli-plugin@^1.3.0:
   version "1.3.1"
   resolved "https://registry.yarnpkg.com/broccoli-plugin/-/broccoli-plugin-1.3.1.tgz#a26315732fb99ed2d9fb58f12a1e14e986b4fabd"
   integrity sha512-DW8XASZkmorp+q7J4EeDEZz+LoyKLAd2XZULXyD9l4m9/hAKV3vjHmB1kiUshcWAYMgTP1m2i4NnqCE/23h6AQ==
@@ -4680,20 +4688,21 @@ ember-source-channel-url@^3.0.0:
   dependencies:
     node-fetch "^2.6.0"
 
-ember-source@3.27.2:
-  version "3.27.2"
-  resolved "https://registry.yarnpkg.com/ember-source/-/ember-source-3.27.2.tgz#3ab37191c2079d7e6e69f9c1c679f4c46f164703"
-  integrity sha512-//w9jiikkm9/WRuSBkyO666vtOsbb6P1mFcQGeiQb/MkbpAT29COIQnf8a7YKEPG/G1dgKox9jUPtPhlnaveig==
+ember-source@3.28.4:
+  version "3.28.4"
+  resolved "https://registry.yarnpkg.com/ember-source/-/ember-source-3.28.4.tgz#b6ac2b1e369ef533d05164c65078b4ceafdb6390"
+  integrity sha512-s7kVy0E08erAHUTI/8SZZvXt3an/xb2g5K+m4Rybvo8Tr/noMk3lIdtyQkSvmgMZ/BbvoW8spS630sO0/JN4Eg==
   dependencies:
     "@babel/helper-module-imports" "^7.8.3"
     "@babel/plugin-transform-block-scoping" "^7.8.3"
     "@babel/plugin-transform-object-assign" "^7.8.3"
     "@ember/edition-utils" "^1.2.0"
-    "@glimmer/vm-babel-plugins" "0.79.2"
-    babel-plugin-debug-macros "^0.3.3"
+    "@glimmer/vm-babel-plugins" "0.80.3"
+    babel-plugin-debug-macros "^0.3.4"
     babel-plugin-filter-imports "^4.0.0"
     broccoli-concat "^4.2.4"
     broccoli-debug "^0.6.4"
+    broccoli-file-creator "^2.1.1"
     broccoli-funnel "^2.0.2"
     broccoli-merge-trees "^4.2.0"
     chalk "^4.0.0"
