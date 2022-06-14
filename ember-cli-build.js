@@ -1,30 +1,10 @@
 'use strict';
 
 const EmberAddon = require('ember-cli/lib/broccoli/ember-addon');
-const MergeTrees = require('broccoli-merge-trees');
-const Funnel = require('broccoli-funnel');
 
 module.exports = function(defaults) {
-  let testTrees = [new Funnel('tests', {
-    exclude: [/^dummy/],
-  })];
-
-  let isModuleUnification = !!defaults.project.isModuleUnification &&
-    defaults.project.isModuleUnification();
-
-  if (isModuleUnification) {
-    testTrees.push('mu-trees/tests');
-  }
-
   let app = new EmberAddon(defaults, {
-    trees: {
-      tests: new MergeTrees(testTrees)
-    },
-
     // Add options here
-    vendorFiles: {
-      'ember-resolver.js': null
-    }
   });
 
   try {
