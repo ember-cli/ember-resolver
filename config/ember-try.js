@@ -119,21 +119,6 @@ module.exports = async function() {
           }
         }
       },
-      {
-        name: 'ember-classic',
-        env: {
-          EMBER_OPTIONAL_FEATURES: JSON.stringify({
-            'application-template-wrapper': true,
-            'default-async-observers': false,
-            'template-only-glimmer-components': false,
-          }),
-        },
-        npm: {
-          ember: {
-            edition: 'classic',
-          },
-        },
-      },
       // The default `.travis.yml` runs this scenario via `yarn test`,
       // not via `ember try`. It's still included here so that running
       // `ember try:each` manually or from a customized CI config will run it
@@ -144,20 +129,6 @@ module.exports = async function() {
           devDependencies: {}
         }
       },
-      {
-        name: 'ember-default-with-jquery',
-        env: {
-          EMBER_OPTIONAL_FEATURES: JSON.stringify({
-            'jquery-integration': true
-          })
-        },
-        npm: {
-          devDependencies: {
-            '@ember/jquery': '^0.5.1'
-          }
-        }
-      },
-
       embroider.safe,
       embroider.optimized,
     ]
