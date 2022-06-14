@@ -1,4 +1,8 @@
-   {
-     "private": true,
-     "workspaces": ["addon", "test-app"]
-   }
+{
+  "private": true,
+  "workspaces": ["addon", "test-app"],
+  "volta": {
+    "node": "14.19.3",
+    "npm": "8.12.1"
+  }
+}

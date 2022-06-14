@@ -48,7 +48,6 @@
     }
   },
   "volta": {
-    "node": "14.19.3",
-    "npm": "8.12.1"
+    "extends": "../package.json"
   }
 }
