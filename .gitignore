@@ -11,4 +11,4 @@ yarn-error.log
 /test-app/.node_modules.ember-try/
 /test-app/package.json.ember-try
 
-/test-app/.eslintcache
+/.eslintcache

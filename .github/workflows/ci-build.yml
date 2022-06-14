@@ -33,7 +33,6 @@ jobs:
         if: steps.npm-cache.outputs.cache-hit != 'true'
         run: npm ci
       - run: npm run lint
-        working-directory: ./test-app/
       - run: npm run test:ember
         working-directory: ./test-app/
 
