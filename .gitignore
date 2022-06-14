@@ -1,0 +1,14 @@
+node_modules
+
+# and you can put in anything else that tends to accumulate in your environment:
+yarn-error.log
+.DS_Store
+/testem.log
+/test-app/dist/
+/test-app/tmp/
+
+# ember-try
+/test-app/.node_modules.ember-try/
+/test-app/package.json.ember-try
+
+/test-app/.eslintcache
