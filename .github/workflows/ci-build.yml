@@ -33,7 +33,9 @@ jobs:
         if: steps.npm-cache.outputs.cache-hit != 'true'
         run: npm ci
       - run: npm run lint
-      - run: npm test
+        working-directory: ./test-app/
+      - run: npm run test:ember
+        working-directory: ./test-app/
 
   floating-dependencies:
     timeout-minutes: 10
@@ -45,18 +47,9 @@ jobs:
       - uses: volta-cli/action@v1
         with:
           node-version: 16.x
-      - uses: actions/cache@v2
-        id: npm-cache
-        with:
-          path: '**/node_modules'
-          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-npm-
-      - name: npm ci
-        if: steps.npm-cache.outputs.cache-hit != 'true'
-        run: npm ci
       - run: npm install --no-shrinkwrap
       - run: npm test
+        working-directory: ./test-app/
 
   try-scenarios:
     timeout-minutes: 10
@@ -95,4 +88,5 @@ jobs:
         if: steps.npm-cache.outputs.cache-hit != 'true'
         run: npm ci
       - name: test
-        run: node_modules/.bin/ember try:one ${{ matrix.ember-try-scenario }} --skip-cleanup
+        run: npx ember try:one ${{ matrix.ember-try-scenario }} --skip-cleanup
+        working-directory: ./test-app/
