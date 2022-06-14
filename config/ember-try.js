@@ -2,7 +2,7 @@
 
 const getChannelURL = require('ember-source-channel-url');
 
-const EMBROIDER_VERSION = '^0.44.1';
+const EMBROIDER_VERSION = '^1.8.0';
 const embroider = {
   safe: {
     name: 'embroider-safe',
@@ -12,9 +12,6 @@ const embroider = {
         '@embroider/webpack': EMBROIDER_VERSION,
         '@embroider/compat': EMBROIDER_VERSION,
         '@embroider/test-setup': EMBROIDER_VERSION,
-
-        // Webpack is a peer dependency of `@embroider/webpack`
-        webpack: '^5.0.0',
       },
     },
     env: {
@@ -30,9 +27,6 @@ const embroider = {
         '@embroider/webpack': EMBROIDER_VERSION,
         '@embroider/compat': EMBROIDER_VERSION,
         '@embroider/test-setup': EMBROIDER_VERSION,
-
-        // Webpack is a peer dependency of `@embroider/webpack`
-        webpack: '^5.0.0',
       },
     },
     env: {
