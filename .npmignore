@@ -8,25 +8,37 @@
 # misc
 /.bowerrc
 /.editorconfig
-/.ember-cli.js
+/.ember-cli
 /.env*
+/.eslintcache
 /.eslintignore
 /.eslintrc.js
 /.git/
+/.github/
+/.github_changelog_generator
 /.gitignore
+/.prettierignore
+/.prettierrc.js
 /.template-lintrc.js
 /.travis.yml
 /.watchmanconfig
 /bower.json
 /config/ember-try.js
+/CODE_OF_CONDUCT.md
 /CONTRIBUTING.md
 /ember-cli-build.js
+/RELEASE.md
+/server/
 /testem.js
 /tests/
+/yarn-error.log
 /yarn.lock
 .gitkeep
 
 # ember-try
 /.node_modules.ember-try/
 /bower.json.ember-try
+/npm-shrinkwrap.json.ember-try
 /package.json.ember-try
+/package-lock.json.ember-try
+/yarn.lock.ember-try
