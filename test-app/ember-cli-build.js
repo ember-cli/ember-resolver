@@ -8,7 +8,7 @@ module.exports = function(defaults) {
   });
 
   try {
-    const { maybeEmbroider } = require('@embroider/test-setup'); // eslint-disable-line node/no-missing-require
+    const { maybeEmbroider } = require('@embroider/test-setup');
     return maybeEmbroider(app);
   } catch (e) {
     // This exists, so that we can continue to support node 10 for some of our
