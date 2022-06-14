@@ -1,3 +1,5 @@
+/* eslint-disable ember/no-classic-classes */
+
 import { run } from '@ember/runloop';
 import Application from '@ember/application';
 import { module, test } from 'qunit';

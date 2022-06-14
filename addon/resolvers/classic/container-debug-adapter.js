@@ -15,6 +15,8 @@ function getPod(type, key, prefix) {
  * support for resolving from modules.
  *
  */
+
+/* eslint-disable ember/no-classic-classes */
 export default ContainerDebugAdapter.extend({
   _moduleRegistry: null,
 

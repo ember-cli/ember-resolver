@@ -1,8 +1,10 @@
 /* globals requirejs, require */
 
+/* eslint-disable ember/no-classic-classes */
+
 import Ember from 'ember';
 import { assert, deprecate, warn } from '@ember/debug';
-import EmberObject, { get, computed } from '@ember/object';
+import EmberObject from '@ember/object';
 import { dasherize, classify, underscore } from '@ember/string';
 import { DEBUG } from '@glimmer/env';
 import classFactory from '../../utils/class-factory';
@@ -93,7 +95,7 @@ function parseName(fullName) {
   }
 
   let fullNameWithoutType = name;
-  let namespace = get(this, 'namespace');
+  let namespace = this.namespace;
   let root = namespace;
 
   return {
@@ -158,6 +160,23 @@ const Resolver = EmberObject.extend({
       this.pluralizedTypes.config = 'config';
     }
     this._deprecatedPodModulePrefix = false;
+
+    /**
+
+     A listing of functions to test for moduleName's based on the provided
+     `parsedName`. This allows easy customization of additional module based
+     lookup patterns.
+
+     @property moduleNameLookupPatterns
+     @returns {Ember.Array}
+    */
+    this.moduleNameLookupPatterns = [
+      this.podBasedModuleName,
+      this.podBasedComponentsInSubdir,
+      this.mainModuleName,
+      this.defaultModuleName,
+      this.nestedColocationComponentModuleName,
+    ];
   },
 
   normalize(fullName) {
@@ -295,27 +314,8 @@ const Resolver = EmberObject.extend({
     return tmpPrefix;
   },
 
-  /**
-
-   A listing of functions to test for moduleName's based on the provided
-   `parsedName`. This allows easy customization of additional module based
-   lookup patterns.
-
-   @property moduleNameLookupPatterns
-   @returns {Ember.Array}
-   */
-  moduleNameLookupPatterns: computed(function(){
-    return [
-      this.podBasedModuleName,
-      this.podBasedComponentsInSubdir,
-      this.mainModuleName,
-      this.defaultModuleName,
-      this.nestedColocationComponentModuleName,
-    ];
-  }).readOnly(),
-
   findModuleName(parsedName, loggingDisabled){
-    let moduleNameLookupPatterns = this.get('moduleNameLookupPatterns');
+    let moduleNameLookupPatterns = this.moduleNameLookupPatterns;
     let moduleName;
 
     for (let index = 0, length = moduleNameLookupPatterns.length; index < length; index++) {
