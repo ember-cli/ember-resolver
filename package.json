@@ -78,6 +78,9 @@
   "publishConfig": {
     "registry": "https://registry.npmjs.org"
   },
+  "ember": {
+    "edition": "octane"
+  },
   "ember-addon": {
     "configPath": "tests/dummy/config"
   },
