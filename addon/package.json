@@ -21,7 +21,9 @@
     "test": "tests"
   },
   "scripts": {},
-  "dependencies": {},
+  "dependencies": {
+    "ember-cli-babel": "^7.26.11"
+  },
   "devDependencies": {},
   "engines": {
     "node": "14.* || 16.* || >= 18"
