@@ -28,18 +28,17 @@ module.exports = {
         '.eslintrc.js',
         '.template-lintrc.js',
         'ember-cli-build.js',
-        'index.js',
-        'testem.js',
-        'blueprints/*/index.js',
-        'config/**/*.js',
-        'tests/dummy/config/**/*.js'
+        'addon/index.js',
+        'addon/blueprints/*/index.js',
+        'addon/config/**/*.js',
+        'test-app/config/**/*.js',
+        'test-app/server/**/*.js',
+        'test-app/testem.js',
       ],
       excludedFiles: [
-        'mu-trees/**',
-        'addon/**',
-        'addon-test-support/**',
-        'app/**',
-        'tests/dummy/app/**'
+        'addon/addon/**',
+        'addon/addon-test-support/**',
+        'addon/app/**',
       ],
       parserOptions: {
         sourceType: 'script'
@@ -48,10 +47,6 @@ module.exports = {
         browser: false,
         node: true
       },
-      plugins: ['node'],
-      rules: Object.assign({}, require('eslint-plugin-node').configs.recommended.rules, {
-        // add your custom rules and overrides for node files here
-      })
     }
   ]
 };

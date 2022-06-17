@@ -3,8 +3,8 @@
 /vendor/
 
 # compiled output
-/dist/
-/tmp/
+/test-app/dist/
+/test-app/tmp/
 
 # dependencies
 /bower_components/

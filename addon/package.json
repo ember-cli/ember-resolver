@@ -1,0 +1,55 @@
+{
+  "name": "ember-resolver",
+  "version": "8.0.3",
+  "description": "The default modules based resolver for Ember CLI.",
+  "keywords": [
+    "ember-addon"
+  ],
+  "homepage": "https://github.com/ember-cli/ember-resolver#readme",
+  "bugs": {
+    "url": "https://github.com/ember-cli/ember-resolver/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ember-cli/ember-resolver.git"
+  },
+  "license": "MIT",
+  "author": "Robert Jackson <me@rwjblue.com>",
+  "main": "index.js",
+  "directories": {
+    "doc": "doc",
+    "test": "tests"
+  },
+  "scripts": {},
+  "dependencies": {
+    "ember-cli-babel": "^7.26.11"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": "14.* || 16.* || >= 18"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
+  },
+  "ember": {
+    "edition": "octane"
+  },
+  "release-it": {
+    "plugins": {
+      "release-it-lerna-changelog": {
+        "infile": "CHANGELOG.md",
+        "launchEditor": true
+      }
+    },
+    "git": {
+      "tagName": "v${version}"
+    },
+    "github": {
+      "release": true,
+      "tokenRef": "GITHUB_AUTH"
+    }
+  },
+  "volta": {
+    "extends": "../package.json"
+  }
+}

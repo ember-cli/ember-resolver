@@ -1,1 +1,5 @@
-export { default } from './resolvers/classic';
+'use strict';
+
+module.exports = {
+  name: require('./package.json').name,
+};

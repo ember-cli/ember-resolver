@@ -5,7 +5,7 @@ import Application from '@ember/application';
 import { module, test } from 'qunit';
 import Resolver from 'ember-resolver/resolver';
 import ContainerDebugAdapter from 'ember-resolver/resolvers/classic/container-debug-adapter';
-import ContainerDebugAdapterInitializer from 'dummy/initializers/container-debug-adapter';
+import ContainerDebugAdapterInitializer from 'test-app/initializers/container-debug-adapter';
 
 let containerDebugAdapter, App;
 

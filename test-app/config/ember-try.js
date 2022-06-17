@@ -38,7 +38,10 @@ const embroider = {
 
 module.exports = async function() {
   return {
-    useYarn: true,
+    buildManagerOptions() {
+      return ['--no-package-lock', '--legacy-peer-deps'];
+    },
+
     scenarios: [
       {
         name: 'ember-lts-3.24',
