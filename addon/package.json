@@ -9,6 +9,7 @@
   "bugs": {
     "url": "https://github.com/ember-cli/ember-resolver/issues"
   },
+  "types": "index.d.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ember-cli/ember-resolver.git"
@@ -25,6 +26,14 @@
     "ember-cli-babel": "^7.26.11"
   },
   "devDependencies": {},
+  "peerDependencies": {
+    "ember-source": "^4.8.3"
+  },
+  "peerDependenciesMeta": {
+    "ember-source": {
+      "optional": true
+    }
+  },
   "engines": {
     "node": "14.* || 16.* || >= 18"
   },
