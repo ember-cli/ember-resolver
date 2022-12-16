@@ -50,8 +50,6 @@
     "prettier": "^2.8.1",
     "qunit": "^2.19.1",
     "qunit-dom": "^2.0.0",
-    "release-it": "^15.5.1",
-    "release-it-lerna-changelog": "^5.0.0",
     "webpack": "^5.73.0"
   },
   "engines": {
@@ -62,6 +60,12 @@
   },
   "ember": {
     "edition": "octane"
+  },
+  "release-it": {
+    "plugins": {
+      "@release-it-plugins/workspaces": true
+    },
+    "npm": false
   },
   "volta": {
     "extends": "../package.json"
