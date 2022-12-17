@@ -1,6 +1,13 @@
 {
   "private": true,
-  "workspaces": ["addon", "test-app"],
+  "workspaces": [
+    "addon",
+    "test-app"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ember-cli/ember-resolver.git"
+  },
   "scripts": {
     "lint": "npm-run-all --aggregate-output --continue-on-error --parallel \"lint:!(fix)\"",
     "lint:fix": "npm-run-all --aggregate-output --continue-on-error --parallel lint:*:fix",
@@ -10,6 +17,8 @@
     "lint:js:fix": "eslint . --fix"
   },
   "devDependencies": {
+    "@release-it-plugins/lerna-changelog": "5.0.0",
+    "@release-it-plugins/workspaces": "^3.2.0",
     "ember-template-lint": "^5.2.0",
     "eslint": "^7.32.0",
     "eslint-plugin-ember": "^11.2.1",
@@ -17,7 +26,25 @@
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-qunit": "^7.3.0",
     "npm-run-all": "^4.1.5",
-    "prettier": "^2.8.1"
+    "prettier": "^2.8.1",
+    "release-it": "^15.5.1"
+  },
+  "release-it": {
+    "plugins": {
+      "@release-it-plugins/workspaces": true,
+      "@release-it-plugins/lerna-changelog": {
+        "infile": "CHANGELOG.md",
+        "launchEditor": true
+      }
+    },
+    "git": {
+      "tagName": "v${version}"
+    },
+    "npm": false,
+    "github": {
+      "release": true,
+      "tokenRef": "GITHUB_AUTH"
+    }
   },
   "volta": {
     "node": "14.19.3",
