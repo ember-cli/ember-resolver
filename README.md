@@ -38,7 +38,7 @@ export default class App extends Application {
 
 ## Strict
 
-> Originally from <https://github.com/stefanpenner/ember-strict-resolver>
+> **Note** This was originally developed as <https://github.com/stefanpenner/ember-strict-resolver>
 
 in app/resolver.js
 
