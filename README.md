@@ -59,7 +59,7 @@ Ember.Registry.prototype.normalize = function (i) {
 
 Migrating to the `strict` resolver from the `classic` can be done piecemeal by supporting a sub-set of the old resolution formats.
 
-> normalize is needed, because without it you will get errors related to failing to be able to inject services that were never normalized in the registry.
+> **Note** `normalize` is needed because without it you will get errors related to failing to be able to inject services that were never normalized in the registry.
 
 ```js
 // app/resolver.js
