@@ -64,7 +64,7 @@ Migrating to the `strict` resolver from the `classic` can be done piecemeal by s
 ```js
 // app/resolver.js
 
-import Resolver from "ember-strict-resolver";
+import Resolver from "ember-resolver/strict";
 
 export default class extends Resolver {
   legacyMappings = {
