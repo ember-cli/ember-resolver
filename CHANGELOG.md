@@ -1,3 +1,42 @@
+
+## v9.0.0 (2022-12-19)
+TL;DR: drop some old versions, and ship TypeScript type definitions.
+
+#### :boom: Breaking Change
+* [#835](https://github.com/ember-cli/ember-resolver/pull/835) Drop support for Ember 3.x, add 4.8 to CI ([@chriskrycho](https://github.com/chriskrycho))
+* [#774](https://github.com/ember-cli/ember-resolver/pull/774) Remove CI scenarios for Ember < 3.24 ([@rwjblue](https://github.com/rwjblue))
+* [#758](https://github.com/ember-cli/ember-resolver/pull/758) Remove support for ember-cli < 2.0.0 ([@rwjblue](https://github.com/rwjblue))
+* [#757](https://github.com/ember-cli/ember-resolver/pull/757) Drop support for Node 10, 11, 12, 13, 15, and 17. ([@rwjblue](https://github.com/rwjblue))
+
+#### :rocket: Enhancement
+* [#823](https://github.com/ember-cli/ember-resolver/pull/823) Feature: Introduce ambient type definitions ([@chriskrycho](https://github.com/chriskrycho))
+
+#### :bug: Bug Fix
+* [#831](https://github.com/ember-cli/ember-resolver/pull/831) Bugfix/types: `Resolver extends EmberObject` ([@chriskrycho](https://github.com/chriskrycho))
+
+#### :memo: Documentation
+* [#778](https://github.com/ember-cli/ember-resolver/pull/778) Refactor the README ([@rwjblue](https://github.com/rwjblue))
+
+#### :house: Internal
+* [#834](https://github.com/ember-cli/ember-resolver/pull/834) Fix release-it config ([@chriskrycho](https://github.com/chriskrycho))
+* [#782](https://github.com/ember-cli/ember-resolver/pull/782) V2 Addon Part 1: Separate test-app from addon ([@rwjblue](https://github.com/rwjblue))
+* [#781](https://github.com/ember-cli/ember-resolver/pull/781) Remove unused dependencies ([@rwjblue](https://github.com/rwjblue))
+* [#780](https://github.com/ember-cli/ember-resolver/pull/780) Add concurrency setup to CI ([@rwjblue](https://github.com/rwjblue))
+* [#779](https://github.com/ember-cli/ember-resolver/pull/779) Migrate to `npm` ([@rwjblue](https://github.com/rwjblue))
+* [#777](https://github.com/ember-cli/ember-resolver/pull/777) Update minimum ember-cli-babel version to 7.26.11 ([@rwjblue](https://github.com/rwjblue))
+* [#714](https://github.com/ember-cli/ember-resolver/pull/714) Update npmignore file ([@SergeAstapov](https://github.com/SergeAstapov))
+* [#776](https://github.com/ember-cli/ember-resolver/pull/776) Add Ember 3.28 and 4.4 CI scenarios ([@rwjblue](https://github.com/rwjblue))
+* [#775](https://github.com/ember-cli/ember-resolver/pull/775) Update Embroider CI scenarios to ^1.8.0 ([@rwjblue](https://github.com/rwjblue))
+* [#772](https://github.com/ember-cli/ember-resolver/pull/772) Update devDependencies to latest. ([@rwjblue](https://github.com/rwjblue))
+* [#773](https://github.com/ember-cli/ember-resolver/pull/773) Remove "classic" edition CI scenarios ([@rwjblue](https://github.com/rwjblue))
+* [#771](https://github.com/ember-cli/ember-resolver/pull/771) Fix CI when using Ember 4+ ([@rwjblue](https://github.com/rwjblue))
+* [#756](https://github.com/ember-cli/ember-resolver/pull/756) Update ember-auto-import to >= 2.4.2 ([@rwjblue](https://github.com/rwjblue))
+
+#### Committers: 3
+- Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
+- Robert Jackson ([@rwjblue](https://github.com/rwjblue))
+- Sergey Astapov ([@SergeAstapov](https://github.com/SergeAstapov))
+
 ## v8.0.3 (2021-09-09)
 
 #### :bug: Bug Fix
