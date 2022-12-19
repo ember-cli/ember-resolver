@@ -43,7 +43,7 @@ export default class App extends Application {
 in app/resolver.js
 
 ```js
-export { default } from "ember-strict-resolver";
+export { default } from "ember-resolver/strict";
 ```
 
 _For additional improvements when fully using the ember-strict-resolver monkey patching the registry to no longer cache and simply returning the values passed like the following can be produce extra performance._
