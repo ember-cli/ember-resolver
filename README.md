@@ -83,7 +83,7 @@ export default class extends Resolver {
 
 This will allow you file PRs with libraries that currently do not support the strict resolver in its entirety.
 
-In the event that you have a component that is failing to resolve correctly with the error `Attempted to lookup "helper:nameOfVariable". Use "helper:name-of-variable" instead.` please convert your template to use explicit-this. The template lint can be enabled by turning on [no-implicit-this](https://github.com/ember-template-lint/ember-template-lint/blob/master/docs/rule/no-implicit-this.md).
+If you have a component that is failing to resolve correctly with the error `Attempted to lookup "helper:nameOfVariable". Use "helper:name-of-variable" instead.`, please convert your template to use explicit-this (also required by Ember v4.0). The template lint can be enabled by turning on [no-implicit-this](https://github.com/ember-template-lint/ember-template-lint/blob/master/docs/rule/no-implicit-this.md).
 
 An example of what this looks like is the following
 
