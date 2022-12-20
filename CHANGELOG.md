@@ -1,3 +1,13 @@
+
+## v8.1.0 (2022-12-20)
+Back-ports built-in TypeScript support for 8.x to decouple that from the Ember 4.x upgrade.
+
+#### :rocket: Enhancement
+* [#839](https://github.com/ember-cli/ember-resolver/pull/839) Backport types to 8.x ([@chriskrycho](https://github.com/chriskrycho))
+
+#### Committers: 1
+- Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
+
 ## v8.0.3 (2021-09-09)
 
 #### :bug: Bug Fix
