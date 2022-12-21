@@ -1,9 +1,7 @@
 
 ## v9.0.1 (2022-12-21)
 
-#### :bug: Bug Fix
-- [#1301](https://github.com/emberjs/ember-test-helpers/pull/1301) Remove the index signature from `TestContext` ([@dfreeman](https://github.com/dfreeman))
-
+This was an accidental republication of [v9.0.0](https://github.com/ember-cli/ember-resolver/releases/tag/v9.0.1). 🤦🏼‍♂️ Nothing to see here.
 
 ## v8.1.0 (2022-12-20)
 Back-ports built-in TypeScript support from 9.0.0 (see below) to decouple that from the Ember 4.x upgrade.
