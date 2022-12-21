@@ -46,15 +46,6 @@ in app/resolver.js
 export { default } from "ember-resolver/strict";
 ```
 
-_For additional improvements when fully using the strict resolver, monkey patching the registry to no longer cache and simply returning the values passed can be produce extra performance:_
-
-```js
-// disable the normalization cache as we no longer normalize, the cache has become a bottle neck.
-Ember.Registry.prototype.normalize = function (i) {
-  return i;
-};
-```
-
 ## Migration
 
 Migrating to the `strict` resolver from the `classic` can be done piecemeal by supporting a sub-set of the old resolution formats.
