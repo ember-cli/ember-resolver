@@ -4,17 +4,18 @@ declare const requirejs: {
   _eak_seen?: Record<string, unknown>;
 };
 
-import Ember from "ember";
-import { assert, deprecate, warn } from "@ember/debug";
-import EmberObject from "@ember/object";
-import { dasherize, classify, underscore } from "@ember/string";
-import { DEBUG } from "@glimmer/env";
-import classFactory from "../../utils/class-factory";
-import type { Factory, FullName, KnownForTypeResult } from "@ember/owner";
-import { EmberClassConstructor } from "@ember/object/-private/types";
-import { Resolver as ResolverContract } from "@ember/owner";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 declare function require(id: string): any;
+
+import Ember from 'ember';
+import { assert, deprecate, warn } from '@ember/debug';
+import EmberObject from '@ember/object';
+import { dasherize, classify, underscore } from '@ember/string';
+import { DEBUG } from '@glimmer/env';
+import classFactory from '../../utils/class-factory';
+import type { Factory, FullName, KnownForTypeResult } from '@ember/owner';
+import { EmberClassConstructor } from '@ember/object/-private/types';
+import { Resolver as ResolverContract } from '@ember/owner';
 
 export type Namespace = Record<string, string> & {
   modulePrefix: string;
@@ -88,7 +89,7 @@ interface ClassicResolver extends EmberObject, Required<ResolverContract> {
   ): string | undefined;
 }
 
-if (typeof requirejs.entries === "undefined") {
+if (typeof requirejs.entries === 'undefined') {
   requirejs.entries = requirejs._eak_seen;
 }
 
@@ -126,7 +127,7 @@ export class ModuleRegistry {
  */
 
 function isParsedName(fullName: FullName | ParsedName): fullName is ParsedName {
-  return typeof fullName === "object" && fullName.parsedName === true;
+  return typeof fullName === 'object' && fullName.parsedName === true;
 }
 
 function parseName(
@@ -137,20 +138,20 @@ function parseName(
     return fullName;
   }
 
-  let prefix = "",
+  let prefix = '',
     type: string,
     name: string;
-  const fullNameParts = fullName.split("@") as [string, ...string[]];
+  const fullNameParts = fullName.split('@') as [string, ...string[]];
 
   if (fullNameParts.length === 3) {
     if (fullNameParts[0].length === 0) {
       // leading scoped namespace: `@scope/pkg@type:name`
       prefix = `@${fullNameParts[1]}`;
       const prefixParts = (fullNameParts as [string, string, string])[2].split(
-        ":"
+        ':'
       ) as [string, ...string[]];
       type = prefixParts[0];
-      name = prefixParts[1] ?? "";
+      name = prefixParts[1] ?? '';
     } else {
       // interweaved scoped namespace: `type:@scope/pkg@name`
       prefix = `@${fullNameParts[1]}`;
@@ -158,12 +159,12 @@ function parseName(
       name = (fullNameParts as [string, string, string])[2];
     }
 
-    if (type === "template:components") {
+    if (type === 'template:components') {
       name = `components/${name}`;
-      type = "template";
+      type = 'template';
     }
   } else if (fullNameParts.length === 2) {
-    const prefixParts = fullNameParts[0].split(":");
+    const prefixParts = fullNameParts[0].split(':');
 
     if (prefixParts.length === 2) {
       if ((prefixParts as [string, string])[1].length === 0) {
@@ -175,22 +176,22 @@ function parseName(
         name = (fullNameParts as [string, string])[1];
       }
     } else {
-      const nameParts = (fullNameParts as [string, string])[1].split(":") as [
+      const nameParts = (fullNameParts as [string, string])[1].split(':') as [
         string,
         ...string[]
       ];
 
       prefix = fullNameParts[0];
       type = nameParts[0];
-      name = nameParts[1] ?? "";
+      name = nameParts[1] ?? '';
     }
 
-    if (type === "template" && prefix.lastIndexOf("components/", 0) === 0) {
+    if (type === 'template' && prefix.lastIndexOf('components/', 0) === 0) {
       name = `components/${name}`;
       prefix = prefix.slice(11);
     }
   } else {
-    [type, name] = fullName.split(":") as [string, string];
+    [type, name] = fullName.split(':') as [string, string];
   }
 
   const fullNameWithoutType = name;
@@ -205,7 +206,7 @@ function parseName(
     fullNameWithoutType: fullNameWithoutType,
     name: name,
     root: root,
-    resolveMethodName: "resolve" + classify(type),
+    resolveMethodName: 'resolve' + classify(type),
   };
 }
 
@@ -213,7 +214,7 @@ function resolveOther(
   this: ClassicResolver,
   parsedName: ParsedName
 ): Factory<object> | object | undefined {
-  assert("`modulePrefix` must be defined", this.namespace.modulePrefix);
+  assert('`modulePrefix` must be defined', this.namespace.modulePrefix);
 
   const normalizedModuleName = this.findModuleName(parsedName);
 
@@ -243,7 +244,7 @@ const Resolver = (
   moduleRegistry: null,
 
   makeToString(this: ClassicResolver, _factory: unknown, fullName: FullName) {
-    return "" + this.namespace.modulePrefix + "@" + fullName + ":";
+    return '' + this.namespace.modulePrefix + '@' + fullName + ':';
   },
 
   shouldWrapInClassFactory(_module: unknown, _parsedName: ParsedName): boolean {
@@ -262,8 +263,8 @@ const Resolver = (
 
     this.pluralizedTypes = this.pluralizedTypes || Object.create(null);
 
-    if (!this.pluralizedTypes["config"]) {
-      this.pluralizedTypes["config"] = "config";
+    if (!this.pluralizedTypes['config']) {
+      this.pluralizedTypes['config'] = 'config';
     }
     this._deprecatedPodModulePrefix = false;
 
@@ -301,7 +302,7 @@ const Resolver = (
     const resolveMethod = this[resolveMethodName];
     let resolved;
 
-    if (typeof resolveMethod === "function") {
+    if (typeof resolveMethod === 'function') {
       resolved = resolveMethod(parsedName);
     }
 
@@ -322,19 +323,19 @@ const Resolver = (
     //      2. `{{render "posts/post"}}`
     //      3. `this.render('posts/post')` from Route
 
-    const split = fullName.split(":") as [string, string, ...string[]];
+    const split = fullName.split(':') as [string, string, ...string[]];
     if (split.length > 1) {
       const type = split[0];
 
       if (
-        type === "component" ||
-        type === "helper" ||
-        type === "modifier" ||
-        (type === "template" && split[1].indexOf("components/") === 0)
+        type === 'component' ||
+        type === 'helper' ||
+        type === 'modifier' ||
+        (type === 'template' && split[1].indexOf('components/') === 0)
       ) {
-        return `${type}:${split[1].replace(/_/g, "-")}`;
+        return `${type}:${split[1].replace(/_/g, '-')}`;
       } else {
-        return `${type}:${dasherize(split[1].replace(/\./g, "/"))}`;
+        return `${type}:${dasherize(split[1].replace(/\./g, '/'))}`;
       }
     } else {
       return fullName;
@@ -343,18 +344,18 @@ const Resolver = (
 
   pluralize(this: ClassicResolver, type: string): string {
     return (
-      this.pluralizedTypes[type] || (this.pluralizedTypes[type] = type + "s")
+      this.pluralizedTypes[type] || (this.pluralizedTypes[type] = type + 's')
     );
   },
 
   podBasedLookupWithPrefix(podPrefix: string, parsedName: ParsedName): string {
     let fullNameWithoutType = parsedName.fullNameWithoutType;
 
-    if (parsedName.type === "template") {
-      fullNameWithoutType = fullNameWithoutType.replace(/^components\//, "");
+    if (parsedName.type === 'template') {
+      fullNameWithoutType = fullNameWithoutType.replace(/^components\//, '');
     }
 
-    return podPrefix + "/" + fullNameWithoutType + "/" + parsedName.type;
+    return podPrefix + '/' + fullNameWithoutType + '/' + parsedName.type;
   },
 
   podBasedModuleName(this: ClassicResolver, parsedName: ParsedName): string {
@@ -370,10 +371,10 @@ const Resolver = (
   ): string | undefined {
     let podPrefix =
       this.namespace.podModulePrefix || this.namespace.modulePrefix;
-    podPrefix = podPrefix + "/components";
+    podPrefix = podPrefix + '/components';
 
     if (
-      parsedName.type === "component" ||
+      parsedName.type === 'component' ||
       /^components/.test(parsedName.fullNameWithoutType)
     ) {
       return this.podBasedLookupWithPrefix(podPrefix, parsedName);
@@ -382,7 +383,7 @@ const Resolver = (
 
   resolveEngine(this: ClassicResolver, parsedName: ParsedName): unknown {
     const engineName = parsedName.fullNameWithoutType;
-    const engineModule = engineName + "/engine";
+    const engineModule = engineName + '/engine';
 
     if (this._moduleRegistry.has(engineModule)) {
       return this._extractDefaultExport(engineModule);
@@ -391,14 +392,14 @@ const Resolver = (
 
   resolveRouteMap(this: ClassicResolver, parsedName: ParsedName) {
     const engineName = parsedName.fullNameWithoutType;
-    const engineRoutesModule = engineName + "/routes";
+    const engineRoutesModule = engineName + '/routes';
 
     if (this._moduleRegistry.has(engineRoutesModule)) {
       const routeMap = this._extractDefaultExport(engineRoutesModule);
 
       assert(
         `The route map for ${engineName} should be wrapped by 'buildRoutes' before exporting.`,
-        typeof routeMap === "object" &&
+        typeof routeMap === 'object' &&
           routeMap !== null &&
           (routeMap as { isRouteMap?: boolean }).isRouteMap
       );
@@ -417,18 +418,18 @@ const Resolver = (
   },
 
   mainModuleName(parsedName: ParsedName): string | undefined {
-    if (parsedName.fullNameWithoutType === "main") {
+    if (parsedName.fullNameWithoutType === 'main') {
       // if router:main or adapter:main look for a module with just the type first
-      return parsedName.prefix + "/" + parsedName.type;
+      return parsedName.prefix + '/' + parsedName.type;
     }
   },
 
   defaultModuleName(this: ClassicResolver, parsedName: ParsedName): string {
     return (
       parsedName.prefix +
-      "/" +
+      '/' +
       this.pluralize(parsedName.type) +
-      "/" +
+      '/' +
       parsedName.fullNameWithoutType
     );
   },
@@ -437,14 +438,14 @@ const Resolver = (
     this: ClassicResolver,
     parsedName: ParsedName
   ): string | undefined {
-    if (parsedName.type === "component") {
+    if (parsedName.type === 'component') {
       return (
         parsedName.prefix +
-        "/" +
+        '/' +
         this.pluralize(parsedName.type) +
-        "/" +
+        '/' +
         parsedName.fullNameWithoutType +
-        "/index"
+        '/index'
       );
     }
   },
@@ -511,11 +512,11 @@ const Resolver = (
     }
     // workaround for dasherized partials:
     // something/something/-something => something/something/_something
-    const partializedModuleName = moduleName.replace(/\/-([^/]*)$/, "/_$1");
+    const partializedModuleName = moduleName.replace(/\/-([^/]*)$/, '/_$1');
 
     if (this._moduleRegistry.has(partializedModuleName)) {
       deprecate(
-        "Modules should not contain underscores. " +
+        'Modules should not contain underscores. ' +
           'Attempted to lookup "' +
           moduleName +
           '" which ' +
@@ -527,10 +528,10 @@ const Resolver = (
           '" instead.',
         false,
         {
-          id: "ember-resolver.underscored-modules",
-          until: "3.0.0",
-          for: "ember-resolver",
-          since: { available: "0.1.0" },
+          id: 'ember-resolver.underscored-modules',
+          until: '3.0.0',
+          for: 'ember-resolver',
+          since: { available: '0.1.0' },
         }
       );
 
@@ -539,7 +540,7 @@ const Resolver = (
 
     if (DEBUG) {
       const isCamelCaseHelper =
-        parsedName.type === "helper" && /[a-z]+[A-Z]+/.test(moduleName);
+        parsedName.type === 'helper' && /[a-z]+[A-Z]+/.test(moduleName);
       if (isCamelCaseHelper) {
         this._camelCaseHelperWarnedNames =
           this._camelCaseHelperWarnedNames || [];
@@ -551,17 +552,17 @@ const Resolver = (
             'Attempted to lookup "' +
               parsedName.fullName +
               '" which ' +
-              "was not found. In previous versions of ember-resolver, a bug would have " +
+              'was not found. In previous versions of ember-resolver, a bug would have ' +
               'caused the module at "' +
               dasherize(moduleName) +
               '" to be ' +
-              "returned for this camel case helper name. This has been fixed. " +
-              "Use the dasherized name to resolve the module that would have been " +
-              "returned in previous versions.",
+              'returned for this camel case helper name. This has been fixed. ' +
+              'Use the dasherized name to resolve the module that would have been ' +
+              'returned in previous versions.',
             false,
             {
-              id: "ember-resolver.camelcase-helper-names",
-              until: "3.0.0",
+              id: 'ember-resolver.camelcase-helper-names',
+              until: '3.0.0',
             } as never
           );
         }
@@ -578,7 +579,7 @@ const Resolver = (
 
     const moduleName = this.findModuleName(parsedName, true);
 
-    return moduleName ?? "";
+    return moduleName ?? '';
   },
 
   // only needed until 1.6.0-beta.2 can be required
@@ -590,18 +591,18 @@ const Resolver = (
   ): void {
     if (
       !(Ember.ENV as { LOG_MODULE_RESOLVER?: boolean }).LOG_MODULE_RESOLVER &&
-      !parsedName.root["LOG_RESOLVER"]
+      !parsedName.root['LOG_RESOLVER']
     ) {
       return;
     }
 
     let padding;
-    const symbol = found ? "[✓]" : "[ ]";
+    const symbol = found ? '[✓]' : '[ ]';
 
     if (parsedName.fullName.length > 60) {
-      padding = ".";
+      padding = '.';
     } else {
-      padding = new Array(60 - parsedName.fullName.length).join(".");
+      padding = new Array(60 - parsedName.fullName.length).join('.');
     }
 
     if (!description) {
@@ -642,8 +643,8 @@ const Resolver = (
     // Note: using string manipulation here rather than regexes for better performance.
     // pod modules
     // '^' + prefix + '/(.+)/' + type + '$'
-    const podPrefix = prefix + "/";
-    const podSuffix = "/" + type;
+    const podPrefix = prefix + '/';
+    const podSuffix = '/' + type;
     const start = moduleName.indexOf(podPrefix);
     const end = moduleName.indexOf(podSuffix);
 
@@ -652,19 +653,19 @@ const Resolver = (
       end === moduleName.length - podSuffix.length &&
       moduleName.length > podPrefix.length + podSuffix.length
     ) {
-      return type + ":" + moduleName.slice(start + podPrefix.length, end);
+      return type + ':' + moduleName.slice(start + podPrefix.length, end);
     }
 
     // non-pod modules
     // '^' + prefix + '/' + pluralizedType + '/(.+)$'
     const pluralizedType = this.pluralize(type);
-    const nonPodPrefix = prefix + "/" + pluralizedType + "/";
+    const nonPodPrefix = prefix + '/' + pluralizedType + '/';
 
     if (
       moduleName.indexOf(nonPodPrefix) === 0 &&
       moduleName.length > nonPodPrefix.length
     ) {
-      return type + ":" + moduleName.slice(nonPodPrefix.length);
+      return type + ':' + moduleName.slice(nonPodPrefix.length);
     }
   },
 
@@ -674,8 +675,8 @@ const Resolver = (
   ): object | undefined {
     let module = this._moduleRegistry.get(normalizedModuleName);
 
-    if (module && module["default"]) {
-      module = module["default"];
+    if (module && module['default']) {
+      module = module['default'];
     }
 
     return module;

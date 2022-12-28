@@ -1,10 +1,10 @@
-import { A } from "@ember/array";
-import ContainerDebugAdapter from "@ember/debug/container-debug-adapter";
-import { ModuleRegistry, type Namespace } from "./index";
-import { getOwner } from "@ember/application";
+import { A } from '@ember/array';
+import ContainerDebugAdapter from '@ember/debug/container-debug-adapter';
+import { ModuleRegistry, type Namespace } from './index';
+import { getOwner } from '@ember/application';
 
 function getPod(type: string, key: string, prefix: string): string | undefined {
-  const match = key.match(new RegExp("^/?" + prefix + "/(.+)/" + type + "$"));
+  const match = key.match(new RegExp('^/?' + prefix + '/(.+)/' + type + '$'));
   if (match !== null) {
     return match[1];
   }
@@ -28,7 +28,7 @@ export default ContainerDebugAdapter.extend({
   init(this: ClassicContainerDebugAdapter): void {
     this._super();
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    this.namespace = getOwner(this)!.lookup("application:main") as Namespace;
+    this.namespace = getOwner(this)!.lookup('application:main') as Namespace;
 
     if (!this._moduleRegistry) {
       this._moduleRegistry = new ModuleRegistry();
@@ -65,7 +65,7 @@ export default ContainerDebugAdapter.extend({
     this: ClassicContainerDebugAdapter,
     type: string
   ): boolean {
-    if (type === "model") {
+    if (type === 'model') {
       return true;
     }
     return this._super(type);
@@ -93,7 +93,7 @@ export default ContainerDebugAdapter.extend({
         let name = getPod(type, key, this.namespace.podModulePrefix || prefix);
         if (!name) {
           // Not pod
-          name = key.split(type + "s/").pop() as string;
+          name = key.split(type + 's/').pop() as string;
 
           // Support for different prefix (such as ember-cli addons).
           // Uncomment the code below when

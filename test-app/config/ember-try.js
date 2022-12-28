@@ -35,8 +35,7 @@ const embroider = {
   },
 };
 
-
-module.exports = async function() {
+module.exports = async function () {
   return {
     buildManagerOptions() {
       return ['--no-package-lock', '--legacy-peer-deps'];
@@ -47,41 +46,41 @@ module.exports = async function() {
         name: 'ember-lts-4.4',
         npm: {
           devDependencies: {
-            'ember-source': '~4.4.0'
-          }
-        }
+            'ember-source': '~4.4.0',
+          },
+        },
       },
       {
         name: 'ember-lts-4.8',
         npm: {
           devDependencies: {
-            'ember-source': '~4.8.0'
-          }
-        }
+            'ember-source': '~4.8.0',
+          },
+        },
       },
       {
         name: 'ember-release',
         npm: {
           devDependencies: {
-            'ember-source': await getChannelURL('release')
-          }
-        }
+            'ember-source': await getChannelURL('release'),
+          },
+        },
       },
       {
         name: 'ember-beta',
         npm: {
           devDependencies: {
-            'ember-source': await getChannelURL('beta')
-          }
-        }
+            'ember-source': await getChannelURL('beta'),
+          },
+        },
       },
       {
         name: 'ember-canary',
         npm: {
           devDependencies: {
-            'ember-source': await getChannelURL('canary')
-          }
-        }
+            'ember-source': await getChannelURL('canary'),
+          },
+        },
       },
       // The default `.travis.yml` runs this scenario via `yarn test`,
       // not via `ember try`. It's still included here so that running
@@ -90,11 +89,11 @@ module.exports = async function() {
       {
         name: 'ember-default',
         npm: {
-          devDependencies: {}
-        }
+          devDependencies: {},
+        },
       },
       embroider.safe,
       embroider.optimized,
-    ]
+    ],
   };
 };
