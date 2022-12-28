@@ -1,4 +1,4 @@
 {
   "extends": "@tsconfig/ember/tsconfig.json",
-  "include": ["addon", "types"]
+  "include": ["src", "types"]
 }

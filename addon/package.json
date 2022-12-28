@@ -16,19 +16,55 @@
   },
   "license": "MIT",
   "author": "Robert Jackson <me@rwjblue.com>",
-  "main": "index.js",
+  "files": [
+    "addon-main.cjs",
+    "dist"
+  ],
   "directories": {
     "doc": "doc",
     "test": "tests"
   },
-  "scripts": {},
+  "scripts": {
+    "build": "rollup --config",
+    "lint": "concurrently 'npm:lint:*(!fix)' --names 'lint:'",
+    "lint:fix": "concurrently 'npm:lint:*:fix' --names 'fix:'",
+    "lint:hbs": "ember-template-lint . --no-error-on-unmatched-pattern",
+    "lint:js": "eslint . --cache",
+    "lint:hbs:fix": "ember-template-lint . --fix --no-error-on-unmatched-pattern",
+    "lint:js:fix": "eslint . --fix",
+    "start": "rollup --config --watch",
+    "test": "echo 'A v2 addon does not have tests, run tests in test-app'",
+    "prepack": "rollup --config"
+  },
   "dependencies": {
-    "ember-cli-babel": "^7.26.11",
-    "ember-cli-typescript": "^5.2.1"
+    "@ember/string": "^3.0.0",
+    "@embroider/addon-shim": "^1.0.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.17.0",
+    "@babel/eslint-parser": "^7.18.2",
+    "@babel/plugin-proposal-class-properties": "^7.16.7",
+    "@babel/plugin-proposal-decorators": "^7.17.0",
+    "@babel/plugin-syntax-decorators": "^7.17.0",
+    "@babel/plugin-transform-typescript": "^7.18.4",
+    "@babel/preset-typescript": "^7.17.12",
     "@tsconfig/ember": "^2.0.0",
+    "@typescript-eslint/eslint-plugin": "^5.46.0",
+    "@typescript-eslint/parser": "^5.46.0",
+    "@embroider/addon-dev": "^2.0.0",
+    "@rollup/plugin-babel": "^5.3.0",
+    "concurrently": "^7.2.1",
     "ember-source": "^4.9.3",
+    "ember-template-lint": "^4.0.0",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-ember": "^10.5.8",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "prettier": "^2.8.1",
+    "rollup": "^2.67.0",
+    "rollup-plugin-copy": "^3.4.0",
+    "rollup-plugin-ts": "^3.0.2",
     "typescript": "^4.9.4"
   },
   "peerDependencies": {
@@ -47,6 +83,22 @@
   },
   "ember": {
     "edition": "octane"
+  },
+  "ember-addon": {
+    "version": 2,
+    "type": "addon",
+    "main": "addon-main.cjs",
+    "app-js": {
+      "./initializers/container-debug-adapter.js": "./dist/_app_/initializers/container-debug-adapter.js"
+    }
+  },
+  "exports": {
+    ".": "./dist/index.js",
+    "./initializers/*": "./dist/initializers/*",
+    "./resolver": "./dist/resolver",
+    "./resolver.js": "./dist/resolver.js",
+    "./resolvers/*": "./dist/resolvers/*",
+    "./addon-main.cjs": "./addon-main.cjs"
   },
   "volta": {
     "extends": "../package.json"

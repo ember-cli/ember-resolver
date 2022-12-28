@@ -13,6 +13,8 @@ import classFactory from "../../utils/class-factory";
 import type { Factory, FullName, KnownForTypeResult } from "@ember/owner";
 import { EmberClassConstructor } from "@ember/object/-private/types";
 import { Resolver as ResolverContract } from "@ember/owner";
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+declare function require(id: string): any;
 
 export type Namespace = Record<string, string> & {
   modulePrefix: string;
