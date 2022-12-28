@@ -1,7 +1,8 @@
 import { A } from '@ember/array';
 import ContainerDebugAdapter from '@ember/debug/container-debug-adapter';
-import { ModuleRegistry, type Namespace } from './index';
 import { getOwner } from '@ember/application';
+import ModuleRegistry from './ModuleRegistry';
+import type Namespace from './Namespace';
 
 function getPod(type: string, key: string, prefix: string): string | undefined {
   const match = key.match(new RegExp('^/?' + prefix + '/(.+)/' + type + '$'));

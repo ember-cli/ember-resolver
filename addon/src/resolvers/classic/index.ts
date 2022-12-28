@@ -1,26 +1,22 @@
 /* eslint-disable ember/no-classic-classes */
-declare const requirejs: {
-  entries?: Record<string, unknown>;
-  _eak_seen?: Record<string, unknown>;
-};
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-declare function require(id: string): any;
 
 import Ember from 'ember';
+import { classify, dasherize, underscore } from '@ember/string';
 import { assert, deprecate, warn } from '@ember/debug';
 import EmberObject from '@ember/object';
-import { dasherize, classify, underscore } from '@ember/string';
+import type { EmberClassConstructor } from '@ember/object/-private/types';
+import type {
+  Factory,
+  FullName,
+  KnownForTypeResult,
+  Resolver as ResolverContract,
+} from '@ember/owner';
 import { DEBUG } from '@glimmer/env';
 import classFactory from '../../utils/class-factory';
-import type { Factory, FullName, KnownForTypeResult } from '@ember/owner';
-import { EmberClassConstructor } from '@ember/object/-private/types';
-import { Resolver as ResolverContract } from '@ember/owner';
+import ModuleRegistry from './ModuleRegistry';
+import type Namespace from './Namespace';
 
-export type Namespace = Record<string, string> & {
-  modulePrefix: string;
-  podModulePrefix?: string;
-};
+export { ModuleRegistry };
 
 type ParsedName = {
   parsedName: true;
@@ -87,31 +83,6 @@ interface ClassicResolver extends EmberObject, Required<ResolverContract> {
     type: string,
     moduleName: string
   ): string | undefined;
-}
-
-if (typeof requirejs.entries === 'undefined') {
-  requirejs.entries = requirejs._eak_seen;
-}
-
-export class ModuleRegistry {
-  private _entries: Record<string, unknown>;
-
-  constructor(readonly entries?: Record<string, unknown>) {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    this._entries = entries || requirejs.entries!;
-  }
-
-  moduleNames(): string[] {
-    return Object.keys(this._entries);
-  }
-
-  has(moduleName: string): boolean {
-    return moduleName in this._entries;
-  }
-
-  get(...args: Parameters<typeof require>) {
-    return require(...args);
-  }
 }
 
 /**
@@ -235,9 +206,10 @@ function resolveOther(
   }
 }
 
-const Resolver = (
-  EmberObject as EmberClassConstructor<ClassicResolver> & typeof EmberObject
-).extend<typeof EmberObject, ClassicResolver>({
+const ClassicResolver = (
+  EmberObject as EmberClassConstructor<Required<ResolverContract>> &
+    typeof EmberObject
+).extend<typeof EmberObject, Required<ResolverContract> & EmberObject>({
   resolveOther,
   parseName,
   pluralizedTypes: null,
@@ -303,7 +275,7 @@ const Resolver = (
     let resolved;
 
     if (typeof resolveMethod === 'function') {
-      resolved = resolveMethod(parsedName);
+      resolved = resolveMethod.call(this, parsedName);
     }
 
     if (resolved == null) {
@@ -683,8 +655,10 @@ const Resolver = (
   },
 });
 
-Resolver.reopenClass({
+ClassicResolver.reopenClass({
   moduleBasedResolver: true,
 });
 
+type Resolver = Required<ResolverContract>;
+const Resolver = ClassicResolver;
 export default Resolver;
