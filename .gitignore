@@ -1,14 +1,25 @@
-node_modules
+# See https://help.github.com/ignore-files/ for more about ignoring files.
 
-# and you can put in anything else that tends to accumulate in your environment:
-yarn-error.log
-.DS_Store
+# compiled output
+dist/
+
+# dependencies
+node_modules/
+
+# misc
+/.env*
+/.pnp*
+/.pnpm-debug.log
+/.sass-cache
+.eslintcache
+/connect.lock
+/coverage/
+/libpeerconnection.log
+/npm-debug.log*
 /testem.log
-/test-app/dist/
-/test-app/tmp/
+/yarn-error.log
 
 # ember-try
-/test-app/.node_modules.ember-try/
-/test-app/package.json.ember-try
-
-/.eslintcache
+/.node_modules.ember-try/
+/package.json.ember-try
+/yarn.lock.ember-try
