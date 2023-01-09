@@ -20,9 +20,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
-      - uses: volta-cli/action@v1
-      - uses: actions/cache@v2
+      - uses: actions/checkout@v3
+      - uses: volta-cli/action@v4
+      - uses: actions/cache@v3
         id: npm-cache
         with:
           path: '**/node_modules'
@@ -42,8 +42,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
-      - uses: volta-cli/action@v1
+      - uses: actions/checkout@v3
+      - uses: volta-cli/action@v4
         with:
           node-version: 16.x
       - run: npm install --no-shrinkwrap
@@ -71,11 +71,11 @@ jobs:
           - embroider-optimized
 
     steps:
-      - uses: actions/checkout@v2
-      - uses: volta-cli/action@v1
+      - uses: actions/checkout@v3
+      - uses: volta-cli/action@v4
         with:
           node-version: 16.x
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         id: npm-cache
         with:
           path: '**/node_modules'
