@@ -88,3 +88,37 @@ jobs:
       - name: test
         run: npx ember try:one ${{ matrix.ember-try-scenario }} --skip-cleanup
         working-directory: ./test-app/
+
+  publish:
+    name: Publish to npm
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install node
+        uses: volta-cli/action@v4
+        with:
+          node-version: 16.x
+          registry-url: 'https://registry.npmjs.org'
+
+      - uses: actions/cache@v3
+        id: npm-cache
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
+
+      - name: install dependencies
+        if: steps.npm-cache.outputs.cache-hit != 'true'
+        run: npm ci
+
+      - name: auto-dist-tag
+        run: npx auto-dist-tag --write
+
+      - name: publish to npm
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH }}
