@@ -1,4 +1,19 @@
 
+## v10.0.0 (2023-01-11)
+
+#### :boom: Breaking Change :bug: Bug Fix
+* [#862](https://github.com/ember-cli/ember-resolver/pull/862) Add @ember/string as a peerDep to indicate the package is required to avoid deprecations in ember-source 4.10 ([@kategengler](https://github.com/kategengler))
+
+#### :house: Internal
+* [#855](https://github.com/ember-cli/ember-resolver/pull/855) Setup CI releasing ([@kategengler](https://github.com/kategengler))
+* [#856](https://github.com/ember-cli/ember-resolver/pull/856) Update dependabot config to get updates for CI actions ([@kategengler](https://github.com/kategengler))
+* [#854](https://github.com/ember-cli/ember-resolver/pull/854) Update gh action dependencies ([@kategengler](https://github.com/kategengler))
+
+#### Committers: 2
+- Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
+- Katie Gengler ([@kategengler](https://github.com/kategengler))
+
+
 ## v9.0.1 (2022-12-21)
 
 This was an accidental republication of [v9.0.0](https://github.com/ember-cli/ember-resolver/releases/tag/v9.0.1). 🤦🏼‍♂️ Nothing to see here.
