@@ -1,7 +1,5 @@
 /* globals requirejs, require */
 
-/* eslint-disable ember/no-classic-classes */
-
 import Ember from 'ember';
 import { assert, deprecate, warn } from '@ember/debug';
 import EmberObject from '@ember/object';
@@ -130,22 +128,22 @@ function resolveOther(parsedName) {
   }
 }
 
-const Resolver = EmberObject.extend({
-  resolveOther,
-  parseName,
-  pluralizedTypes: null,
-  moduleRegistry: null,
+class Resolver extends EmberObject {
+  resolveOther = resolveOther;
+  parseName = parseName;
+  pluralizedTypes = null;
+  moduleRegistry = null;
 
   makeToString(factory, fullName) {
     return '' + this.namespace.modulePrefix + '@' + fullName + ':';
-  },
+  }
 
   shouldWrapInClassFactory(/* module, parsedName */){
     return false;
-  },
+  }
 
-  init() {
-    this._super();
+  constructor() {
+    super(...arguments);
     this.moduleBasedResolver = true;
 
     if (!this._moduleRegistry) {
@@ -177,11 +175,11 @@ const Resolver = EmberObject.extend({
       this.defaultModuleName,
       this.nestedColocationComponentModuleName,
     ];
-  },
+  }
 
   normalize(fullName) {
     return this._normalizeCache[fullName] || (this._normalizeCache[fullName] = this._normalize(fullName));
-  },
+  }
 
   resolve(fullName) {
     let parsedName = this.parseName(fullName);
@@ -197,7 +195,7 @@ const Resolver = EmberObject.extend({
     }
 
     return resolved;
-  },
+  }
 
   _normalize(fullName) {
     // A) Convert underscores to dashes
@@ -226,11 +224,11 @@ const Resolver = EmberObject.extend({
     } else {
       return fullName;
     }
-  },
+  }
 
   pluralize(type) {
     return this.pluralizedTypes[type] || (this.pluralizedTypes[type] = type + 's');
-  },
+  }
 
   podBasedLookupWithPrefix(podPrefix, parsedName) {
     let fullNameWithoutType = parsedName.fullNameWithoutType;
@@ -240,13 +238,13 @@ const Resolver = EmberObject.extend({
     }
 
     return podPrefix + '/' + fullNameWithoutType + '/' + parsedName.type;
-  },
+  }
 
   podBasedModuleName(parsedName) {
     let podPrefix = this.namespace.podModulePrefix || this.namespace.modulePrefix;
 
     return this.podBasedLookupWithPrefix(podPrefix, parsedName);
-  },
+  }
 
   podBasedComponentsInSubdir(parsedName) {
     let podPrefix = this.namespace.podModulePrefix || this.namespace.modulePrefix;
@@ -255,7 +253,7 @@ const Resolver = EmberObject.extend({
     if (parsedName.type === 'component' || /^components/.test(parsedName.fullNameWithoutType)) {
       return this.podBasedLookupWithPrefix(podPrefix, parsedName);
     }
-  },
+  }
 
   resolveEngine(parsedName) {
     let engineName = parsedName.fullNameWithoutType;
@@ -264,7 +262,7 @@ const Resolver = EmberObject.extend({
     if (this._moduleRegistry.has(engineModule)) {
       return this._extractDefaultExport(engineModule);
     }
-  },
+  }
 
   resolveRouteMap(parsedName) {
     let engineName = parsedName.fullNameWithoutType;
@@ -277,7 +275,7 @@ const Resolver = EmberObject.extend({
 
       return routeMap;
     }
-  },
+  }
 
   resolveTemplate(parsedName) {
     let resolved = this.resolveOther(parsedName);
@@ -285,24 +283,24 @@ const Resolver = EmberObject.extend({
       resolved = Ember.TEMPLATES[parsedName.fullNameWithoutType];
     }
     return resolved;
-  },
+  }
 
   mainModuleName(parsedName) {
     if (parsedName.fullNameWithoutType === 'main') {
       // if router:main or adapter:main look for a module with just the type first
       return parsedName.prefix + '/' + parsedName.type;
     }
-  },
+  }
 
   defaultModuleName(parsedName) {
     return parsedName.prefix + '/' +  this.pluralize(parsedName.type) + '/' + parsedName.fullNameWithoutType;
-  },
+  }
 
   nestedColocationComponentModuleName(parsedName) {
     if (parsedName.type === 'component') {
       return parsedName.prefix + '/' +  this.pluralize(parsedName.type) + '/' + parsedName.fullNameWithoutType + '/index';
     }
-  },
+  }
 
   prefix(parsedName) {
     let tmpPrefix = this.namespace.modulePrefix;
@@ -312,7 +310,7 @@ const Resolver = EmberObject.extend({
     }
 
     return tmpPrefix;
-  },
+  }
 
   findModuleName(parsedName, loggingDisabled){
     let moduleNameLookupPatterns = this.moduleNameLookupPatterns;
@@ -341,7 +339,7 @@ const Resolver = EmberObject.extend({
         return moduleName;
       }
     }
-  },
+  }
 
   chooseModuleName(moduleName, parsedName) {
     let underscoredModuleName = underscore(moduleName);
@@ -392,7 +390,7 @@ const Resolver = EmberObject.extend({
         }
       }
     }
-  },
+  }
 
   // used by Ember.DefaultResolver.prototype._logLookup
   lookupDescription(fullName) {
@@ -401,7 +399,7 @@ const Resolver = EmberObject.extend({
     let moduleName = this.findModuleName(parsedName, true);
 
     return moduleName;
-  },
+  }
 
   // only needed until 1.6.0-beta.2 can be required
   _logLookup(found, parsedName, description) {
@@ -426,7 +424,7 @@ const Resolver = EmberObject.extend({
     if (console && console.info) {
       console.info(symbol, parsedName.fullName, padding, description);
     }
-  },
+  }
 
   knownForType(type) {
     let moduleKeys = this._moduleRegistry.moduleNames();
@@ -442,7 +440,7 @@ const Resolver = EmberObject.extend({
     }
 
     return items;
-  },
+  }
 
   translateToContainerFullname(type, moduleName) {
     let prefix = this.prefix({ type });
@@ -468,7 +466,7 @@ const Resolver = EmberObject.extend({
     if (moduleName.indexOf(nonPodPrefix) === 0 && moduleName.length > nonPodPrefix.length) {
       return type + ':' + moduleName.slice(nonPodPrefix.length);
     }
-  },
+  }
 
   _extractDefaultExport(normalizedModuleName) {
     let module = this._moduleRegistry.get(normalizedModuleName, null, null, true /* force sync */);
@@ -479,7 +477,7 @@ const Resolver = EmberObject.extend({
 
     return module;
   }
-});
+}
 
 Resolver.reopenClass({
   moduleBasedResolver: true
