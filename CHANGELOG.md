@@ -1,6 +1,16 @@
 
 
 
+
+## v10.1.0 (2023-05-02)
+
+#### :rocket: Enhancement
+* [#902](https://github.com/ember-cli/ember-resolver/pull/902) Convert Resolver to Native Class ([@elwayman02](https://github.com/elwayman02))
+
+#### Committers: 1
+- Jordan Hawker ([@elwayman02](https://github.com/elwayman02))
+
+
 ## v10.0.0 (2023-01-11)
 
 #### :boom: Breaking Change :bug: Bug Fix
