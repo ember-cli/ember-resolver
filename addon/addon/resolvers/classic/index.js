@@ -1,7 +1,5 @@
 /* globals requirejs, require */
 
-/* eslint-disable ember/no-classic-classes */
-
 import Ember from 'ember';
 import { assert, deprecate, warn } from '@ember/debug';
 import EmberObject from '@ember/object';
@@ -39,149 +37,145 @@ export class ModuleRegistry {
  *  2) is able to provide injections to classes that implement `extend`
  *     (as is typical with Ember).
  */
+class Resolver extends EmberObject {
+  static moduleBasedResolver = true;
+  moduleBasedResolver = true;
 
-function parseName(fullName) {
-  if (fullName.parsedName === true) { return fullName; }
+  _deprecatedPodModulePrefix = false;
+  _normalizeCache = Object.create(null);
 
-  let prefix, type, name;
-  let fullNameParts = fullName.split('@');
+  /**
+   A listing of functions to test for moduleName's based on the provided
+   `parsedName`. This allows easy customization of additional module based
+   lookup patterns.
 
-  if (fullNameParts.length === 3) {
-    if (fullNameParts[0].length === 0) {
-      // leading scoped namespace: `@scope/pkg@type:name`
-      prefix = `@${fullNameParts[1]}`;
-      let prefixParts = fullNameParts[2].split(':');
-      type = prefixParts[0];
-      name = prefixParts[1];
-    } else {
-      // interweaved scoped namespace: `type:@scope/pkg@name`
-      prefix = `@${fullNameParts[1]}`;
-      type = fullNameParts[0].slice(0, -1);
-      name = fullNameParts[2];
-    }
+   @property moduleNameLookupPatterns
+   @returns {Ember.Array}
+   */
+  moduleNameLookupPatterns = [
+    this.podBasedModuleName,
+    this.podBasedComponentsInSubdir,
+    this.mainModuleName,
+    this.defaultModuleName,
+    this.nestedColocationComponentModuleName,
+  ];
 
-    if (type === 'template:components') {
-      name = `components/${name}`;
-      type = 'template';
-    }
-  } else if (fullNameParts.length === 2) {
-    let prefixParts = fullNameParts[0].split(':');
 
-    if (prefixParts.length === 2) {
-      if (prefixParts[1].length === 0) {
-        type = prefixParts[0];
-        name = `@${fullNameParts[1]}`;
-      } else {
-        prefix = prefixParts[1];
-        type = prefixParts[0];
-        name = fullNameParts[1];
-      }
-    } else {
-      let nameParts = fullNameParts[1].split(':');
-
-      prefix = fullNameParts[0];
-      type = nameParts[0];
-      name = nameParts[1];
-    }
-
-    if (type === 'template' && prefix.lastIndexOf('components/', 0) === 0) {
-      name = `components/${name}`;
-      prefix = prefix.slice(11);
-    }
-  } else {
-    fullNameParts = fullName.split(':');
-    type = fullNameParts[0];
-    name = fullNameParts[1];
-  }
-
-  let fullNameWithoutType = name;
-  let namespace = this.namespace;
-  let root = namespace;
-
-  return {
-    parsedName: true,
-    fullName: fullName,
-    prefix: prefix || this.prefix({type: type}),
-    type: type,
-    fullNameWithoutType: fullNameWithoutType,
-    name: name,
-    root: root,
-    resolveMethodName: "resolve" + classify(type)
-  };
-}
-
-function resolveOther(parsedName) {
-  assert('`modulePrefix` must be defined', this.namespace.modulePrefix);
-
-  let normalizedModuleName = this.findModuleName(parsedName);
-
-  if (normalizedModuleName) {
-    let defaultExport = this._extractDefaultExport(normalizedModuleName, parsedName);
-
-    if (defaultExport === undefined) {
-      throw new Error(` Expected to find: '${parsedName.fullName}' within '${normalizedModuleName}' but got 'undefined'. Did you forget to 'export default' within '${normalizedModuleName}'?`);
-    }
-
-    if (this.shouldWrapInClassFactory(defaultExport, parsedName)) {
-      defaultExport = classFactory(defaultExport);
-    }
-
-    return defaultExport;
-  }
-}
-
-const Resolver = EmberObject.extend({
-  resolveOther,
-  parseName,
-  pluralizedTypes: null,
-  moduleRegistry: null,
-
-  makeToString(factory, fullName) {
-    return '' + this.namespace.modulePrefix + '@' + fullName + ':';
-  },
-
-  shouldWrapInClassFactory(/* module, parsedName */){
-    return false;
-  },
-
-  init() {
-    this._super();
-    this.moduleBasedResolver = true;
+  constructor() {
+    super(...arguments);
 
     if (!this._moduleRegistry) {
       this._moduleRegistry = new ModuleRegistry();
     }
-
-    this._normalizeCache = Object.create(null);
 
     this.pluralizedTypes = this.pluralizedTypes || Object.create(null);
 
     if (!this.pluralizedTypes.config) {
       this.pluralizedTypes.config = 'config';
     }
-    this._deprecatedPodModulePrefix = false;
+  }
 
-    /**
+  makeToString(factory, fullName) {
+    return '' + this.namespace.modulePrefix + '@' + fullName + ':';
+  }
 
-     A listing of functions to test for moduleName's based on the provided
-     `parsedName`. This allows easy customization of additional module based
-     lookup patterns.
+  shouldWrapInClassFactory(/* module, parsedName */){
+    return false;
+  }
 
-     @property moduleNameLookupPatterns
-     @returns {Ember.Array}
-    */
-    this.moduleNameLookupPatterns = [
-      this.podBasedModuleName,
-      this.podBasedComponentsInSubdir,
-      this.mainModuleName,
-      this.defaultModuleName,
-      this.nestedColocationComponentModuleName,
-    ];
-  },
+  parseName(fullName) {
+    if (fullName.parsedName === true) { return fullName; }
+
+    let prefix, type, name;
+    let fullNameParts = fullName.split('@');
+
+    if (fullNameParts.length === 3) {
+      if (fullNameParts[0].length === 0) {
+        // leading scoped namespace: `@scope/pkg@type:name`
+        prefix = `@${fullNameParts[1]}`;
+        let prefixParts = fullNameParts[2].split(':');
+        type = prefixParts[0];
+        name = prefixParts[1];
+      } else {
+        // interweaved scoped namespace: `type:@scope/pkg@name`
+        prefix = `@${fullNameParts[1]}`;
+        type = fullNameParts[0].slice(0, -1);
+        name = fullNameParts[2];
+      }
+
+      if (type === 'template:components') {
+        name = `components/${name}`;
+        type = 'template';
+      }
+    } else if (fullNameParts.length === 2) {
+      let prefixParts = fullNameParts[0].split(':');
+
+      if (prefixParts.length === 2) {
+        if (prefixParts[1].length === 0) {
+          type = prefixParts[0];
+          name = `@${fullNameParts[1]}`;
+        } else {
+          prefix = prefixParts[1];
+          type = prefixParts[0];
+          name = fullNameParts[1];
+        }
+      } else {
+        let nameParts = fullNameParts[1].split(':');
+
+        prefix = fullNameParts[0];
+        type = nameParts[0];
+        name = nameParts[1];
+      }
+
+      if (type === 'template' && prefix.lastIndexOf('components/', 0) === 0) {
+        name = `components/${name}`;
+        prefix = prefix.slice(11);
+      }
+    } else {
+      fullNameParts = fullName.split(':');
+      type = fullNameParts[0];
+      name = fullNameParts[1];
+    }
+
+    let fullNameWithoutType = name;
+    let namespace = this.namespace;
+    let root = namespace;
+
+    return {
+      parsedName: true,
+      fullName: fullName,
+      prefix: prefix || this.prefix({type: type}),
+      type: type,
+      fullNameWithoutType: fullNameWithoutType,
+      name: name,
+      root: root,
+      resolveMethodName: "resolve" + classify(type)
+    };
+  }
+
+  resolveOther(parsedName) {
+    assert('`modulePrefix` must be defined', this.namespace.modulePrefix);
+
+    let normalizedModuleName = this.findModuleName(parsedName);
+
+    if (normalizedModuleName) {
+      let defaultExport = this._extractDefaultExport(normalizedModuleName, parsedName);
+
+      if (defaultExport === undefined) {
+        throw new Error(` Expected to find: '${parsedName.fullName}' within '${normalizedModuleName}' but got 'undefined'. Did you forget to 'export default' within '${normalizedModuleName}'?`);
+      }
+
+      if (this.shouldWrapInClassFactory(defaultExport, parsedName)) {
+        defaultExport = classFactory(defaultExport);
+      }
+
+      return defaultExport;
+    }
+  }
 
   normalize(fullName) {
     return this._normalizeCache[fullName] || (this._normalizeCache[fullName] = this._normalize(fullName));
-  },
+  }
 
   resolve(fullName) {
     let parsedName = this.parseName(fullName);
@@ -197,7 +191,7 @@ const Resolver = EmberObject.extend({
     }
 
     return resolved;
-  },
+  }
 
   _normalize(fullName) {
     // A) Convert underscores to dashes
@@ -226,11 +220,11 @@ const Resolver = EmberObject.extend({
     } else {
       return fullName;
     }
-  },
+  }
 
   pluralize(type) {
     return this.pluralizedTypes[type] || (this.pluralizedTypes[type] = type + 's');
-  },
+  }
 
   podBasedLookupWithPrefix(podPrefix, parsedName) {
     let fullNameWithoutType = parsedName.fullNameWithoutType;
@@ -240,13 +234,13 @@ const Resolver = EmberObject.extend({
     }
 
     return podPrefix + '/' + fullNameWithoutType + '/' + parsedName.type;
-  },
+  }
 
   podBasedModuleName(parsedName) {
     let podPrefix = this.namespace.podModulePrefix || this.namespace.modulePrefix;
 
     return this.podBasedLookupWithPrefix(podPrefix, parsedName);
-  },
+  }
 
   podBasedComponentsInSubdir(parsedName) {
     let podPrefix = this.namespace.podModulePrefix || this.namespace.modulePrefix;
@@ -255,7 +249,7 @@ const Resolver = EmberObject.extend({
     if (parsedName.type === 'component' || /^components/.test(parsedName.fullNameWithoutType)) {
       return this.podBasedLookupWithPrefix(podPrefix, parsedName);
     }
-  },
+  }
 
   resolveEngine(parsedName) {
     let engineName = parsedName.fullNameWithoutType;
@@ -264,7 +258,7 @@ const Resolver = EmberObject.extend({
     if (this._moduleRegistry.has(engineModule)) {
       return this._extractDefaultExport(engineModule);
     }
-  },
+  }
 
   resolveRouteMap(parsedName) {
     let engineName = parsedName.fullNameWithoutType;
@@ -277,7 +271,7 @@ const Resolver = EmberObject.extend({
 
       return routeMap;
     }
-  },
+  }
 
   resolveTemplate(parsedName) {
     let resolved = this.resolveOther(parsedName);
@@ -285,24 +279,24 @@ const Resolver = EmberObject.extend({
       resolved = Ember.TEMPLATES[parsedName.fullNameWithoutType];
     }
     return resolved;
-  },
+  }
 
   mainModuleName(parsedName) {
     if (parsedName.fullNameWithoutType === 'main') {
       // if router:main or adapter:main look for a module with just the type first
       return parsedName.prefix + '/' + parsedName.type;
     }
-  },
+  }
 
   defaultModuleName(parsedName) {
     return parsedName.prefix + '/' +  this.pluralize(parsedName.type) + '/' + parsedName.fullNameWithoutType;
-  },
+  }
 
   nestedColocationComponentModuleName(parsedName) {
     if (parsedName.type === 'component') {
       return parsedName.prefix + '/' +  this.pluralize(parsedName.type) + '/' + parsedName.fullNameWithoutType + '/index';
     }
-  },
+  }
 
   prefix(parsedName) {
     let tmpPrefix = this.namespace.modulePrefix;
@@ -312,7 +306,7 @@ const Resolver = EmberObject.extend({
     }
 
     return tmpPrefix;
-  },
+  }
 
   findModuleName(parsedName, loggingDisabled){
     let moduleNameLookupPatterns = this.moduleNameLookupPatterns;
@@ -341,7 +335,7 @@ const Resolver = EmberObject.extend({
         return moduleName;
       }
     }
-  },
+  }
 
   chooseModuleName(moduleName, parsedName) {
     let underscoredModuleName = underscore(moduleName);
@@ -392,7 +386,7 @@ const Resolver = EmberObject.extend({
         }
       }
     }
-  },
+  }
 
   // used by Ember.DefaultResolver.prototype._logLookup
   lookupDescription(fullName) {
@@ -401,7 +395,7 @@ const Resolver = EmberObject.extend({
     let moduleName = this.findModuleName(parsedName, true);
 
     return moduleName;
-  },
+  }
 
   // only needed until 1.6.0-beta.2 can be required
   _logLookup(found, parsedName, description) {
@@ -426,7 +420,7 @@ const Resolver = EmberObject.extend({
     if (console && console.info) {
       console.info(symbol, parsedName.fullName, padding, description);
     }
-  },
+  }
 
   knownForType(type) {
     let moduleKeys = this._moduleRegistry.moduleNames();
@@ -442,7 +436,7 @@ const Resolver = EmberObject.extend({
     }
 
     return items;
-  },
+  }
 
   translateToContainerFullname(type, moduleName) {
     let prefix = this.prefix({ type });
@@ -468,7 +462,7 @@ const Resolver = EmberObject.extend({
     if (moduleName.indexOf(nonPodPrefix) === 0 && moduleName.length > nonPodPrefix.length) {
       return type + ':' + moduleName.slice(nonPodPrefix.length);
     }
-  },
+  }
 
   _extractDefaultExport(normalizedModuleName) {
     let module = this._moduleRegistry.get(normalizedModuleName, null, null, true /* force sync */);
@@ -479,10 +473,6 @@ const Resolver = EmberObject.extend({
 
     return module;
   }
-});
-
-Resolver.reopenClass({
-  moduleBasedResolver: true
-});
+}
 
 export default Resolver;
