@@ -2,7 +2,7 @@
 
 import Ember from 'ember';
 import { module, test } from 'qunit';
-import Resolver, { ModuleRegistry } from 'ember-resolver/resolvers/classic';
+import Resolver, { ModuleRegistry } from 'ember-resolver';
 
 let originalConsoleInfo, logCalls, resolver, loader;
 
@@ -10,7 +10,7 @@ function setupResolver(options = {}) {
   if (!options.namespace) {
     options.namespace = { modulePrefix: 'appkit' };
   }
-  loader = { 
+  loader = {
     entries: Object.create(null),
     define(id, deps, callback) {
       if (deps.length > 0) {
@@ -19,7 +19,7 @@ function setupResolver(options = {}) {
       this.entries[id] = callback;
     }
   };
-  options._moduleRegistry = new ModuleRegistry(loader.entries) 
+  options._moduleRegistry = new ModuleRegistry(loader.entries)
   options._moduleRegistry.get = function(moduleName) {
     return loader.entries[moduleName]();
   }
@@ -322,7 +322,7 @@ test('can lookup a route-map', function(assert) {
   assert.equal(routeMap, expected, 'default export was returned');
 });
 
-// the assert.expectWarning helper no longer works 
+// the assert.expectWarning helper no longer works
 test.skip('warns if looking up a camelCase helper that has a dasherized module present', function(assert){
   assert.expect(1);
 
