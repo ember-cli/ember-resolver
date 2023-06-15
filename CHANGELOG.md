@@ -2,6 +2,25 @@
 
 
 
+
+## v11.0.0-beta.0 (2023-06-15)
+
+#### :boom: Breaking Change
+* [#906](https://github.com/ember-cli/ember-resolver/pull/906) Simplify repository structure (remove `addon/resolvers/classic`) ([@rwjblue](https://github.com/rwjblue))
+* [#904](https://github.com/ember-cli/ember-resolver/pull/904) Remove `container-debug-adapter` initializer ([@rwjblue](https://github.com/rwjblue))
+
+#### :bug: Bug Fix
+* [#916](https://github.com/ember-cli/ember-resolver/pull/916) Loosen peer dependency on ember-source to support ember-source >= v5.0 ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### :house: Internal
+* [#905](https://github.com/ember-cli/ember-resolver/pull/905) Drop IE11 from `config/targets.js` ([@rwjblue](https://github.com/rwjblue))
+
+#### Committers: 3
+- Katie Gengler ([@kategengler](https://github.com/kategengler))
+- Robert Jackson ([@rwjblue](https://github.com/rwjblue))
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
+
 ## v10.1.0 (2023-05-02)
 
 #### :rocket: Enhancement
