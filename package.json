@@ -40,7 +40,9 @@
     "git": {
       "tagName": "v${version}"
     },
-    "npm": false,
+    "npm": {
+      "publish": false
+    },
     "github": {
       "release": true,
       "tokenRef": "GITHUB_AUTH"
