@@ -5,7 +5,7 @@ on:
     branches:
       - master
       - 'v*'
-    tags: 
+    tags:
       - '*'
   pull_request:
   schedule:
@@ -119,6 +119,7 @@ jobs:
 
       - name: auto-dist-tag
         run: npx auto-dist-tag --write
+        working-directory: './addon/'
 
       - name: publish to npm
         run: npm publish
