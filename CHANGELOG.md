@@ -2,6 +2,20 @@
 
 
 
+## v10.1.1 (2023-06-15)
+
+🐛 Bug Fix
+  - [#916](https://github.com/ember-cli/ember-resolver/pull/916) Loosen peer dependency on ember-source to support ember-source >= v5.0 (@NullVoxPopuli)
+
+🏠 Internal
+
+  - [#905](https://github.com/ember-cli/ember-resolver/pull/905) Drop IE11 from config/targets.js (@rwjblue)
+
+Committers: 3
+ - Robert Jackson (@rwjblue)
+ - @NullVoxPopuli
+
+
 ## v10.1.0 (2023-05-02)
 
 #### :rocket: Enhancement
