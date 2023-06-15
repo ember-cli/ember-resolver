@@ -31,7 +31,9 @@
   },
   "release-it": {
     "plugins": {
-      "@release-it-plugins/workspaces": true,
+      "@release-it-plugins/workspaces": {
+        "publish": false
+      },
       "@release-it-plugins/lerna-changelog": {
         "infile": "CHANGELOG.md",
         "launchEditor": true
@@ -40,9 +42,7 @@
     "git": {
       "tagName": "v${version}"
     },
-    "npm": {
-      "publish": false
-    },
+    "npm": false,
     "github": {
       "release": true,
       "tokenRef": "GITHUB_AUTH"
