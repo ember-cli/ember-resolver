@@ -3,6 +3,19 @@
 
 
 
+## v11.0.0 (2023-07-25)
+
+#### :rocket: Enhancement
+* [#933](https://github.com/ember-cli/ember-resolver/pull/933) feat: embed @ember/string utils ([@lifeart](https://github.com/lifeart))
+
+#### :house: Internal
+* [#939](https://github.com/ember-cli/ember-resolver/pull/939) Update to latest Ember LTS ([@kategengler](https://github.com/kategengler))
+
+#### Committers: 2
+- Alex Kanunnikov ([@lifeart](https://github.com/lifeart))
+- Katie Gengler ([@kategengler](https://github.com/kategengler))
+
+
 ## v11.0.0-beta.0 (2023-06-15)
 
 #### :boom: Breaking Change
