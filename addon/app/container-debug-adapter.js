@@ -1,1 +1,1 @@
-export { default } from "ember-resolver/container-debug-adapter";
+export { default } from 'ember-resolver/container-debug-adapter';

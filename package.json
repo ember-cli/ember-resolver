@@ -17,12 +17,15 @@
     "lint:js:fix": "eslint . --fix"
   },
   "devDependencies": {
+    "@babel/eslint-parser": "^7.21.3",
+    "@babel/plugin-proposal-decorators": "^7.21.0",
     "@release-it-plugins/lerna-changelog": "5.0.0",
     "@release-it-plugins/workspaces": "^3.2.0",
     "ember-template-lint": "^5.7.2",
-    "eslint": "^7.32.0",
-    "eslint-plugin-ember": "^11.4.6",
-    "eslint-plugin-node": "^11.1.0",
+    "eslint": "^8.37.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-ember": "^11.5.0",
+    "eslint-plugin-n": "^15.7.0",
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-qunit": "^7.3.4",
     "npm-run-all": "^4.1.5",

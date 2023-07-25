@@ -2,40 +2,50 @@
 import Cache from './cache';
 let STRINGS = {};
 export function setStrings(strings) {
-    STRINGS = strings;
+  STRINGS = strings;
 }
 export function getStrings() {
-    return STRINGS;
+  return STRINGS;
 }
 export function getString(name) {
-    return STRINGS[name];
+  return STRINGS[name];
 }
 const STRING_DASHERIZE_REGEXP = /[ _]/g;
-const STRING_DASHERIZE_CACHE = new Cache(1000, (key) => decamelize(key).replace(STRING_DASHERIZE_REGEXP, '-'));
+const STRING_DASHERIZE_CACHE = new Cache(1000, (key) =>
+  decamelize(key).replace(STRING_DASHERIZE_REGEXP, '-')
+);
 const STRING_CLASSIFY_REGEXP_1 = /^(\-|_)+(.)?/;
 const STRING_CLASSIFY_REGEXP_2 = /(.)(\-|\_|\.|\s)+(.)?/g;
 const STRING_CLASSIFY_REGEXP_3 = /(^|\/|\.)([a-z])/g;
 const CLASSIFY_CACHE = new Cache(1000, (str) => {
-    const replace1 = (_match, _separator, chr) => chr ? `_${chr.toUpperCase()}` : '';
-    const replace2 = (_match, initialChar, _separator, chr) => initialChar + (chr ? chr.toUpperCase() : '');
-    const parts = str.split('/');
-    for (let i = 0; i < parts.length; i++) {
-        parts[i] = parts[i]
-            .replace(STRING_CLASSIFY_REGEXP_1, replace1)
-            .replace(STRING_CLASSIFY_REGEXP_2, replace2);
-    }
-    return parts
-        .join('/')
-        .replace(STRING_CLASSIFY_REGEXP_3, (match /*, separator, chr */) => match.toUpperCase());
+  const replace1 = (_match, _separator, chr) =>
+    chr ? `_${chr.toUpperCase()}` : '';
+  const replace2 = (_match, initialChar, _separator, chr) =>
+    initialChar + (chr ? chr.toUpperCase() : '');
+  const parts = str.split('/');
+  for (let i = 0; i < parts.length; i++) {
+    parts[i] = parts[i]
+      .replace(STRING_CLASSIFY_REGEXP_1, replace1)
+      .replace(STRING_CLASSIFY_REGEXP_2, replace2);
+  }
+  return parts
+    .join('/')
+    .replace(STRING_CLASSIFY_REGEXP_3, (match /*, separator, chr */) =>
+      match.toUpperCase()
+    );
 });
 const STRING_UNDERSCORE_REGEXP_1 = /([a-z\d])([A-Z]+)/g;
 const STRING_UNDERSCORE_REGEXP_2 = /\-|\s+/g;
-const UNDERSCORE_CACHE = new Cache(1000, (str) => str
+const UNDERSCORE_CACHE = new Cache(1000, (str) =>
+  str
     .replace(STRING_UNDERSCORE_REGEXP_1, '$1_$2')
     .replace(STRING_UNDERSCORE_REGEXP_2, '_')
-    .toLowerCase());
+    .toLowerCase()
+);
 const STRING_DECAMELIZE_REGEXP = /([a-z\d])([A-Z])/g;
-const DECAMELIZE_CACHE = new Cache(1000, (str) => str.replace(STRING_DECAMELIZE_REGEXP, '$1_$2').toLowerCase());
+const DECAMELIZE_CACHE = new Cache(1000, (str) =>
+  str.replace(STRING_DECAMELIZE_REGEXP, '$1_$2').toLowerCase()
+);
 /**
   Converts a camelized string into all lower case separated by underscores.
 
@@ -54,7 +64,7 @@ const DECAMELIZE_CACHE = new Cache(1000, (str) => str.replace(STRING_DECAMELIZE_
   @public
 */
 export function decamelize(str) {
-    return DECAMELIZE_CACHE.get(str);
+  return DECAMELIZE_CACHE.get(str);
 }
 /**
   Replaces underscores, spaces, or camelCase with dashes.
@@ -75,7 +85,7 @@ export function decamelize(str) {
   @public
 */
 export function dasherize(str) {
-    return STRING_DASHERIZE_CACHE.get(str);
+  return STRING_DASHERIZE_CACHE.get(str);
 }
 /**
   Returns the UpperCamelCase form of a string.
@@ -96,7 +106,7 @@ export function dasherize(str) {
   @public
 */
 export function classify(str) {
-    return CLASSIFY_CACHE.get(str);
+  return CLASSIFY_CACHE.get(str);
 }
 /**
   More general than decamelize. Returns the lower\_case\_and\_underscored
@@ -118,5 +128,5 @@ export function classify(str) {
   @public
 */
 export function underscore(str) {
-    return UNDERSCORE_CACHE.get(str);
+  return UNDERSCORE_CACHE.get(str);
 }

@@ -60,7 +60,6 @@ class Resolver extends EmberObject {
     this.nestedColocationComponentModuleName,
   ];
 
-
   constructor() {
     super(...arguments);
 
@@ -79,12 +78,14 @@ class Resolver extends EmberObject {
     return '' + this.namespace.modulePrefix + '@' + fullName + ':';
   }
 
-  shouldWrapInClassFactory(/* module, parsedName */){
+  shouldWrapInClassFactory(/* module, parsedName */) {
     return false;
   }
 
   parseName(fullName) {
-    if (fullName.parsedName === true) { return fullName; }
+    if (fullName.parsedName === true) {
+      return fullName;
+    }
 
     let prefix, type, name;
     let fullNameParts = fullName.split('@');
@@ -144,12 +145,12 @@ class Resolver extends EmberObject {
     return {
       parsedName: true,
       fullName: fullName,
-      prefix: prefix || this.prefix({type: type}),
+      prefix: prefix || this.prefix({ type: type }),
       type: type,
       fullNameWithoutType: fullNameWithoutType,
       name: name,
       root: root,
-      resolveMethodName: "resolve" + classify(type)
+      resolveMethodName: 'resolve' + classify(type),
     };
   }
 
@@ -159,10 +160,15 @@ class Resolver extends EmberObject {
     let normalizedModuleName = this.findModuleName(parsedName);
 
     if (normalizedModuleName) {
-      let defaultExport = this._extractDefaultExport(normalizedModuleName, parsedName);
+      let defaultExport = this._extractDefaultExport(
+        normalizedModuleName,
+        parsedName
+      );
 
       if (defaultExport === undefined) {
-        throw new Error(` Expected to find: '${parsedName.fullName}' within '${normalizedModuleName}' but got 'undefined'. Did you forget to 'export default' within '${normalizedModuleName}'?`);
+        throw new Error(
+          ` Expected to find: '${parsedName.fullName}' within '${normalizedModuleName}' but got 'undefined'. Did you forget to 'export default' within '${normalizedModuleName}'?`
+        );
       }
 
       if (this.shouldWrapInClassFactory(defaultExport, parsedName)) {
@@ -174,7 +180,10 @@ class Resolver extends EmberObject {
   }
 
   normalize(fullName) {
-    return this._normalizeCache[fullName] || (this._normalizeCache[fullName] = this._normalize(fullName));
+    return (
+      this._normalizeCache[fullName] ||
+      (this._normalizeCache[fullName] = this._normalize(fullName))
+    );
   }
 
   resolve(fullName) {
@@ -223,7 +232,9 @@ class Resolver extends EmberObject {
   }
 
   pluralize(type) {
-    return this.pluralizedTypes[type] || (this.pluralizedTypes[type] = type + 's');
+    return (
+      this.pluralizedTypes[type] || (this.pluralizedTypes[type] = type + 's')
+    );
   }
 
   podBasedLookupWithPrefix(podPrefix, parsedName) {
@@ -237,16 +248,21 @@ class Resolver extends EmberObject {
   }
 
   podBasedModuleName(parsedName) {
-    let podPrefix = this.namespace.podModulePrefix || this.namespace.modulePrefix;
+    let podPrefix =
+      this.namespace.podModulePrefix || this.namespace.modulePrefix;
 
     return this.podBasedLookupWithPrefix(podPrefix, parsedName);
   }
 
   podBasedComponentsInSubdir(parsedName) {
-    let podPrefix = this.namespace.podModulePrefix || this.namespace.modulePrefix;
+    let podPrefix =
+      this.namespace.podModulePrefix || this.namespace.modulePrefix;
     podPrefix = podPrefix + '/components';
 
-    if (parsedName.type === 'component' || /^components/.test(parsedName.fullNameWithoutType)) {
+    if (
+      parsedName.type === 'component' ||
+      /^components/.test(parsedName.fullNameWithoutType)
+    ) {
       return this.podBasedLookupWithPrefix(podPrefix, parsedName);
     }
   }
@@ -267,7 +283,10 @@ class Resolver extends EmberObject {
     if (this._moduleRegistry.has(engineRoutesModule)) {
       let routeMap = this._extractDefaultExport(engineRoutesModule);
 
-      assert(`The route map for ${engineName} should be wrapped by 'buildRoutes' before exporting.` , routeMap.isRouteMap);
+      assert(
+        `The route map for ${engineName} should be wrapped by 'buildRoutes' before exporting.`,
+        routeMap.isRouteMap
+      );
 
       return routeMap;
     }
@@ -289,12 +308,25 @@ class Resolver extends EmberObject {
   }
 
   defaultModuleName(parsedName) {
-    return parsedName.prefix + '/' +  this.pluralize(parsedName.type) + '/' + parsedName.fullNameWithoutType;
+    return (
+      parsedName.prefix +
+      '/' +
+      this.pluralize(parsedName.type) +
+      '/' +
+      parsedName.fullNameWithoutType
+    );
   }
 
   nestedColocationComponentModuleName(parsedName) {
     if (parsedName.type === 'component') {
-      return parsedName.prefix + '/' +  this.pluralize(parsedName.type) + '/' + parsedName.fullNameWithoutType + '/index';
+      return (
+        parsedName.prefix +
+        '/' +
+        this.pluralize(parsedName.type) +
+        '/' +
+        parsedName.fullNameWithoutType +
+        '/index'
+      );
     }
   }
 
@@ -308,11 +340,15 @@ class Resolver extends EmberObject {
     return tmpPrefix;
   }
 
-  findModuleName(parsedName, loggingDisabled){
+  findModuleName(parsedName, loggingDisabled) {
     let moduleNameLookupPatterns = this.moduleNameLookupPatterns;
     let moduleName;
 
-    for (let index = 0, length = moduleNameLookupPatterns.length; index < length; index++) {
+    for (
+      let index = 0, length = moduleNameLookupPatterns.length;
+      index < length;
+      index++
+    ) {
       let item = moduleNameLookupPatterns[index];
 
       let tmpModuleName = item.call(this, parsedName);
@@ -340,8 +376,14 @@ class Resolver extends EmberObject {
   chooseModuleName(moduleName, parsedName) {
     let underscoredModuleName = underscore(moduleName);
 
-    if (moduleName !== underscoredModuleName && this._moduleRegistry.has(moduleName) && this._moduleRegistry.has(underscoredModuleName)) {
-      throw new TypeError(`Ambiguous module names: '${ moduleName}' and '${underscoredModuleName }'`);
+    if (
+      moduleName !== underscoredModuleName &&
+      this._moduleRegistry.has(moduleName) &&
+      this._moduleRegistry.has(underscoredModuleName)
+    ) {
+      throw new TypeError(
+        `Ambiguous module names: '${moduleName}' and '${underscoredModuleName}'`
+      );
     }
 
     if (this._moduleRegistry.has(moduleName)) {
@@ -354,35 +396,53 @@ class Resolver extends EmberObject {
     let partializedModuleName = moduleName.replace(/\/-([^/]*)$/, '/_$1');
 
     if (this._moduleRegistry.has(partializedModuleName)) {
-      deprecate('Modules should not contain underscores. ' +
-      'Attempted to lookup "'+moduleName+'" which ' +
-      'was not found. Please rename "'+partializedModuleName+'" '+
-      'to "'+moduleName+'" instead.', false,
-      {
-        id: 'ember-resolver.underscored-modules',
-        until: '3.0.0',
-        for: 'ember-resolver',
-        since: '0.1.0'
-      });
+      deprecate(
+        'Modules should not contain underscores. ' +
+          'Attempted to lookup "' +
+          moduleName +
+          '" which ' +
+          'was not found. Please rename "' +
+          partializedModuleName +
+          '" ' +
+          'to "' +
+          moduleName +
+          '" instead.',
+        false,
+        {
+          id: 'ember-resolver.underscored-modules',
+          until: '3.0.0',
+          for: 'ember-resolver',
+          since: '0.1.0',
+        }
+      );
 
       return partializedModuleName;
     }
 
     if (DEBUG) {
-      let isCamelCaseHelper = parsedName.type === 'helper' && /[a-z]+[A-Z]+/.test(moduleName);
+      let isCamelCaseHelper =
+        parsedName.type === 'helper' && /[a-z]+[A-Z]+/.test(moduleName);
       if (isCamelCaseHelper) {
-        this._camelCaseHelperWarnedNames = this._camelCaseHelperWarnedNames || [];
-        let alreadyWarned = this._camelCaseHelperWarnedNames.indexOf(parsedName.fullName) > -1;
+        this._camelCaseHelperWarnedNames =
+          this._camelCaseHelperWarnedNames || [];
+        let alreadyWarned =
+          this._camelCaseHelperWarnedNames.indexOf(parsedName.fullName) > -1;
         if (!alreadyWarned && this._moduleRegistry.has(dasherize(moduleName))) {
           this._camelCaseHelperWarnedNames.push(parsedName.fullName);
-          warn('Attempted to lookup "' + parsedName.fullName + '" which ' +
-          'was not found. In previous versions of ember-resolver, a bug would have ' +
-          'caused the module at "' + dasherize(moduleName) + '" to be ' +
-          'returned for this camel case helper name. This has been fixed. ' +
-          'Use the dasherized name to resolve the module that would have been ' +
-          'returned in previous versions.',
-          false,
-          { id: 'ember-resolver.camelcase-helper-names', until: '3.0.0' });
+          warn(
+            'Attempted to lookup "' +
+              parsedName.fullName +
+              '" which ' +
+              'was not found. In previous versions of ember-resolver, a bug would have ' +
+              'caused the module at "' +
+              dasherize(moduleName) +
+              '" to be ' +
+              'returned for this camel case helper name. This has been fixed. ' +
+              'Use the dasherized name to resolve the module that would have been ' +
+              'returned in previous versions.',
+            false,
+            { id: 'ember-resolver.camelcase-helper-names', until: '3.0.0' }
+          );
         }
       }
     }
@@ -449,8 +509,11 @@ class Resolver extends EmberObject {
     let start = moduleName.indexOf(podPrefix);
     let end = moduleName.indexOf(podSuffix);
 
-    if (start === 0 && end === (moduleName.length - podSuffix.length) &&
-        moduleName.length > (podPrefix.length + podSuffix.length)) {
+    if (
+      start === 0 &&
+      end === moduleName.length - podSuffix.length &&
+      moduleName.length > podPrefix.length + podSuffix.length
+    ) {
       return type + ':' + moduleName.slice(start + podPrefix.length, end);
     }
 
@@ -459,13 +522,21 @@ class Resolver extends EmberObject {
     let pluralizedType = this.pluralize(type);
     let nonPodPrefix = prefix + '/' + pluralizedType + '/';
 
-    if (moduleName.indexOf(nonPodPrefix) === 0 && moduleName.length > nonPodPrefix.length) {
+    if (
+      moduleName.indexOf(nonPodPrefix) === 0 &&
+      moduleName.length > nonPodPrefix.length
+    ) {
       return type + ':' + moduleName.slice(nonPodPrefix.length);
     }
   }
 
   _extractDefaultExport(normalizedModuleName) {
-    let module = this._moduleRegistry.get(normalizedModuleName, null, null, true /* force sync */);
+    let module = this._moduleRegistry.get(
+      normalizedModuleName,
+      null,
+      null,
+      true /* force sync */
+    );
 
     if (module && module['default']) {
       module = module['default'];
