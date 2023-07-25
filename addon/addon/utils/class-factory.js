@@ -6,6 +6,6 @@ export default function classFactory(klass) {
       } else {
         return klass;
       }
-    }
+    },
   };
 }

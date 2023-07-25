@@ -56,7 +56,9 @@ export default ContainerDebugAdapter.extend({
       @return {boolean} whether a list is available for this type.
       */
   canCatalogEntriesByType(type) {
-    if (type === 'model') { return true; }
+    if (type === 'model') {
+      return true;
+    }
     return this._super(...arguments);
   },
 
@@ -76,7 +78,7 @@ export default ContainerDebugAdapter.extend({
     for (let i = 0, l = moduleNames.length; i < l; i++) {
       let key = moduleNames[i];
 
-      if(key.indexOf(type) !== -1) {
+      if (key.indexOf(type) !== -1) {
         // Check if it's a pod module
         let name = getPod(type, key, this.namespace.podModulePrefix || prefix);
         if (!name) {
@@ -97,6 +99,5 @@ export default ContainerDebugAdapter.extend({
       }
     }
     return types;
-  }
+  },
 });
-

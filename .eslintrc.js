@@ -1,52 +1,58 @@
+'use strict';
+
 module.exports = {
   root: true,
-  parser: 'babel-eslint',
+  parser: '@babel/eslint-parser',
   parserOptions: {
-    ecmaVersion: 2018,
+    ecmaVersion: 'latest',
     sourceType: 'module',
-    ecmaFeatures: {
-      legacyDecorators: true
-    }
+    requireConfigFile: false,
+    babelOptions: {
+      plugins: [
+        ['@babel/plugin-proposal-decorators', { decoratorsBeforeExport: true }],
+      ],
+    },
   },
-  plugins: [
-    'ember'
-  ],
+  plugins: ['ember'],
   extends: [
     'eslint:recommended',
-    'plugin:ember/recommended'
+    'plugin:ember/recommended',
+    'plugin:prettier/recommended',
   ],
   env: {
-    browser: true
+    browser: true,
   },
-  rules: {
-    'ember/no-jquery': 'error'
-  },
+  rules: {},
   overrides: [
     // node files
     {
       files: [
-        '.eslintrc.js',
-        '.template-lintrc.js',
-        'ember-cli-build.js',
-        'addon/index.js',
-        'addon/blueprints/*/index.js',
-        'addon/config/**/*.js',
-        'test-app/config/**/*.js',
-        'test-app/server/**/*.js',
-        'test-app/testem.js',
-      ],
-      excludedFiles: [
-        'addon/addon/**',
-        'addon/addon-test-support/**',
-        'addon/app/**',
+        './.eslintrc.js',
+        './.prettierrc.js',
+        './.stylelintrc.js',
+        './.template-lintrc.js',
+        './addon/index.js',
+        './addon/config/**/*.js',
+        './test-app/testem.js',
+        './test-app/tests/dummy/config/**/*.js',
+        './test-app/server/**/*.js',
+        './test-app/testem.js',
+        './test-app/config/**/*.js',
+        './test-app/ember-cli-build.js',
       ],
       parserOptions: {
-        sourceType: 'script'
+        sourceType: 'script',
       },
       env: {
         browser: false,
-        node: true
+        node: true,
       },
-    }
-  ]
+      extends: ['plugin:n/recommended'],
+    },
+    {
+      // test files
+      files: ['tests/**/*-test.{js,ts}'],
+      extends: ['plugin:qunit/recommended'],
+    },
+  ],
 };

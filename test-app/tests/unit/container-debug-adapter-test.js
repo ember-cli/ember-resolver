@@ -1,8 +1,8 @@
 /* globals define, requirejs */
-import { setupTest } from "ember-qunit";
-import { module, test } from "qunit";
+import { setupTest } from 'ember-qunit';
+import { module, test } from 'qunit';
 
-module("Container Debug Adapter Tests", function (hooks) {
+module('Container Debug Adapter Tests', function (hooks) {
   setupTest(hooks);
 
   let containerDebugAdapter;
@@ -16,7 +16,7 @@ module("Container Debug Adapter Tests", function (hooks) {
 
   hooks.beforeEach(function () {
     modulesToReset = [];
-    containerDebugAdapter = this.owner.lookup("container-debug-adapter:main");
+    containerDebugAdapter = this.owner.lookup('container-debug-adapter:main');
   });
 
   hooks.afterEach(function () {
@@ -26,80 +26,80 @@ module("Container Debug Adapter Tests", function (hooks) {
     });
   });
 
-  test("can access Container Debug Adapter which can catalog typical entries by type", function (assert) {
+  test('can access Container Debug Adapter which can catalog typical entries by type', function (assert) {
     assert.equal(
-      containerDebugAdapter.canCatalogEntriesByType("model"),
+      containerDebugAdapter.canCatalogEntriesByType('model'),
       true,
-      "canCatalogEntriesByType should return false for model"
+      'canCatalogEntriesByType should return false for model'
     );
     assert.equal(
-      containerDebugAdapter.canCatalogEntriesByType("template"),
+      containerDebugAdapter.canCatalogEntriesByType('template'),
       false,
-      "canCatalogEntriesByType should return false for template"
+      'canCatalogEntriesByType should return false for template'
     );
     assert.equal(
-      containerDebugAdapter.canCatalogEntriesByType("controller"),
+      containerDebugAdapter.canCatalogEntriesByType('controller'),
       true,
-      "canCatalogEntriesByType should return true for controller"
+      'canCatalogEntriesByType should return true for controller'
     );
     assert.equal(
-      containerDebugAdapter.canCatalogEntriesByType("route"),
+      containerDebugAdapter.canCatalogEntriesByType('route'),
       true,
-      "canCatalogEntriesByType should return true for route"
+      'canCatalogEntriesByType should return true for route'
     );
     assert.equal(
-      containerDebugAdapter.canCatalogEntriesByType("view"),
+      containerDebugAdapter.canCatalogEntriesByType('view'),
       true,
-      "canCatalogEntriesByType should return true for view"
+      'canCatalogEntriesByType should return true for view'
     );
   });
 
-  test("the default ContainerDebugAdapter catalogs controller entries", function (assert) {
-    def("test-app/controllers/foo");
-    def("test-app/controllers/users/foo");
+  test('the default ContainerDebugAdapter catalogs controller entries', function (assert) {
+    def('test-app/controllers/foo');
+    def('test-app/controllers/users/foo');
 
-    let controllers = containerDebugAdapter.catalogEntriesByType("controller");
+    let controllers = containerDebugAdapter.catalogEntriesByType('controller');
 
-    assert.ok(controllers.includes("foo"), "foo controller was discovered");
+    assert.ok(controllers.includes('foo'), 'foo controller was discovered');
     assert.ok(
-      controllers.includes("users/foo"),
-      "users/foo controller was discovered"
+      controllers.includes('users/foo'),
+      'users/foo controller was discovered'
     );
   });
 
-  test("Does not duplicate entries", function (assert) {
-    def("test-app/models/foo");
-    def("test-app/more/models/foo");
+  test('Does not duplicate entries', function (assert) {
+    def('test-app/models/foo');
+    def('test-app/more/models/foo');
 
-    let models = containerDebugAdapter.catalogEntriesByType("model");
+    let models = containerDebugAdapter.catalogEntriesByType('model');
 
-    assert.equal(models.length, 1, "Only one is returned");
-    assert.equal(models[0], "foo", "the name is correct");
+    assert.equal(models.length, 1, 'Only one is returned');
+    assert.equal(models[0], 'foo', 'the name is correct');
   });
 
-  test("Pods support", function (assert) {
-    def("test-app/user/model");
-    def("test-app/post/model");
+  test('Pods support', function (assert) {
+    def('test-app/user/model');
+    def('test-app/post/model');
 
-    let models = containerDebugAdapter.catalogEntriesByType("model");
+    let models = containerDebugAdapter.catalogEntriesByType('model');
 
-    assert.equal(models.length, 2, "All models are found");
-    assert.equal(models[0], "user", "the name is correct");
-    assert.equal(models[1], "post", "the name is correct");
+    assert.equal(models.length, 2, 'All models are found');
+    assert.equal(models[0], 'user', 'the name is correct');
+    assert.equal(models[1], 'post', 'the name is correct');
   });
 
-  test("Pods podModulePrefix support", function (assert) {
-    const app = this.owner.lookup("application:main");
+  test('Pods podModulePrefix support', function (assert) {
+    const app = this.owner.lookup('application:main');
 
-    app.podModulePrefix = "my-prefix";
+    app.podModulePrefix = 'my-prefix';
 
-    def("my-prefix/user/model");
-    def("my-prefix/users/user/model");
+    def('my-prefix/user/model');
+    def('my-prefix/users/user/model');
 
-    let models = containerDebugAdapter.catalogEntriesByType("model");
+    let models = containerDebugAdapter.catalogEntriesByType('model');
 
-    assert.equal(models.length, 2, "models discovered");
-    assert.equal(models[0], "user", "the name is correct");
-    assert.equal(models[1], "users/user", "the name is correct");
+    assert.equal(models.length, 2, 'models discovered');
+    assert.equal(models[0], 'user', 'the name is correct');
+    assert.equal(models[1], 'users/user', 'the name is correct');
   });
 });
