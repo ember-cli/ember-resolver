@@ -27,7 +27,6 @@
   },
   "devDependencies": {},
   "peerDependencies": {
-    "@ember/string": "^3.0.1",
     "ember-source": "^4.8.3 || >= 5.0.0"
   },
   "peerDependenciesMeta": {
