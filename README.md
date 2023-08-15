@@ -22,6 +22,7 @@ import Resolver from 'ember-resolver';
 
 export default class AppResolver extends Resolver {
   pluralizedTypes = {
+    ...this.pluralizedTypes,
     'sheep': 'sheep',
     'strategy': 'strategies'
   }
