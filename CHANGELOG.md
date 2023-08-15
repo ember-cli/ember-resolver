@@ -3,6 +3,15 @@
 
 
 
+
+## v11.0.1 (2023-08-15)
+
+#### :bug: Bug Fix
+* [#951](https://github.com/ember-cli/ember-resolver/pull/951) fix: update docs around pluralizedTypes and type the field ([@SergeAstapov](https://github.com/SergeAstapov))
+
+#### Committers: 1
+- Sergey Astapov ([@SergeAstapov](https://github.com/SergeAstapov))
+
 ## v11.0.0 (2023-07-25)
 
 #### :boom: Breaking Change
