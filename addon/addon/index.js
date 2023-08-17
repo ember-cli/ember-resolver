@@ -1,7 +1,7 @@
 /* globals requirejs, require */
 
 import Ember from 'ember';
-import { assert, deprecate, warn } from '@ember/debug';
+import { assert, warn } from '@ember/debug';
 import EmberObject from '@ember/object';
 import { dasherize, classify, underscore } from './string';
 import { DEBUG } from '@glimmer/env';
@@ -390,33 +390,6 @@ class Resolver extends EmberObject {
       return moduleName;
     } else if (this._moduleRegistry.has(underscoredModuleName)) {
       return underscoredModuleName;
-    }
-    // workaround for dasherized partials:
-    // something/something/-something => something/something/_something
-    let partializedModuleName = moduleName.replace(/\/-([^/]*)$/, '/_$1');
-
-    if (this._moduleRegistry.has(partializedModuleName)) {
-      deprecate(
-        'Modules should not contain underscores. ' +
-          'Attempted to lookup "' +
-          moduleName +
-          '" which ' +
-          'was not found. Please rename "' +
-          partializedModuleName +
-          '" ' +
-          'to "' +
-          moduleName +
-          '" instead.',
-        false,
-        {
-          id: 'ember-resolver.underscored-modules',
-          until: '3.0.0',
-          for: 'ember-resolver',
-          since: '0.1.0',
-        }
-      );
-
-      return partializedModuleName;
     }
 
     if (DEBUG) {
