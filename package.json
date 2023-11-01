@@ -18,7 +18,7 @@
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.21.3",
-    "@babel/plugin-proposal-decorators": "^7.21.0",
+    "@babel/plugin-proposal-decorators": "^7.23.2",
     "@release-it-plugins/lerna-changelog": "5.0.0",
     "@release-it-plugins/workspaces": "^3.2.0",
     "ember-template-lint": "^5.7.2",
