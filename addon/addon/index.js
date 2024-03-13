@@ -142,6 +142,21 @@ class Resolver extends EmberObject {
     let namespace = this.namespace;
     let root = namespace;
 
+    deprecate(
+      `Components with separetly resolved templates are deprecated. Migrate to either co-located js/ts + hbs files or to gjs/gts.`,
+      false,
+      {
+        id: 'template-resolving',
+        url: 'https://deprecations.emberjs.com/id/template-resolving',
+        until: '6.0.0',
+        for: 'ember-source',
+        since: {
+          available: '5.10.0',
+          enabled: '5.10.0',
+        },
+      }
+    );
+
     return {
       parsedName: true,
       fullName: fullName,
