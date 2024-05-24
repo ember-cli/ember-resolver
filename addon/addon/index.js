@@ -1,5 +1,3 @@
-/* globals requirejs, require */
-
 import Ember from 'ember';
 import { assert, deprecate, warn } from '@ember/debug';
 import EmberObject from '@ember/object';
@@ -7,13 +5,9 @@ import { dasherize, classify, underscore } from './string';
 import { DEBUG } from '@glimmer/env';
 import classFactory from './utils/class-factory';
 
-if (typeof requirejs.entries === 'undefined') {
-  requirejs.entries = requirejs._eak_seen;
-}
-
 export class ModuleRegistry {
   constructor(entries) {
-    this._entries = entries || requirejs.entries;
+    this._entries = entries;
   }
   moduleNames() {
     return Object.keys(this._entries);
@@ -21,8 +15,8 @@ export class ModuleRegistry {
   has(moduleName) {
     return moduleName in this._entries;
   }
-  get(...args) {
-    return require(...args);
+  get(moduleName) {
+    return this._entries[moduleName];
   }
 }
 
@@ -37,7 +31,28 @@ export class ModuleRegistry {
  *  2) is able to provide injections to classes that implement `extend`
  *     (as is typical with Ember).
  */
+
+const preloadedModules = new WeakMap();
+
+function findPreloadedModules(klass) {
+  let parentsModules;
+  if (klass.prototype) {
+    parentsModules = findPreloadedModules(klass.prototype);
+  }
+  let ownModules = preloadedModules.get(klass);
+  if (!ownModules || !parentsModules) {
+    return ownModules ?? parentsModules;
+  }
+  return Object.assign({}, parentsModules, ownModules);
+}
+
 class Resolver extends EmberObject {
+  static withModules(modules) {
+    let extended = class extends this {};
+    preloadedModules.set(extended, modules);
+    return extended;
+  }
+
   static moduleBasedResolver = true;
   moduleBasedResolver = true;
 
@@ -64,7 +79,9 @@ class Resolver extends EmberObject {
     super(...arguments);
 
     if (!this._moduleRegistry) {
-      this._moduleRegistry = new ModuleRegistry();
+      this._moduleRegistry = new ModuleRegistry(
+        findPreloadedModules(this.constructor)
+      );
     }
 
     this.pluralizedTypes = this.pluralizedTypes || Object.create(null);
