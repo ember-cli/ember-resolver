@@ -1,5 +1,17 @@
 import Resolver, { ModuleRegistry } from 'ember-resolver';
-import { setOwner } from '@ember/owner';
+import {
+  macroCondition,
+  dependencySatisfies,
+  importSync,
+} from '@embroider/macros';
+
+let setOwner;
+
+if (macroCondition(dependencySatisfies('ember-source', '>= 4.11'))) {
+  setOwner = importSync('@ember/owner').setOwner;
+} else {
+  setOwner = importSync('@ember/application').setOwner;
+}
 
 export let resolver;
 export let loader;

@@ -5,7 +5,19 @@ import EmberObject from '@ember/object';
 import { dasherize, classify, underscore } from './string';
 import { DEBUG } from '@glimmer/env';
 import classFactory from './utils/class-factory';
-import { getOwner } from '@ember/owner';
+import {
+  macroCondition,
+  dependencySatisfies,
+  importSync,
+} from '@embroider/macros';
+
+let getOwner;
+
+if (macroCondition(dependencySatisfies('ember-source', '>= 4.11'))) {
+  getOwner = importSync('@ember/owner').getOwner;
+} else {
+  getOwner = importSync('@ember/application').getOwner;
+}
 
 import { TEMPLATES } from './template-cache';
 
