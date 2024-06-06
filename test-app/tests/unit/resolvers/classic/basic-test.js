@@ -1,8 +1,8 @@
 /* eslint-disable no-console */
 
-import Ember from 'ember';
 import { module, test } from 'qunit';
 import { setupResolver, resolver, loader } from './-setup-resolver';
+import { TEMPLATES } from 'ember-resolver/template-cache';
 
 let originalConsoleInfo;
 
@@ -434,7 +434,7 @@ module('ember-resolver/resolvers/classic', function (hooks) {
   });
 
   test('can lookup templates via Ember.TEMPLATES', function (assert) {
-    Ember.TEMPLATES['application'] = function () {
+    TEMPLATES['application'] = function () {
       return '<h1>herp</h1>';
     };
 

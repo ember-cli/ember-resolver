@@ -1,11 +1,13 @@
 /* globals requirejs, require */
 
-import Ember from 'ember';
 import { assert, deprecate, warn } from '@ember/debug';
 import EmberObject from '@ember/object';
 import { dasherize, classify, underscore } from './string';
 import { DEBUG } from '@glimmer/env';
 import classFactory from './utils/class-factory';
+import { getOwner } from '@ember/owner';
+
+import { TEMPLATES } from './template-cache';
 
 if (typeof requirejs.entries === 'undefined') {
   requirejs.entries = requirejs._eak_seen;
@@ -295,7 +297,7 @@ class Resolver extends EmberObject {
   resolveTemplate(parsedName) {
     let resolved = this.resolveOther(parsedName);
     if (resolved == null) {
-      resolved = Ember.TEMPLATES[parsedName.fullNameWithoutType];
+      resolved = TEMPLATES[parsedName.fullNameWithoutType];
     }
     return resolved;
   }
@@ -459,7 +461,9 @@ class Resolver extends EmberObject {
 
   // only needed until 1.6.0-beta.2 can be required
   _logLookup(found, parsedName, description) {
-    if (!Ember.ENV.LOG_MODULE_RESOLVER && !parsedName.root.LOG_RESOLVER) {
+    let owner = getOwner(this);
+    let env = owner?.resolveRegistration?.('config:environment');
+    if (!env?.LOG_MODULE_RESOLVER && !parsedName.root.LOG_RESOLVER) {
       return;
     }
 
