@@ -4,6 +4,18 @@
 
 
 
+
+## v12.0.0 (2024-06-07)
+
+#### :boom: Breaking Change
+* [#973](https://github.com/ember-cli/ember-resolver/pull/973) Do not use global ember -- drop support for ember-source < 4.12 ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### :house: Internal
+* [#974](https://github.com/ember-cli/ember-resolver/pull/974) Update test format to modern qunit ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 1
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
 ## v11.0.1 (2023-08-15)
 
 #### :bug: Bug Fix
