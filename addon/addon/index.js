@@ -5,21 +5,8 @@ import EmberObject from '@ember/object';
 import { dasherize, classify, underscore } from './string';
 import { DEBUG } from '@glimmer/env';
 import classFactory from './utils/class-factory';
-import {
-  macroCondition,
-  dependencySatisfies,
-  importSync,
-} from '@embroider/macros';
 
-let getOwner;
-
-if (macroCondition(dependencySatisfies('ember-source', '>= 4.11'))) {
-  getOwner = importSync('@ember/owner').getOwner;
-} else {
-  getOwner = importSync('@ember/application').getOwner;
-}
-
-import { TEMPLATES } from './template-cache';
+import { getOwner } from '@ember/owner';
 
 if (typeof requirejs.entries === 'undefined') {
   requirejs.entries = requirejs._eak_seen;
@@ -307,11 +294,7 @@ class Resolver extends EmberObject {
   }
 
   resolveTemplate(parsedName) {
-    let resolved = this.resolveOther(parsedName);
-    if (resolved == null) {
-      resolved = TEMPLATES[parsedName.fullNameWithoutType];
-    }
-    return resolved;
+    return this.resolveOther(parsedName);
   }
 
   mainModuleName(parsedName) {
