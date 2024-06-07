@@ -1,18 +1,20 @@
-import Ember from 'ember';
 import { module, test } from 'qunit';
+import { setupTest } from 'ember-qunit';
 
 import { setupResolver, resolver, loader } from './-setup-resolver';
 
 let originalConsoleInfo, logCalls;
 
 module('Logging', function (hooks) {
+  setupTest(hooks);
+
   hooks.beforeEach(function () {
     originalConsoleInfo = console ? console.info : null;
     logCalls = [];
     console.info = function (arg) {
       logCalls.push(arg);
     };
-    setupResolver();
+    setupResolver({ owner: this.owner });
   });
 
   hooks.afterEach(function () {
@@ -26,7 +28,8 @@ module('Logging', function (hooks) {
       return 'is logged';
     });
 
-    Ember.ENV.LOG_MODULE_RESOLVER = true;
+    let env = this.owner.resolveRegistration('config:environment');
+    env.LOG_MODULE_RESOLVER = true;
 
     resolver.resolve('fruit:orange');
 
@@ -38,7 +41,8 @@ module('Logging', function (hooks) {
       return 'is not logged';
     });
 
-    Ember.ENV.LOG_MODULE_RESOLVER = false;
+    let env = this.owner.resolveRegistration('config:environment');
+    env.LOG_MODULE_RESOLVER = false;
 
     resolver.resolve('fruit:orange');
 

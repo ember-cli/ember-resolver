@@ -1,9 +1,14 @@
 import Resolver, { ModuleRegistry } from 'ember-resolver';
 
+import { setOwner } from '@ember/owner';
+
 export let resolver;
 export let loader;
 
 export function setupResolver(options = {}) {
+  let owner = options.owner;
+  delete options.owner;
+
   if (!options.namespace) {
     options.namespace = { modulePrefix: 'appkit' };
   }
@@ -22,4 +27,8 @@ export function setupResolver(options = {}) {
   };
 
   resolver = Resolver.create(options);
+
+  if (owner) {
+    setOwner(resolver, owner);
+  }
 }
