@@ -5,6 +5,15 @@
 
 
 
+
+## v12.0.1 (2024-06-11)
+
+#### :bug: Bug Fix
+* [#976](https://github.com/ember-cli/ember-resolver/pull/976) Fix peer range for ember-source ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 1
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
 ## v12.0.0 (2024-06-07)
 
 #### :boom: Breaking Change
