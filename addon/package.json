@@ -42,6 +42,14 @@
   "ember": {
     "edition": "octane"
   },
+  "ember-addon": {
+    "type": "addon",
+    "version": 2
+  },
+  "exports": {
+    ".": "./addon/index",
+    "./*": "./addon/*"
+  },
   "volta": {
     "extends": "../package.json"
   }
