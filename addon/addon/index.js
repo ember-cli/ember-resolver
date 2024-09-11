@@ -1,10 +1,6 @@
 import { dasherize, classify, underscore } from './string';
 import classFactory from './utils/class-factory';
 
-if (typeof globalThis.requirejs.entries === 'undefined') {
-  globalThis.requirejs.entries = globalThis.requirejs._eak_seen;
-}
-
 export class ModuleRegistry {
   constructor(entries) {
     this._entries = entries || globalThis.requirejs.entries;
@@ -58,10 +54,34 @@ export default class Resolver {
     this.nestedColocationComponentModuleName,
   ];
 
+  static withModules(explicitModules) {
+    return class extends this {
+      static explicitModules = explicitModules;
+    };
+  }
+
   constructor(props) {
     Object.assign(this, props);
     if (!this._moduleRegistry) {
-      this._moduleRegistry = new ModuleRegistry();
+      const explicitModules = this.constructor.explicitModules;
+      if (explicitModules) {
+        this._moduleRegistry = {
+          moduleNames() {
+            return Object.keys(explicitModules);
+          },
+          has(name) {
+            return Boolean(explicitModules[name]);
+          },
+          get(name) {
+            return explicitModules[name];
+          },
+        };
+      } else {
+        if (typeof globalThis.requirejs.entries === 'undefined') {
+          globalThis.requirejs.entries = globalThis.requirejs._eak_seen;
+        }
+        this._moduleRegistry = new ModuleRegistry();
+      }
     }
 
     this.pluralizedTypes = this.pluralizedTypes || Object.create(null);
