@@ -1,12 +1,7 @@
 /* globals requirejs, require */
 
-import { assert, deprecate, warn } from '@ember/debug';
-import EmberObject from '@ember/object';
 import { dasherize, classify, underscore } from './string';
-import { DEBUG } from '@glimmer/env';
 import classFactory from './utils/class-factory';
-
-import { getOwner } from '@ember/owner';
 
 if (typeof requirejs.entries === 'undefined') {
   requirejs.entries = requirejs._eak_seen;
@@ -38,12 +33,16 @@ export class ModuleRegistry {
  *  2) is able to provide injections to classes that implement `extend`
  *     (as is typical with Ember).
  */
-class Resolver extends EmberObject {
+export default class Resolver {
   static moduleBasedResolver = true;
   moduleBasedResolver = true;
 
   _deprecatedPodModulePrefix = false;
   _normalizeCache = Object.create(null);
+
+  static create(props) {
+    return new this(props);
+  }
 
   /**
    A listing of functions to test for moduleName's based on the provided
@@ -61,9 +60,8 @@ class Resolver extends EmberObject {
     this.nestedColocationComponentModuleName,
   ];
 
-  constructor() {
-    super(...arguments);
-
+  constructor(props) {
+    Object.assign(this, props);
     if (!this._moduleRegistry) {
       this._moduleRegistry = new ModuleRegistry();
     }
@@ -337,7 +335,7 @@ class Resolver extends EmberObject {
     return tmpPrefix;
   }
 
-  findModuleName(parsedName, loggingDisabled) {
+  findModuleName(parsedName) {
     let moduleNameLookupPatterns = this.moduleNameLookupPatterns;
     let moduleName;
 
@@ -353,15 +351,11 @@ class Resolver extends EmberObject {
       // allow treat all dashed and all underscored as the same thing
       // supports components with dashes and other stuff with underscores.
       if (tmpModuleName) {
-        tmpModuleName = this.chooseModuleName(tmpModuleName, parsedName);
+        tmpModuleName = this.chooseModuleName(tmpModuleName);
       }
 
       if (tmpModuleName && this._moduleRegistry.has(tmpModuleName)) {
         moduleName = tmpModuleName;
-      }
-
-      if (!loggingDisabled) {
-        this._logLookup(moduleName, parsedName, tmpModuleName);
       }
 
       if (moduleName) {
@@ -370,7 +364,7 @@ class Resolver extends EmberObject {
     }
   }
 
-  chooseModuleName(moduleName, parsedName) {
+  chooseModuleName(moduleName) {
     let underscoredModuleName = underscore(moduleName);
 
     if (
@@ -387,97 +381,6 @@ class Resolver extends EmberObject {
       return moduleName;
     } else if (this._moduleRegistry.has(underscoredModuleName)) {
       return underscoredModuleName;
-    }
-    // workaround for dasherized partials:
-    // something/something/-something => something/something/_something
-    let partializedModuleName = moduleName.replace(/\/-([^/]*)$/, '/_$1');
-
-    if (this._moduleRegistry.has(partializedModuleName)) {
-      deprecate(
-        'Modules should not contain underscores. ' +
-          'Attempted to lookup "' +
-          moduleName +
-          '" which ' +
-          'was not found. Please rename "' +
-          partializedModuleName +
-          '" ' +
-          'to "' +
-          moduleName +
-          '" instead.',
-        false,
-        {
-          id: 'ember-resolver.underscored-modules',
-          until: '3.0.0',
-          for: 'ember-resolver',
-          since: '0.1.0',
-        }
-      );
-
-      return partializedModuleName;
-    }
-
-    if (DEBUG) {
-      let isCamelCaseHelper =
-        parsedName.type === 'helper' && /[a-z]+[A-Z]+/.test(moduleName);
-      if (isCamelCaseHelper) {
-        this._camelCaseHelperWarnedNames =
-          this._camelCaseHelperWarnedNames || [];
-        let alreadyWarned =
-          this._camelCaseHelperWarnedNames.indexOf(parsedName.fullName) > -1;
-        if (!alreadyWarned && this._moduleRegistry.has(dasherize(moduleName))) {
-          this._camelCaseHelperWarnedNames.push(parsedName.fullName);
-          warn(
-            'Attempted to lookup "' +
-              parsedName.fullName +
-              '" which ' +
-              'was not found. In previous versions of ember-resolver, a bug would have ' +
-              'caused the module at "' +
-              dasherize(moduleName) +
-              '" to be ' +
-              'returned for this camel case helper name. This has been fixed. ' +
-              'Use the dasherized name to resolve the module that would have been ' +
-              'returned in previous versions.',
-            false,
-            { id: 'ember-resolver.camelcase-helper-names', until: '3.0.0' }
-          );
-        }
-      }
-    }
-  }
-
-  // used by Ember.DefaultResolver.prototype._logLookup
-  lookupDescription(fullName) {
-    let parsedName = this.parseName(fullName);
-
-    let moduleName = this.findModuleName(parsedName, true);
-
-    return moduleName;
-  }
-
-  // only needed until 1.6.0-beta.2 can be required
-  _logLookup(found, parsedName, description) {
-    let owner = getOwner(this);
-    let env = owner?.resolveRegistration?.('config:environment');
-    if (!env?.LOG_MODULE_RESOLVER && !parsedName.root.LOG_RESOLVER) {
-      return;
-    }
-
-    let padding;
-    let symbol = found ? '[✓]' : '[ ]';
-
-    if (parsedName.fullName.length > 60) {
-      padding = '.';
-    } else {
-      padding = new Array(60 - parsedName.fullName.length).join('.');
-    }
-
-    if (!description) {
-      description = this.lookupDescription(parsedName);
-    }
-
-    /* eslint-disable no-console */
-    if (console && console.info) {
-      console.info(symbol, parsedName.fullName, padding, description);
     }
   }
 
@@ -545,4 +448,8 @@ class Resolver extends EmberObject {
   }
 }
 
-export default Resolver;
+function assert(message, check) {
+  if (!check) {
+    throw new Error(message);
+  }
+}
