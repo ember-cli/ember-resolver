@@ -1,15 +1,13 @@
-/* globals requirejs, require */
-
 import { dasherize, classify, underscore } from './string';
 import classFactory from './utils/class-factory';
 
-if (typeof requirejs.entries === 'undefined') {
-  requirejs.entries = requirejs._eak_seen;
+if (typeof globalThis.requirejs.entries === 'undefined') {
+  globalThis.requirejs.entries = globalThis.requirejs._eak_seen;
 }
 
 export class ModuleRegistry {
   constructor(entries) {
-    this._entries = entries || requirejs.entries;
+    this._entries = entries || globalThis.requirejs.entries;
   }
   moduleNames() {
     return Object.keys(this._entries);
@@ -18,7 +16,7 @@ export class ModuleRegistry {
     return moduleName in this._entries;
   }
   get(...args) {
-    return require(...args);
+    return globalThis.require(...args);
   }
 }
 
