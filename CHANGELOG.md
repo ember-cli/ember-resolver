@@ -6,6 +6,21 @@
 
 
 
+
+## v13.0.0 (2024-09-11)
+
+#### :boom: Breaking Change
+* [#977](https://github.com/ember-cli/ember-resolver/pull/977) Convert to plain library and drop deprecated behaviors ([@ef4](https://github.com/ef4))
+
+#### :rocket: Enhancement
+* [#979](https://github.com/ember-cli/ember-resolver/pull/979) Optional explicit modules ([@ef4](https://github.com/ef4))
+
+#### :bug: Bug Fix
+* [#978](https://github.com/ember-cli/ember-resolver/pull/978) hide global require from webpack ([@ef4](https://github.com/ef4))
+
+#### Committers: 1
+- Edward Faulkner ([@ef4](https://github.com/ef4))
+
 ## v12.0.1 (2024-06-11)
 
 #### :bug: Bug Fix
