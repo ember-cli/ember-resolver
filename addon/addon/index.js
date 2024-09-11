@@ -8,10 +8,6 @@ import classFactory from './utils/class-factory';
 
 import { getOwner } from '@ember/owner';
 
-if (typeof requirejs.entries === 'undefined') {
-  requirejs.entries = requirejs._eak_seen;
-}
-
 export class ModuleRegistry {
   constructor(entries) {
     this._entries = entries || requirejs.entries;
@@ -61,11 +57,35 @@ class Resolver extends EmberObject {
     this.nestedColocationComponentModuleName,
   ];
 
+  static withModules(explicitModules) {
+    return class extends this {
+      static explicitModules = explicitModules;
+    };
+  }
+
   constructor() {
     super(...arguments);
 
     if (!this._moduleRegistry) {
-      this._moduleRegistry = new ModuleRegistry();
+      const explicitModules = this.constructor.explicitModules;
+      if (explicitModules) {
+        this._moduleRegistry = {
+          moduleNames() {
+            return Object.keys(explicitModules);
+          },
+          has(name) {
+            return Boolean(explicitModules[name]);
+          },
+          get(name) {
+            return explicitModules[name];
+          },
+        };
+      } else {
+        if (typeof requirejs.entries === 'undefined') {
+          requirejs.entries = requirejs._eak_seen;
+        }
+        this._moduleRegistry = new ModuleRegistry();
+      }
     }
 
     this.pluralizedTypes = this.pluralizedTypes || Object.create(null);
