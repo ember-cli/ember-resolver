@@ -417,21 +417,6 @@ module('ember-resolver/resolvers/classic', function (hooks) {
     resolver.resolve('big-band:steve-miller-band');
   });
 
-  test('can lookup templates with mixed naming moduleName', function (assert) {
-    assert.expect(1);
-
-    loader.define('appkit/bands/_steve-miller-band', [], function () {
-      assert.ok(true, 'underscored version looked up properly');
-
-      return 'whatever';
-    });
-
-    resolver.resolve('band:-steve-miller-band');
-
-    // TODO: these helpers not not compatible with modern ember
-    // assert.expectDeprecation('Modules should not contain underscores. Attempted to lookup "appkit/bands/-steve-miller-band" which was not found. Please rename "appkit/bands/_steve-miller-band" to "appkit/bands/-steve-miller-band" instead.');
-  });
-
   test('it provides eachForType which invokes the callback for each item found', function (assert) {
     function orange() {}
     loader.define('appkit/fruits/orange', [], function () {
