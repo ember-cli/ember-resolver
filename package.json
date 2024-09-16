@@ -33,6 +33,9 @@
     "release-it": "^15.6.0"
   },
   "release-it": {
+    "hooks": {
+      "before:init": "cp README.md LICENSE.md addon/"
+    },
     "plugins": {
       "@release-it-plugins/workspaces": {
         "publish": false
