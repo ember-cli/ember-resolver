@@ -41,7 +41,10 @@
     "edition": "octane"
   },
   "exports": {
-    ".": "./addon/index",
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./addon/index"
+    },
     "./*": "./addon/*"
   },
   "volta": {
