@@ -7,6 +7,19 @@
 
 
 
+
+## v13.0.1 (2024-09-16)
+
+#### :bug: Bug Fix
+* [#982](https://github.com/ember-cli/ember-resolver/pull/982) Give TS tooling an extra hint where the default index.d.ts is ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### :house: Internal
+* [#980](https://github.com/ember-cli/ember-resolver/pull/980) Copy README.md and LICENSE.md to addon folder during release ([@SergeAstapov](https://github.com/SergeAstapov))
+
+#### Committers: 2
+- Sergey Astapov ([@SergeAstapov](https://github.com/SergeAstapov))
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
 ## v13.0.0 (2024-09-11)
 
 #### :boom: Breaking Change
