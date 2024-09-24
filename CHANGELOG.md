@@ -8,6 +8,15 @@
 
 
 
+
+## v13.0.2 (2024-09-24)
+
+#### :bug: Bug Fix
+* [#985](https://github.com/ember-cli/ember-resolver/pull/985) Fix static-this type error ([@ef4](https://github.com/ef4))
+
+#### Committers: 1
+- Edward Faulkner ([@ef4](https://github.com/ef4))
+
 ## v13.0.1 (2024-09-16)
 
 #### :bug: Bug Fix

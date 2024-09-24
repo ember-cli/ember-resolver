@@ -1,7 +1,7 @@
 {
   "name": "test-app",
   "private": true,
-  "version": "13.0.1",
+  "version": "13.0.2",
   "description": "The default modules based resolver for Ember CLI.",
   "keywords": [],
   "homepage": "https://github.com/ember-cli/ember-resolver#readme",
@@ -42,7 +42,7 @@
     "ember-disable-prototype-extensions": "^1.1.3",
     "ember-load-initializers": "^2.1.2",
     "ember-qunit": "^6.2.0",
-    "ember-resolver": "13.0.1",
+    "ember-resolver": "13.0.2",
     "ember-source": "~4.12.0",
     "ember-source-channel-url": "^3.0.0",
     "ember-try": "^2.0.0",
