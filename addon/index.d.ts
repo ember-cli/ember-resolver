@@ -6,6 +6,7 @@ export default class Resolver {
 }
 export default interface Resolver extends Required<ResolverContract> {
     pluralizedTypes: Record<string, string>;
+    addModules(modules: Record<string, unknown>): void;
 }
 
 
