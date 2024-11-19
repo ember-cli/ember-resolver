@@ -1,0 +1,53 @@
+{
+  "name": "ember-resolver",
+  "version": "13.1.0",
+  "description": "The default modules based resolver for Ember CLI.",
+  "keywords": [],
+  "homepage": "https://github.com/ember-cli/ember-resolver#readme",
+  "bugs": {
+    "url": "https://github.com/ember-cli/ember-resolver/issues"
+  },
+  "types": "index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ember-cli/ember-resolver.git"
+  },
+  "license": "MIT",
+  "author": "Robert Jackson <me@rwjblue.com>",
+  "main": "index.js",
+  "directories": {
+    "doc": "doc",
+    "test": "tests"
+  },
+  "scripts": {},
+  "dependencies": {
+    "ember-cli-babel": "^7.26.11"
+  },
+  "peerDependencies": {
+    "ember-source": "^4.12.0 || >= 5.0.0"
+  },
+  "peerDependenciesMeta": {
+    "ember-source": {
+      "optional": true
+    }
+  },
+  "engines": {
+    "node": "14.* || 16.* || >= 18"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
+  },
+  "ember": {
+    "edition": "octane"
+  },
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./addon/index"
+    },
+    "./*": "./addon/*"
+  },
+  "volta": {
+    "extends": "../package.json"
+  }
+}
