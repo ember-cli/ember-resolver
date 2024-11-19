@@ -9,6 +9,15 @@
 
 
 
+
+## v13.1.0 (2024-11-19)
+
+#### :rocket: Enhancement
+* [#986](https://github.com/ember-cli/ember-resolver/pull/986) Extending withModules module to support dynamically added modules ([@ef4](https://github.com/ef4))
+
+#### Committers: 1
+- Edward Faulkner ([@ef4](https://github.com/ef4))
+
 ## v13.0.2 (2024-09-24)
 
 #### :bug: Bug Fix
