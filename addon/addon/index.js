@@ -63,7 +63,7 @@ export default class Resolver {
   constructor(props) {
     Object.assign(this, props);
     if (!this._moduleRegistry) {
-      const explicitModules = this.constructor.explicitModules;
+      let explicitModules = this.constructor.explicitModules;
       if (explicitModules) {
         this._moduleRegistry = {
           moduleNames() {
@@ -74,6 +74,9 @@ export default class Resolver {
           },
           get(name) {
             return explicitModules[name];
+          },
+          addModules(modules) {
+            explicitModules = Object.assign({}, explicitModules, modules);
           },
         };
       } else {
@@ -204,6 +207,9 @@ export default class Resolver {
   }
 
   resolve(fullName) {
+    if (fullName === 'resolver:current') {
+      return { create: () => this };
+    }
     let parsedName = this.parseName(fullName);
     let resolveMethodName = parsedName.resolveMethodName;
     let resolved;
@@ -217,6 +223,15 @@ export default class Resolver {
     }
 
     return resolved;
+  }
+
+  addModules(modules) {
+    if (!this._moduleRegistry.addModules) {
+      throw new Error(
+        `addModules is only supported when your Resolver has been configured to use static modules via Resolver.withModules()`
+      );
+    }
+    this._moduleRegistry.addModules(modules);
   }
 
   _normalize(fullName) {
