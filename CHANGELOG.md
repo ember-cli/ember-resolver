@@ -10,6 +10,18 @@
 
 
 
+
+## v13.1.1 (2025-05-16)
+
+#### :bug: Bug Fix
+* [#987](https://github.com/ember-cli/ember-resolver/pull/987) Remove unneeded peer declaration ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### :house: Internal
+* [#988](https://github.com/ember-cli/ember-resolver/pull/988) Add packageManager ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 1
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
 ## v13.1.0 (2024-11-19)
 
 #### :rocket: Enhancement

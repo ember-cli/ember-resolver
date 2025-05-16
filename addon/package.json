@@ -1,6 +1,6 @@
 {
   "name": "ember-resolver",
-  "version": "13.1.0",
+  "version": "13.1.1",
   "description": "The default modules based resolver for Ember CLI.",
   "keywords": [],
   "homepage": "https://github.com/ember-cli/ember-resolver#readme",
