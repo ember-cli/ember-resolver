@@ -45,7 +45,7 @@
     "ember-resolver": "13.1.1",
     "ember-source": "~4.12.0",
     "ember-source-channel-url": "^3.0.0",
-    "ember-try": "^2.0.0",
+    "ember-try": "^4.0.0",
     "loader.js": "^4.7.0",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.8.7",
@@ -67,9 +67,6 @@
       "@release-it-plugins/workspaces": true
     },
     "npm": false
-  },
-  "volta": {
-    "extends": "../package.json"
   },
   "dependencies": {
     "@embroider/macros": "^1.16.2"

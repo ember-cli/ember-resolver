@@ -37,9 +37,7 @@ const embroider = {
 
 module.exports = async function () {
   return {
-    buildManagerOptions() {
-      return ['--no-package-lock', '--legacy-peer-deps'];
-    },
+    usePnpm: true,
 
     scenarios: [
       {
