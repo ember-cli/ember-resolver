@@ -1,4 +1,5 @@
 {
+  "version": "13.1.1",
   "private": true,
   "repository": {
     "type": "git",
@@ -15,8 +16,6 @@
   "devDependencies": {
     "@babel/eslint-parser": "^7.21.3",
     "@babel/plugin-proposal-decorators": "^7.21.0",
-    "@release-it-plugins/lerna-changelog": "5.0.0",
-    "@release-it-plugins/workspaces": "^3.2.0",
     "ember-template-lint": "^5.7.2",
     "eslint": "^8.46.0",
     "eslint-config-prettier": "^8.9.0",
@@ -26,30 +25,7 @@
     "eslint-plugin-qunit": "^7.3.4",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.8.4",
-    "release-it": "^15.6.0"
+    "release-plan": "^0.17.4"
   },
-  "release-it": {
-    "hooks": {
-      "before:init": "cp README.md LICENSE.md addon/"
-    },
-    "plugins": {
-      "@release-it-plugins/workspaces": {
-        "publish": false
-      },
-      "@release-it-plugins/lerna-changelog": {
-        "infile": "CHANGELOG.md",
-        "launchEditor": true
-      }
-    },
-    "git": {
-      "tagName": "v${version}"
-    },
-    "npm": false,
-    "github": {
-      "release": true,
-      "tokenRef": "GITHUB_AUTH"
-    }
-  },
-  "packageManager": "pnpm@10.29.3",
-  "version": "13.1.1"
+  "packageManager": "pnpm@10.29.3"
 }
