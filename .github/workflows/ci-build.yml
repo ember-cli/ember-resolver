@@ -22,20 +22,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
-      - uses: volta-cli/action@v4
-      - uses: actions/cache@v3
-        id: npm-cache
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v6
         with:
-          path: '**/node_modules'
-          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-npm-
-      - name: npm ci
-        if: steps.npm-cache.outputs.cache-hit != 'true'
-        run: npm ci
-      - run: npm run lint
-      - run: npm run test:ember
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install
+      - run: pnpm run lint
+      - run: pnpm run test:ember
         working-directory: ./test-app/
 
   floating-dependencies:
@@ -44,12 +39,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
-      - uses: volta-cli/action@v4
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v6
         with:
-          node-version: 16.x
-      - run: npm install --no-shrinkwrap
-      - run: npm test
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --no-lockfile
+      - run: pnpm test
         working-directory: ./test-app/
 
   try-scenarios:
@@ -74,22 +71,15 @@ jobs:
           - embroider-optimized
 
     steps:
-      - uses: actions/checkout@v3
-      - uses: volta-cli/action@v4
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v6
         with:
-          node-version: 16.x
-      - uses: actions/cache@v3
-        id: npm-cache
-        with:
-          path: '**/node_modules'
-          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-npm-
-      - name: npm ci
-        if: steps.npm-cache.outputs.cache-hit != 'true'
-        run: npm ci
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install
       - name: test
-        run: npx ember try:one ${{ matrix.ember-try-scenario }} --skip-cleanup
+        run: pnpm ember try:one ${{ matrix.ember-try-scenario }} --skip-cleanup
         working-directory: ./test-app/
 
   publish:

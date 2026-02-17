@@ -29,8 +29,5 @@
       "default": "./addon/index"
     },
     "./*": "./addon/*"
-  },
-  "volta": {
-    "extends": "../package.json"
   }
 }
