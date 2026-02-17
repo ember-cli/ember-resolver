@@ -1,5 +1,23 @@
 # Changelog
 
+## Release (2026-02-17)
+
+* ember-resolver 13.2.0 (minor)
+
+#### :rocket: Enhancement
+* `ember-resolver`
+  * [#989](https://github.com/ember-cli/ember-resolver/pull/989) remove ember-cli-babel dependency and engine reference ([@mansona](https://github.com/mansona))
+
+#### :house: Internal
+* Other
+  * [#992](https://github.com/ember-cli/ember-resolver/pull/992) start using release-plan ([@mansona](https://github.com/mansona))
+  * [#990](https://github.com/ember-cli/ember-resolver/pull/990) remove cron from github ci ([@mansona](https://github.com/mansona))
+* `ember-resolver`
+  * [#991](https://github.com/ember-cli/ember-resolver/pull/991) swap to pnpm ([@mansona](https://github.com/mansona))
+
+#### Committers: 1
+- Chris Manson ([@mansona](https://github.com/mansona))
+
 
 
 
